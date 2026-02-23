@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { hotelsByDestination } from "@/lib/hotels-database"
 import { destinationToCountryCode, convertMonthsToWebhookFormat } from "@/lib/destination-mapping"
 import { useState } from "react"
+import { supabase } from "@/integrations/supabase/client"
 
 interface SummaryPageProps {
   configuration: any
@@ -74,8 +75,20 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
       }
 
       console.log("[TripHERO] Camp configuration:", configData)
-      // Webhook integration placeholder
-      setError("Webhook integrácia vyžaduje backend. Kontaktujte administrátora.")
+
+      const { data, error: fnError } = await supabase.functions.invoke('generate-camp-preview', {
+        body: configData,
+      })
+
+      if (fnError) {
+        console.error("[TripHERO] Camp preview error:", fnError)
+        setError("Nepodarilo sa vygenerovať náhľad. Skúste to prosím znova.")
+        setIsSubmitting(false)
+        return
+      }
+
+      console.log("[TripHERO] Camp preview response:", data)
+      // TODO: Handle the camp preview response (e.g. navigate to preview page)
       setIsSubmitting(false)
     } catch (error) {
       console.error("[TripHERO] Error:", error)
