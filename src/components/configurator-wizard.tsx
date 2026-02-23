@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { hotelsByDestination, transferPrice, flightsPricing, mealsPricing } from "@/lib/hotels-database"
 import SiteNavigation from "./site-navigation"
 import { destinationToCountryCode, convertMonthsToWebhookFormat } from "@/lib/destination-mapping"
+import { supabase } from "@/integrations/supabase/client"
 
 interface ConfiguratorWizardProps {
   configuration: any
@@ -63,7 +64,22 @@ export default function ConfiguratorWizard({ configuration, onConfigurationChang
         campType: configuration.campType || "",
       }
       console.log("[TripHERO] Sending step 1 data to webhook:", webhookData)
-      // Webhook call placeholder - will need backend integration
+
+      const { data, error } = await supabase.functions.invoke('fetch-flight-prices', {
+        body: webhookData,
+      })
+
+      if (error) {
+        console.error("[TripHERO] Flight prices webhook error:", error)
+        return
+      }
+
+      console.log("[TripHERO] Flight prices response:", data)
+      if (Array.isArray(data)) {
+        setFlightPricesByMonth(data)
+      } else if (data?.flights) {
+        setFlightPricesByMonth(data.flights)
+      }
     } catch (error) {
       console.error("[TripHERO] Error sending step 1 data:", error)
     }
