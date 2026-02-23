@@ -8,24 +8,24 @@ interface Step1BasicProps {
 }
 
 const initialMainDestinations = [
-  { id: "Turecko", label: "Turecko", image: "/placeholder.svg" },
-  { id: "Grécko", label: "Grécko", image: "/placeholder.svg" },
-  { id: "Egypt", label: "Egypt", image: "/placeholder.svg" },
-  { id: "Portugalsko", label: "Portugalsko", image: "/placeholder.svg" },
-  { id: "Bali", label: "Bali", image: "/placeholder.svg" },
+  { id: "Turecko", label: "Turecko", image: "/destinations/turkey.jpg" },
+  { id: "Grécko", label: "Grécko", image: "/destinations/greece.jpg" },
+  { id: "Egypt", label: "Egypt", image: "/destinations/egypt.jpg" },
+  { id: "Portugalsko", label: "Portugalsko", image: "/destinations/portugal.jpg" },
+  { id: "Bali", label: "Bali", image: "/destinations/bali.jpg" },
 ]
 
 const additionalDestinations = [
-  { id: "Španielsko", label: "Španielsko", image: "/placeholder.svg" },
-  { id: "Taliansko", label: "Taliansko", image: "/placeholder.svg" },
-  { id: "Francúzsko", label: "Francúzsko", image: "/placeholder.svg" },
-  { id: "Maroko", label: "Maroko", image: "/placeholder.svg" },
-  { id: "Thajsko", label: "Thajsko", image: "/placeholder.svg" },
-  { id: "Vietnam", label: "Vietnam", image: "/placeholder.svg" },
-  { id: "Mexiko", label: "Mexiko", image: "/placeholder.svg" },
-  { id: "Kostarika", label: "Kostarika", image: "/placeholder.svg" },
-  { id: "Austrália", label: "Austrália", image: "/placeholder.svg" },
-  { id: "Japonsko", label: "Japonsko", image: "/placeholder.svg" },
+  { id: "Španielsko", label: "Španielsko", image: "/destinations/spanish.jpg" },
+  { id: "Taliansko", label: "Taliansko", image: "/destinations/italy.jpg" },
+  { id: "Francúzsko", label: "Francúzsko", image: "/destinations/france.jpg" },
+  { id: "Maroko", label: "Maroko", image: "/destinations/morocco.jpg" },
+  { id: "Thajsko", label: "Thajsko", image: "/destinations/thailand.jpg" },
+  { id: "Vietnam", label: "Vietnam", image: "/destinations/vietnam.jpg" },
+  { id: "Mexiko", label: "Mexiko", image: "/destinations/mexico.jpg" },
+  { id: "Kostarika", label: "Kostarika", image: "/destinations/costarica.jpg" },
+  { id: "Austrália", label: "Austrália", image: "/destinations/australia.jpg" },
+  { id: "Japonsko", label: "Japonsko", image: "/destinations/japan.jpg" },
 ]
 
 const monthsByDestination: Record<string, { month: string; number: number; label: string }[]> = {

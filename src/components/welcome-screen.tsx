@@ -8,10 +8,10 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-background px-4">
       <div className="max-w-2xl w-full">
-        <div className="mb-12 h-64 bg-primary/10 rounded-2xl flex items-center justify-center">
+        <div className="mb-12 h-64 rounded-2xl overflow-hidden">
           <img
-            src="/placeholder.svg"
-            alt="Travel destination"
+            src="/luxury-beach-resort-sunset-aerial-view.jpg"
+            alt="Luxury beach resort"
             className="w-full h-full object-cover rounded-2xl"
           />
         </div>
