@@ -1,5 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
+// Preview webhook z triphero-leap: body = { action, sessionId, tripData }. n8n vráti { slug, ...previewData }.
+// Nastav N8N_CAMP_PREVIEW_WEBHOOK_URL = https://n8n.codeblocks.sk/webhook/3b6f62b9-dc0c-4902-bfd7-956f0bb23021
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',

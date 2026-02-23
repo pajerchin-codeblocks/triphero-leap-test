@@ -1,5 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
+// Step1 webhook z triphero-leap: POST body sa posiela na n8n.
+// Nastav N8N_FLIGHT_PRICES_WEBHOOK_URL = https://n8n.codeblocks.sk/webhook/73b1e138-9659-4bde-9731-1031b26668fb
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',

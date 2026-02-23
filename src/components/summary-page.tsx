@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { hotelsByDestination } from "@/lib/hotels-database"
 import { destinationToCountryCode, convertMonthsToWebhookFormat } from "@/lib/destination-mapping"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 
 interface SummaryPageProps {
@@ -11,7 +12,8 @@ interface SummaryPageProps {
   onChat: () => void
 }
 
-export default function SummaryPage({ configuration, onEdit }: SummaryPageProps) {
+export default function SummaryPage({ configuration, onEdit, onChat }: SummaryPageProps) {
+  const navigate = useNavigate()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -41,6 +43,13 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
     return { min: rewardPerParticipant * participants, max: rewardPerParticipant * participants, minParticipants: participants, maxParticipants: participants }
   }
 
+  const calculateTotalEarnings = () => {
+    const rewardPerParticipant = Number.parseInt(configuration.trainerReward ?? "50") || 50
+    const participantStr = configuration.participants || "8"
+    const minParticipants = Number.parseInt(participantStr.match(/(\d+)/)?.[1] || "8")
+    return rewardPerParticipant * minParticipants
+  }
+
   const displayTrainerReward = Number.parseInt(configuration.trainerReward ?? "50") || 50
   const earningsRange = calculateEarningsRange()
 
@@ -64,6 +73,8 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
         transfer: configuration.transfer || false,
         extras: configuration.extras || [],
         trainerReward: Number.parseInt(configuration.trainerReward ?? "50") || 50,
+        totalEarnings: calculateTotalEarnings(),
+        budgetPerPerson: configuration.budgetPerPerson || 0,
         totalPrice: (configuration.budgetPerPerson || 0) * minParticipants,
         trainerName: configuration.trainerName || "",
         trainerExperience: configuration.trainerExperience || "",
@@ -74,10 +85,16 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
         specialActivities: configuration.specialActivities || "",
       }
 
-      console.log("[TripHERO] Camp configuration:", configData)
+      const payload = {
+        action: "generatePreview",
+        sessionId: Date.now().toString(),
+        tripData: configData,
+      }
+
+      console.log("[TripHERO] Sending camp data to generate-camp-preview:", payload)
 
       const { data, error: fnError } = await supabase.functions.invoke('generate-camp-preview', {
-        body: configData,
+        body: payload,
       })
 
       if (fnError) {
@@ -87,11 +104,25 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
         return
       }
 
-      console.log("[TripHERO] Camp preview response:", data)
-      // TODO: Handle the camp preview response (e.g. navigate to preview page)
-      setIsSubmitting(false)
-    } catch (error) {
-      console.error("[TripHERO] Error:", error)
+      const responseData = data
+      const previewData = Array.isArray(responseData) ? responseData[0] : responseData
+      console.log("[TripHERO] Preview data:", previewData)
+
+      const slug = previewData?.slug
+      if (!slug) {
+        console.error("[TripHERO] No slug in response. Full response:", responseData)
+        setError("Nepodarilo sa vygenerovať náhľad. Skúste to prosím znova.")
+        setIsSubmitting(false)
+        return
+      }
+
+      const storageKey = `triphero_preview_${slug}`
+      localStorage.setItem(storageKey, JSON.stringify(previewData))
+      console.log("[TripHERO] Saved preview data to localStorage with key:", storageKey)
+
+      navigate(`/preview/${slug}`)
+    } catch (err) {
+      console.error("[TripHERO] Error:", err)
       setError("Nepodarilo sa vygenerovať náhľad. Skúste to prosím znova.")
       setIsSubmitting(false)
     }

@@ -74,11 +74,33 @@ export default function ConfiguratorWizard({ configuration, onConfigurationChang
         return
       }
 
-      console.log("[TripHERO] Flight prices response:", data)
-      if (Array.isArray(data)) {
-        setFlightPricesByMonth(data)
-      } else if (data?.flights) {
-        setFlightPricesByMonth(data.flights)
+      console.log("[TripHERO] Step 1 data sent successfully:", data)
+
+      // Rovnaké parsovanie ako v triphero-leap (app/api/webhook/step1 + configurator-wizard)
+      const result = data as { data?: unknown; flights?: Array<{ month: string; minPrice: number }>; price?: number }
+      const raw = result?.data !== undefined ? result.data : result
+
+      // Priamy formát: [{ month: "2026-11", minPrice: 123 }]
+      if (Array.isArray(raw) && raw.length > 0 && raw[0] && typeof raw[0] === 'object' && 'month' in (raw[0] as object) && 'minPrice' in (raw[0] as object)) {
+        setFlightPricesByMonth(raw as Array<{ month: string; minPrice: number }>)
+        console.log("[TripHERO] Flight prices by month:", raw)
+      }
+      // Vnorený formát: [{ flights: [{ month, minPrice }] }]
+      else if (Array.isArray(raw) && raw[0] && typeof raw[0] === 'object' && raw[0] !== null && 'flights' in (raw[0] as object)) {
+        const flights = (raw[0] as { flights: Array<{ month: string; minPrice: number }> }).flights
+        setFlightPricesByMonth(flights)
+        console.log("[TripHERO] Flight prices by month (nested):", flights)
+      }
+      // Legacy jeden price
+      else if (result?.price !== undefined) {
+        setFlightPricesByMonth([{ month: "default", minPrice: result.price as number }])
+        console.log("[TripHERO] Single flight price (legacy):", result.price)
+      }
+      // Fallback: data je priamo pole alebo { flights }
+      else if (Array.isArray(data) && data.length > 0) {
+        setFlightPricesByMonth(data as Array<{ month: string; minPrice: number }>)
+      } else if (result?.flights) {
+        setFlightPricesByMonth(result.flights)
       }
     } catch (error) {
       console.error("[TripHERO] Error sending step 1 data:", error)
