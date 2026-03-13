@@ -27,6 +27,14 @@ export default function ConfiguratorWizard({
   const [currentStep, setCurrentStep] = useState(0);
   const [validationErrors, setValidationErrors] = useState<Record<string, boolean>>({});
   const [flightPricesByMonth, setFlightPricesByMonth] = useState<Array<{ month: string; minPrice: number }>>([]);
+  const [stepperFloating, setStepperFloating] = useState(false);
+  const stepperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onScroll = () => setStepperFloating(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const steps = [
     { title: "Základné parametre", component: Step1Basic },
