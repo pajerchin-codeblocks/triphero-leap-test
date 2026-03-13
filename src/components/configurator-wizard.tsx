@@ -270,7 +270,7 @@ export default function ConfiguratorWizard({
             <Button
               onClick={handlePrevious}
               disabled={currentStep === 0}
-              className={`gap-2 rounded-xl shrink-0 gradient-wizard-btn font-semibold transition-all ${
+              className={`gap-2 rounded-xl shrink-0 gradient-wizard-btn font-semibold transition-all hidden md:flex ${
                 currentStep === 0 ? "invisible" : ""
               }`}
             >
