@@ -194,52 +194,61 @@ export default function ConfiguratorWizard({ configuration, onConfigurationChang
   const estimatedPricePerPerson = calculateEstimatedPrice()
   const earningsRange = calculateEarningsRange()
 
+  const hasSummaryData = !!(
+    configuration.destination ||
+    (configuration.months && configuration.months.length > 0) ||
+    configuration.duration ||
+    configuration.participants ||
+    configuration.campType ||
+    configuration.hotel ||
+    configuration.meals
+  )
+
   return (
     <div className="min-h-screen bg-background">
       <div className="py-8 px-4 pt-4">
         <div className="max-w-7xl mx-auto">
-          {/* Stepper */}
+          {/* Stepper + Nav buttons */}
           <div className="flex items-center justify-between mb-8 bg-muted/40 backdrop-blur-sm rounded-2xl p-4">
-            {steps.map((step, index) => (
-              <div key={index} className="flex items-center flex-1">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${
-                  index === currentStep
-                    ? "gradient-brand text-primary-foreground shadow-glow"
-                    : index < currentStep
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground"
-                }`}>
-                  {index < currentStep ? <Check className="w-4 h-4" /> : index + 1}
+            {currentStep > 0 ? (
+              <Button onClick={handlePrevious} variant="outline" className="gap-2 bg-transparent rounded-xl shrink-0">
+                ← Späť
+              </Button>
+            ) : (
+              <div className="w-[100px] shrink-0" />
+            )}
+            <div className="flex items-center flex-1 mx-4">
+              {steps.map((step, index) => (
+                <div key={index} className="flex items-center flex-1">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${
+                    index === currentStep
+                      ? "gradient-brand text-primary-foreground shadow-glow"
+                      : index < currentStep
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground"
+                  }`}>
+                    {index < currentStep ? <Check className="w-4 h-4" /> : index + 1}
+                  </div>
+                  <span className={`ml-3 text-sm font-medium hidden md:inline ${
+                    index === currentStep ? "text-foreground font-semibold" : index < currentStep ? "text-foreground" : "text-muted-foreground"
+                  }`}>
+                    {step.title}
+                  </span>
+                  {index < steps.length - 1 && (
+                    <div className={`flex-1 h-1 mx-4 rounded-full transition-colors ${
+                      index < currentStep ? "gradient-brand" : "bg-border"
+                    }`} />
+                  )}
                 </div>
-                <span className={`ml-3 text-sm font-medium hidden md:inline ${
-                  index === currentStep ? "text-foreground font-semibold" : index < currentStep ? "text-foreground" : "text-muted-foreground"
-                }`}>
-                  {step.title}
-                </span>
-                {index < steps.length - 1 && (
-                  <div className={`flex-1 h-1 mx-4 rounded-full transition-colors ${
-                    index < currentStep ? "gradient-brand" : "bg-border"
-                  }`} />
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
+            <Button onClick={handleNext} variant="hero" className="gap-2 rounded-xl shrink-0">
+              {currentStep === steps.length - 1 ? "Pokračovať" : "Ďalej"} →
+            </Button>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              {/* Navigation buttons */}
-              <div className="flex gap-4 justify-between mb-6">
-                {currentStep > 0 ? (
-                  <Button onClick={handlePrevious} variant="outline" className="gap-2 bg-transparent rounded-xl">
-                    ← Späť
-                  </Button>
-                ) : (
-                  <div />
-                )}
-                <Button onClick={handleNext} variant="hero" className="gap-2 rounded-xl">
-                  {currentStep === steps.length - 1 ? "Pokračovať" : "Ďalej"} →
-                </Button>
-              </div>
               {currentStep === 1 ? (
                 <Step2Accommodation
                   configuration={configuration}
@@ -256,58 +265,58 @@ export default function ConfiguratorWizard({ configuration, onConfigurationChang
               )}
             </div>
 
-            {/* Summary sidebar - dark navy */}
+            {/* Summary sidebar */}
             <div className="lg:col-span-1">
-              <div className="sticky top-6">
-                <Card className="bg-card text-card-foreground border rounded-2xl shadow-soft overflow-hidden">
-                  <CardContent className="px-4 py-4 space-y-2">
-                    <h3 className="text-base font-semibold mb-2">Súhrn</h3>
-                    {configuration.destination && (
-                      <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Destinácia</span><span className="text-sm font-medium">{configuration.destination}</span></div>
-                    )}
-                    {configuration.months && configuration.months.length > 0 && (
-                      <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Termíny</span><span className="text-sm font-medium text-right max-w-[60%]">{configuration.months.join(", ")}</span></div>
-                    )}
-                    {configuration.duration && (
-                      <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Trvanie</span><span className="text-sm font-medium">{configuration.duration}</span></div>
-                    )}
-                    {configuration.participants && (
-                      <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Účastníci</span><span className="text-sm font-medium">{configuration.participants}</span></div>
-                    )}
-                    {configuration.campType && (
-                      <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Typ campu</span><span className="text-sm font-medium">{configuration.campType}</span></div>
-                    )}
-                    {configuration.hotel && (
-                      <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Hotel</span><span className="text-sm font-medium text-right max-w-[60%]">
-                        {hotelsByDestination[configuration.destination as keyof typeof hotelsByDestination]?.find((h) => h.id === configuration.hotel)?.name || "Nevybratý"}
-                      </span></div>
-                    )}
-                    {configuration.meals && (
-                      <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Strava</span><span className="text-sm font-medium">{configuration.meals}</span></div>
-                    )}
-                    {currentStep >= 2 && (
-                      <div className="pt-2 border-t border-border space-y-1">
-                        <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Odmena / účastník</span><span className="text-sm font-semibold">{configuration.trainerReward ?? 50} €</span></div>
-                        {earningsRange.min > 0 && (
-                          <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Rozsah zárobku</span><span className="text-sm font-semibold text-accent">{earningsRange.min} – {earningsRange.max} €</span></div>
-                        )}
+              {hasSummaryData && (
+                <div className="sticky mt-[10rem]" style={{ top: '4.5rem' }}>
+                  <Card className="bg-card text-card-foreground border rounded-2xl shadow-soft overflow-hidden">
+                    <CardContent className="px-4 py-4 space-y-2">
+                      <h3 className="text-base font-semibold mb-2">Súhrn</h3>
+                      {configuration.destination && (
+                        <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Destinácia</span><span className="text-sm font-medium">{configuration.destination}</span></div>
+                      )}
+                      {configuration.months && configuration.months.length > 0 && (
+                        <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Termíny</span><span className="text-sm font-medium text-right max-w-[60%]">{configuration.months.join(", ")}</span></div>
+                      )}
+                      {configuration.duration && (
+                        <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Trvanie</span><span className="text-sm font-medium">{configuration.duration}</span></div>
+                      )}
+                      {configuration.participants && (
+                        <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Účastníci</span><span className="text-sm font-medium">{configuration.participants}</span></div>
+                      )}
+                      {configuration.campType && (
+                        <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Typ campu</span><span className="text-sm font-medium">{configuration.campType}</span></div>
+                      )}
+                      {configuration.hotel && (
+                        <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Hotel</span><span className="text-sm font-medium text-right max-w-[60%]">
+                          {hotelsByDestination[configuration.destination as keyof typeof hotelsByDestination]?.find((h) => h.id === configuration.hotel)?.name || "Nevybratý"}
+                        </span></div>
+                      )}
+                      {configuration.meals && (
+                        <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Strava</span><span className="text-sm font-medium">{configuration.meals}</span></div>
+                      )}
+                      {currentStep >= 2 && (
+                        <div className="pt-2 border-t border-border space-y-1">
+                          <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Odmena / účastník</span><span className="text-sm font-semibold">{configuration.trainerReward ?? 50} €</span></div>
+                          {earningsRange.min > 0 && (
+                            <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Rozsah zárobku</span><span className="text-sm font-semibold text-accent">{earningsRange.min} – {earningsRange.max} €</span></div>
+                          )}
+                        </div>
+                      )}
+                    </CardContent>
+                    {configuration.hotel && currentStep > 0 && (
+                      <div className="px-4 py-3 border-t border-border bg-muted/30">
+                        <div className="flex justify-between items-baseline">
+                          <span className="text-xs text-muted-foreground">Cena za osobu</span>
+                          <span className="text-xl font-bold text-accent">~ {estimatedPricePerPerson} €</span>
+                        </div>
                       </div>
                     )}
-                  </CardContent>
-                  {configuration.hotel && currentStep > 0 && (
-                    <div className="px-4 py-3 border-t border-border bg-muted/30">
-                      <div className="flex justify-between items-baseline">
-                        <span className="text-xs text-muted-foreground">Cena za osobu</span>
-                        <span className="text-xl font-bold text-accent">~ {estimatedPricePerPerson} €</span>
-                      </div>
-                    </div>
-                  )}
-                </Card>
-              </div>
+                  </Card>
+                </div>
+              )}
             </div>
           </div>
-
-          <WizardNavigation currentStep={currentStep} totalSteps={steps.length} onNext={handleNext} onPrevious={handlePrevious} />
         </div>
       </div>
     </div>
