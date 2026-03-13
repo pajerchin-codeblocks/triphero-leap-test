@@ -134,7 +134,7 @@ export default function Preview() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteNavigation />
+      <Navbar />
 
       <div className="relative pt-20">
         <div className="max-w-7xl mx-auto px-4 py-8">

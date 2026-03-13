@@ -206,8 +206,7 @@ export default function ConfiguratorWizard({ configuration, onConfigurationChang
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteNavigation />
-      <div className="py-8 px-4 pt-24">
+      <div className="py-8 px-4 pt-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             {steps.map((step, index) => (
