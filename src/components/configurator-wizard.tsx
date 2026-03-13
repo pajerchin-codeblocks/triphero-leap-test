@@ -291,7 +291,7 @@ export default function ConfiguratorWizard({
                   </button>
                   <span
                     onClick={() => handleStepClick(index)}
-                    className={`ml-3 text-sm font-medium hidden md:inline cursor-pointer ${
+                    className={`ml-3 text-sm font-medium hidden md:inline cursor-pointer whitespace-nowrap ${
                       index === currentStep
                         ? "text-foreground font-semibold"
                         : index < currentStep
