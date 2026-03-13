@@ -253,7 +253,7 @@ export default function ConfiguratorWizard({
       <div className="py-8 px-4 pt-4">
         <div className="max-w-7xl mx-auto">
           {/* Stepper + Nav buttons */}
-          <div className="sticky top-0 z-40 bg-muted/40 backdrop-blur-sm rounded-2xl p-4 flex items-center justify-between mb-8">
+          <div className="sticky top-0 z-40 bg-background rounded-2xl p-4 flex items-center justify-between mb-8 shadow-soft">
             <Button
               onClick={handlePrevious}
               disabled={currentStep === 0}
