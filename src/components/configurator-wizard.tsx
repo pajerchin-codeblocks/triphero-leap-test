@@ -146,6 +146,19 @@ export default function ConfiguratorWizard({
     }
   };
 
+  const handleStepClick = (index: number) => {
+    if (index < currentStep) {
+      // Allow going back to any completed step
+      setValidationErrors({});
+      setCurrentStep(index);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (index === currentStep + 1) {
+      // Allow going one step forward (triggers validation via handleNext)
+      handleNext();
+    }
+    // Don't allow skipping ahead more than 1 step
+  };
+
   const calculateEstimatedPrice = () => {
     const INSTAGYM_COMMISSION = 250;
     const trainerReward = configuration.trainerReward ?? 50;
