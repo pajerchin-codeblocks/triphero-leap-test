@@ -8,7 +8,8 @@ import Step5Program from "./wizard-steps/step5-program";
 import WizardNavigation from "./wizard-navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { hotelsByDestination, transferPrice, flightsPricing, mealsPricing } from "@/lib/hotels-database";
-import { Check } from "lucide-react";
+import { Check, ChevronUp, ChevronDown } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 import { destinationToCountryCode, convertMonthsToWebhookFormat } from "@/lib/destination-mapping";
 import { supabase } from "@/integrations/supabase/client";
