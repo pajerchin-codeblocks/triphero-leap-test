@@ -399,7 +399,8 @@ export default function ConfiguratorWizard({
                         </div>
                       </div>
                     )}
-                  </Card>
+                  </div>
+                  </div>
                 </div>
               )}
             </div>
