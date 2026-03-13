@@ -276,7 +276,7 @@ export default function ConfiguratorWizard({
             >
               ← Späť
             </Button>
-            <div className="flex items-center flex-1 mx-4">
+            <div className="flex items-center flex-1 md:mx-4">
               {steps.map((step, index) => (
                 <div key={index} className="flex items-center flex-1">
                   <button
