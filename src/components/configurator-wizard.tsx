@@ -297,6 +297,25 @@ export default function ConfiguratorWizard({
                   validationErrors={validationErrors}
                 />
               )}
+
+              {/* Bottom navigation buttons */}
+              <div className="mt-12 flex gap-4 justify-between">
+                <Button
+                  onClick={handlePrevious}
+                  disabled={currentStep === 0}
+                  className={`gap-2 rounded-xl gradient-wizard-btn font-semibold transition-all ${
+                    currentStep === 0 ? "invisible" : ""
+                  }`}
+                >
+                  ← Späť
+                </Button>
+                <Button
+                  onClick={handleNext}
+                  className="gap-2 rounded-xl gradient-wizard-btn font-semibold transition-all"
+                >
+                  {currentStep === steps.length - 1 ? "Pokračovať" : "Ďalej"} →
+                </Button>
+              </div>
             </div>
 
             {/* Summary sidebar */}
