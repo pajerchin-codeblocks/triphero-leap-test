@@ -228,7 +228,7 @@ export default function ConfiguratorWizard({
       <div className="py-8 px-4 pt-4">
         <div className="max-w-7xl mx-auto">
           {/* Stepper + Nav buttons */}
-          <div className="flex items-center justify-between mb-8 bg-muted/40 backdrop-blur-sm rounded-2xl p-4">
+          <div className="sticky top-0 z-40 bg-muted/40 backdrop-blur-sm rounded-2xl p-4 flex items-center justify-between mb-8">
             <Button
               onClick={handlePrevious}
               disabled={currentStep === 0}
@@ -241,8 +241,10 @@ export default function ConfiguratorWizard({
             <div className="flex items-center flex-1 mx-4">
               {steps.map((step, index) => (
                 <div key={index} className="flex items-center flex-1">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${
+                  <button
+                    type="button"
+                    onClick={() => handleStepClick(index)}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm transition-all cursor-pointer hover:scale-110 ${
                       index === currentStep
                         ? "gradient-brand text-primary-foreground shadow-glow"
                         : index < currentStep
@@ -251,9 +253,10 @@ export default function ConfiguratorWizard({
                     }`}
                   >
                     {index < currentStep ? <Check className="w-4 h-4" /> : index + 1}
-                  </div>
+                  </button>
                   <span
-                    className={`ml-3 text-sm font-medium hidden md:inline ${
+                    onClick={() => handleStepClick(index)}
+                    className={`ml-3 text-sm font-medium hidden md:inline cursor-pointer ${
                       index === currentStep
                         ? "text-foreground font-semibold"
                         : index < currentStep
