@@ -261,7 +261,7 @@ export default function ConfiguratorWizard({
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="py-8 px-4 pt-4">
+      <div className={`py-8 px-4 pt-4 ${isMobile && hasSummaryData ? "pb-20" : ""}`}>
         <div className="max-w-7xl mx-auto">
           {/* Stepper + Nav buttons */}
           <div ref={stepperRef} className={`sticky top-0 z-40 rounded-2xl p-4 flex items-center justify-between mb-8 transition-all duration-300 ${
