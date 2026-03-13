@@ -146,17 +146,29 @@ export default function ConfiguratorWizard({
     }
   };
 
-  const handleStepClick = (index: number) => {
+  const handleStepClick = async (index: number) => {
+    if (index === currentStep) return;
     if (index < currentStep) {
-      // Allow going back to any completed step
       setValidationErrors({});
       setCurrentStep(index);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } else if (index === currentStep + 1) {
-      // Allow going one step forward (triggers validation via handleNext)
-      handleNext();
+    } else {
+      // Validate all steps between current and target
+      for (let s = currentStep; s < index; s++) {
+        const errors = validateStep(s);
+        if (errors.length > 0) {
+          const errorObj: Record<string, boolean> = {};
+          errors.forEach((field) => (errorObj[field] = true));
+          setValidationErrors(errorObj);
+          if (s !== currentStep) setCurrentStep(s);
+          return;
+        }
+      }
+      setValidationErrors({});
+      if (currentStep === 0) await sendStep1DataToWebhook();
+      setCurrentStep(index);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
-    // Don't allow skipping ahead more than 1 step
   };
 
   const calculateEstimatedPrice = () => {
@@ -241,7 +253,7 @@ export default function ConfiguratorWizard({
       <div className="py-8 px-4 pt-4">
         <div className="max-w-7xl mx-auto">
           {/* Stepper + Nav buttons */}
-          <div className="sticky top-0 z-40 bg-muted/40 backdrop-blur-sm rounded-2xl p-4 flex items-center justify-between mb-8">
+          <div className="sticky top-0 z-40 bg-background rounded-2xl p-4 flex items-center justify-between mb-8 shadow-soft">
             <Button
               onClick={handlePrevious}
               disabled={currentStep === 0}
