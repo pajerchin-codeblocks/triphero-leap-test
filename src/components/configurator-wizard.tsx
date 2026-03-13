@@ -225,18 +225,21 @@ export default function ConfiguratorWizard({ configuration, onConfigurationChang
             ))}
           </div>
 
-          {/* Navigation buttons */}
-          <div className="flex gap-4 justify-between mb-6">
-            <Button onClick={handlePrevious} disabled={currentStep === 0} variant="outline" className="gap-2 bg-transparent rounded-xl">
-              ← Späť
-            </Button>
-            <Button onClick={handleNext} variant="hero" className="gap-2 rounded-xl">
-              {currentStep === steps.length - 1 ? "Pokračovať" : "Ďalej"} →
-            </Button>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
+              {/* Navigation buttons */}
+              <div className="flex gap-4 justify-between mb-6">
+                {currentStep > 0 ? (
+                  <Button onClick={handlePrevious} variant="outline" className="gap-2 bg-transparent rounded-xl">
+                    ← Späť
+                  </Button>
+                ) : (
+                  <div />
+                )}
+                <Button onClick={handleNext} variant="hero" className="gap-2 rounded-xl">
+                  {currentStep === steps.length - 1 ? "Pokračovať" : "Ďalej"} →
+                </Button>
+              </div>
               {currentStep === 1 ? (
                 <Step2Accommodation
                   configuration={configuration}

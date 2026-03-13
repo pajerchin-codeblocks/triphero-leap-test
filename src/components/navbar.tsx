@@ -58,12 +58,8 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Desktop CTA */}
-          <div className="hidden md:block flex-shrink-0">
-            <Button variant="hero" size="sm" className="rounded-full px-6" asChild>
-              <a href="/">Začať plánovať trip</a>
-            </Button>
-          </div>
+          {/* Spacer to balance layout */}
+          <div className="hidden md:block flex-shrink-0 w-[1px]" />
 
           {/* Mobile hamburger */}
           <button
@@ -105,9 +101,6 @@ export default function Navbar() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: navLinks.length * 0.1 }}
               >
-                <Button variant="hero" size="lg" className="w-full mt-4" asChild>
-                  <a href="/" onClick={() => setMobileOpen(false)}>Začať plánovať trip</a>
-                </Button>
               </motion.div>
             </div>
           </motion.div>
