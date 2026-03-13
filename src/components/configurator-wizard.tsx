@@ -259,53 +259,49 @@ export default function ConfiguratorWizard({ configuration, onConfigurationChang
             {/* Summary sidebar - dark navy */}
             <div className="lg:col-span-1">
               <div className="sticky" style={{ top: '22rem' }}>
-                <Card className="bg-card text-card-foreground border rounded-2xl shadow-soft">
-                  <CardContent className="px-6 py-6 space-y-4">
-                    <h3 className="text-lg font-semibold">Súhrn</h3>
+                <Card className="bg-card text-card-foreground border rounded-2xl shadow-soft overflow-hidden">
+                  <CardContent className="px-4 py-4 space-y-2">
+                    <h3 className="text-base font-semibold mb-2">Súhrn</h3>
                     {configuration.destination && (
-                      <div><p className="text-sm text-muted-foreground">Destinácia</p><p className="font-medium">{configuration.destination}</p></div>
+                      <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Destinácia</span><span className="text-sm font-medium">{configuration.destination}</span></div>
                     )}
                     {configuration.months && configuration.months.length > 0 && (
-                      <div><p className="text-sm text-muted-foreground">Termíny</p><p className="font-medium">{configuration.months.join(", ")}</p></div>
+                      <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Termíny</span><span className="text-sm font-medium text-right max-w-[60%]">{configuration.months.join(", ")}</span></div>
                     )}
                     {configuration.duration && (
-                      <div><p className="text-sm text-muted-foreground">Trvanie</p><p className="font-medium">{configuration.duration}</p></div>
+                      <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Trvanie</span><span className="text-sm font-medium">{configuration.duration}</span></div>
                     )}
                     {configuration.participants && (
-                      <div><p className="text-sm text-muted-foreground">Odhadovaný počet účastníkov</p><p className="font-medium">{configuration.participants}</p></div>
+                      <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Účastníci</span><span className="text-sm font-medium">{configuration.participants}</span></div>
                     )}
                     {configuration.campType && (
-                      <div><p className="text-sm text-muted-foreground">Typ campu</p><p className="font-medium">{configuration.campType}</p></div>
+                      <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Typ campu</span><span className="text-sm font-medium">{configuration.campType}</span></div>
                     )}
                     {configuration.hotel && (
-                      <div><p className="text-sm text-muted-foreground">Hotel</p><p className="font-medium">
+                      <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Hotel</span><span className="text-sm font-medium text-right max-w-[60%]">
                         {hotelsByDestination[configuration.destination as keyof typeof hotelsByDestination]?.find((h) => h.id === configuration.hotel)?.name || "Nevybratý"}
-                      </p></div>
+                      </span></div>
                     )}
                     {configuration.meals && (
-                      <div><p className="text-sm text-muted-foreground">Strava</p><p className="font-medium">{configuration.meals}</p></div>
-                    )}
-                    {configuration.hotel && currentStep > 0 && (
-                      <div className="pt-4 border-t border-border">
-                        <p className="text-sm text-muted-foreground">Odhadovaná cena za osobu</p>
-                        <p className="text-2xl font-bold text-accent">~ {estimatedPricePerPerson} €</p>
-                      </div>
+                      <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Strava</span><span className="text-sm font-medium">{configuration.meals}</span></div>
                     )}
                     {currentStep >= 2 && (
-                      <div className="pt-4 border-t border-border space-y-2">
-                        <div>
-                          <p className="text-sm text-muted-foreground">Výška odmeny na jedného účastníka</p>
-                          <p className="text-lg font-semibold">{configuration.trainerReward ?? 50} €</p>
-                        </div>
+                      <div className="pt-2 border-t border-border space-y-1">
+                        <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Odmena / účastník</span><span className="text-sm font-semibold">{configuration.trainerReward ?? 50} €</span></div>
                         {earningsRange.min > 0 && (
-                          <div>
-                            <p className="text-sm text-muted-foreground">Rozsah zárobku</p>
-                            <p className="text-lg font-semibold text-accent">{earningsRange.min} € - {earningsRange.max} €</p>
-                          </div>
+                          <div className="flex justify-between items-baseline"><span className="text-xs text-muted-foreground">Rozsah zárobku</span><span className="text-sm font-semibold text-accent">{earningsRange.min} – {earningsRange.max} €</span></div>
                         )}
                       </div>
                     )}
                   </CardContent>
+                  {configuration.hotel && currentStep > 0 && (
+                    <div className="px-4 py-3 border-t border-border bg-muted/30">
+                      <div className="flex justify-between items-baseline">
+                        <span className="text-xs text-muted-foreground">Cena za osobu</span>
+                        <span className="text-xl font-bold text-accent">~ {estimatedPricePerPerson} €</span>
+                      </div>
+                    </div>
+                  )}
                 </Card>
               </div>
             </div>
