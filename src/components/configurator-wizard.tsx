@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Step1Basic from "./wizard-steps/step1-basic";
 import Step2Accommodation from "./wizard-steps/step2-accommodation";
 import Step3Business from "./wizard-steps/step3-business";
@@ -27,6 +27,14 @@ export default function ConfiguratorWizard({
   const [currentStep, setCurrentStep] = useState(0);
   const [validationErrors, setValidationErrors] = useState<Record<string, boolean>>({});
   const [flightPricesByMonth, setFlightPricesByMonth] = useState<Array<{ month: string; minPrice: number }>>([]);
+  const [stepperFloating, setStepperFloating] = useState(false);
+  const stepperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onScroll = () => setStepperFloating(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const steps = [
     { title: "Základné parametre", component: Step1Basic },
@@ -253,7 +261,9 @@ export default function ConfiguratorWizard({
       <div className="py-8 px-4 pt-4">
         <div className="max-w-7xl mx-auto">
           {/* Stepper + Nav buttons */}
-          <div className="sticky top-0 z-40 bg-background rounded-2xl p-4 flex items-center justify-between mb-8 shadow-soft">
+          <div ref={stepperRef} className={`sticky top-0 z-40 rounded-2xl p-4 flex items-center justify-between mb-8 transition-all duration-300 ${
+            stepperFloating ? "bg-background shadow-soft" : "bg-muted/40 backdrop-blur-sm"
+          }`}>
             <Button
               onClick={handlePrevious}
               disabled={currentStep === 0}
