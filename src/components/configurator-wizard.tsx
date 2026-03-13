@@ -229,13 +229,15 @@ export default function ConfiguratorWizard({
         <div className="max-w-7xl mx-auto">
           {/* Stepper + Nav buttons */}
           <div className="flex items-center justify-between mb-8 bg-muted/40 backdrop-blur-sm rounded-2xl p-4">
-            {currentStep > 0 ? (
-              <Button onClick={handlePrevious} variant="outline" className="gap-2 bg-transparent rounded-xl shrink-0">
-                ← Späť
-              </Button>
-            ) : (
-              <div className="w-[100px] shrink-0" />
-            )}
+            <Button
+              onClick={handlePrevious}
+              disabled={currentStep === 0}
+              className={`gap-2 rounded-xl shrink-0 gradient-wizard-btn font-semibold transition-all ${
+                currentStep === 0 ? "invisible" : ""
+              }`}
+            >
+              ← Späť
+            </Button>
             <div className="flex items-center flex-1 mx-4">
               {steps.map((step, index) => (
                 <div key={index} className="flex items-center flex-1">
@@ -271,7 +273,10 @@ export default function ConfiguratorWizard({
                 </div>
               ))}
             </div>
-            <Button onClick={handleNext} variant="hero" className="gap-2 rounded-xl shrink-0">
+            <Button
+              onClick={handleNext}
+              className="gap-2 rounded-xl shrink-0 gradient-wizard-btn font-semibold transition-all"
+            >
               {currentStep === steps.length - 1 ? "Pokračovať" : "Ďalej"} →
             </Button>
           </div>
