@@ -48,12 +48,12 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-foreground mb-2">Ubytovanie & služby</h2>
-        <p className="text-foreground/60">Vyber si hotel, stravu a doplnkové služby</p>
+        <h2 className="text-3xl font-bold text-foreground mb-2">Ubytovanie & služby</h2>
+        <p className="text-muted-foreground text-base">Vyber si hotel, stravu a doplnkové služby</p>
       </div>
 
-      <Card>
-        <CardContent className="space-y-8 px-6 py-6">
+      <Card className="shadow-soft rounded-2xl border-0">
+        <CardContent className="space-y-10 px-6 py-6">
           {/* Hotels */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-4">Vyber hotel v {configuration.destination}</label>
@@ -64,8 +64,8 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
                     <button
                       key={hotel.id}
                       onClick={() => handleChange("hotel", hotel.id)}
-                      className={`text-left rounded-xl overflow-hidden border-2 transition transform hover:shadow-lg ${
-                        configuration.hotel === hotel.id ? "border-accent ring-2 ring-accent" : "border-border hover:border-accent/50"
+                      className={`text-left rounded-2xl overflow-hidden border-2 transition transform hover:shadow-lg ${
+                        configuration.hotel === hotel.id ? "border-primary ring-2 ring-primary" : "border-border hover:border-primary/50"
                       }`}
                     >
                       <div className="relative overflow-hidden bg-muted h-40">
@@ -74,7 +74,7 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
                       <div className="p-4 bg-card">
                         <div className="flex justify-between items-start mb-2">
                           <h3 className="font-bold text-foreground text-sm">{hotel.name}</h3>
-                          <span className="text-accent text-xs font-bold">{renderStars(hotel.stars)}</span>
+                          <span className="text-xs font-bold">{renderStars(hotel.stars)}</span>
                         </div>
                         <p className="text-xs text-muted-foreground mb-2">{hotel.description}</p>
                         <p className="text-sm font-semibold text-foreground">od {hotel.pricePerNight}€ / noc</p>
@@ -98,11 +98,11 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
                   key={meal}
                   onClick={() => handleChange("meals", meal)}
                   className={`p-3 rounded-lg border-2 font-medium transition text-center ${
-                    configuration.meals === meal ? "border-accent bg-accent/10 text-accent" : "border-border bg-background text-foreground hover:border-accent/50"
+                    configuration.meals === meal ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:border-primary/50"
                   }`}
                 >
                   <div>{meal}</div>
-                  <div className="text-xs text-muted-foreground mt-1">od {price}€/deň</div>
+                  <div className={`text-xs mt-1 ${configuration.meals === meal ? "text-primary-foreground/70" : "text-muted-foreground"}`}>od {price}€/deň</div>
                 </button>
               ))}
             </div>
@@ -124,17 +124,17 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
                       key={flight.month}
                       onClick={() => handleChange("selectedFlight", isSelected ? null : { month: flight.month, price: flight.minPrice })}
                       className={`p-4 rounded-lg border-2 text-left transition ${
-                        isSelected ? "border-accent bg-accent/10" : "border-border bg-background hover:border-accent/50"
+                        isSelected ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:border-primary/50"
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className={`text-sm font-medium ${isSelected ? "text-accent" : "text-foreground"}`}>
+                          <p className={`text-sm font-medium ${isSelected ? "text-primary-foreground" : "text-foreground"}`}>
                             {flight.month !== "default" ? new Date(flight.month + "-01").toLocaleDateString("sk-SK", { year: "numeric", month: "long" }) : "Letenka"}
                           </p>
-                          <p className="text-xs text-muted-foreground mt-1">minimálna cena</p>
+                          <p className={`text-xs mt-1 ${isSelected ? "text-primary-foreground/70" : "text-muted-foreground"}`}>minimálna cena</p>
                         </div>
-                        <p className={`text-2xl font-bold ${isSelected ? "text-accent" : "text-foreground"}`}>{flight.minPrice} €</p>
+                        <p className={`text-2xl font-bold ${isSelected ? "text-primary-foreground" : "text-foreground"}`}>{flight.minPrice} €</p>
                       </div>
                     </button>
                   )
@@ -176,9 +176,9 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
               ))}
 
               {configuration.extras?.filter((e: string) => !Object.keys(extraServicesPricing).includes(e)).map((custom: string) => (
-                <div key={custom} className="flex items-center gap-2 p-3 border border-accent rounded-lg bg-accent/5">
+                <div key={custom} className="flex items-center gap-2 p-3 border border-primary rounded-lg bg-primary/5">
                   <span className="font-medium text-foreground flex-1">{custom}</span>
-                  <button onClick={() => handleToggleExtra(custom)} className="text-accent hover:text-accent/80 font-bold">✕</button>
+                  <button onClick={() => handleToggleExtra(custom)} className="text-primary hover:text-primary/80 font-bold">✕</button>
                 </div>
               ))}
 
@@ -189,9 +189,9 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
                   onChange={(e) => setCustomExtra(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleAddCustomExtra()}
                   placeholder="Zadaj vlastnú službu..."
-                  className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 />
-                <button onClick={handleAddCustomExtra} className="px-4 py-2 bg-accent text-accent-foreground rounded-lg font-medium hover:bg-accent/90 transition">+</button>
+                <button onClick={handleAddCustomExtra} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition">+</button>
               </div>
             </div>
           </div>

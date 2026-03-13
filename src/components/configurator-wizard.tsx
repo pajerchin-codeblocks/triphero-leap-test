@@ -8,6 +8,7 @@ import Step5Program from "./wizard-steps/step5-program"
 import WizardNavigation from "./wizard-navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { hotelsByDestination, transferPrice, flightsPricing, mealsPricing } from "@/lib/hotels-database"
+import { Check } from "lucide-react"
 
 import { destinationToCountryCode, convertMonthsToWebhookFormat } from "@/lib/destination-mapping"
 import { supabase } from "@/integrations/supabase/client"
@@ -76,28 +77,17 @@ export default function ConfiguratorWizard({ configuration, onConfigurationChang
 
       console.log("[TripHERO] Step 1 data sent successfully:", data)
 
-      // Rovnaké parsovanie ako v triphero-leap (app/api/webhook/step1 + configurator-wizard)
       const result = data as { data?: unknown; flights?: Array<{ month: string; minPrice: number }>; price?: number }
       const raw = result?.data !== undefined ? result.data : result
 
-      // Priamy formát: [{ month: "2026-11", minPrice: 123 }]
       if (Array.isArray(raw) && raw.length > 0 && raw[0] && typeof raw[0] === 'object' && 'month' in (raw[0] as object) && 'minPrice' in (raw[0] as object)) {
         setFlightPricesByMonth(raw as Array<{ month: string; minPrice: number }>)
-        console.log("[TripHERO] Flight prices by month:", raw)
-      }
-      // Vnorený formát: [{ flights: [{ month, minPrice }] }]
-      else if (Array.isArray(raw) && raw[0] && typeof raw[0] === 'object' && raw[0] !== null && 'flights' in (raw[0] as object)) {
+      } else if (Array.isArray(raw) && raw[0] && typeof raw[0] === 'object' && raw[0] !== null && 'flights' in (raw[0] as object)) {
         const flights = (raw[0] as { flights: Array<{ month: string; minPrice: number }> }).flights
         setFlightPricesByMonth(flights)
-        console.log("[TripHERO] Flight prices by month (nested):", flights)
-      }
-      // Legacy jeden price
-      else if (result?.price !== undefined) {
+      } else if (result?.price !== undefined) {
         setFlightPricesByMonth([{ month: "default", minPrice: result.price as number }])
-        console.log("[TripHERO] Single flight price (legacy):", result.price)
-      }
-      // Fallback: data je priamo pole alebo { flights }
-      else if (Array.isArray(data) && data.length > 0) {
+      } else if (Array.isArray(data) && data.length > 0) {
         setFlightPricesByMonth(data as Array<{ month: string; minPrice: number }>)
       } else if (result?.flights) {
         setFlightPricesByMonth(result.flights)
@@ -208,27 +198,39 @@ export default function ConfiguratorWizard({ configuration, onConfigurationChang
     <div className="min-h-screen bg-background">
       <div className="py-8 px-4 pt-4">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
+          {/* Stepper */}
+          <div className="flex items-center justify-between mb-8 bg-muted/40 backdrop-blur-sm rounded-2xl p-4">
             {steps.map((step, index) => (
               <div key={index} className="flex items-center flex-1">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm transition-colors ${
-                  index === currentStep ? "bg-accent text-accent-foreground" : index < currentStep ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${
+                  index === currentStep
+                    ? "gradient-brand text-primary-foreground shadow-glow"
+                    : index < currentStep
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground"
                 }`}>
-                  {index + 1}
+                  {index < currentStep ? <Check className="w-4 h-4" /> : index + 1}
                 </div>
-                <span className={`ml-3 text-sm font-medium hidden md:inline ${index <= currentStep ? "text-foreground" : "text-muted-foreground"}`}>
+                <span className={`ml-3 text-sm font-medium hidden md:inline ${
+                  index === currentStep ? "text-foreground font-semibold" : index < currentStep ? "text-foreground" : "text-muted-foreground"
+                }`}>
                   {step.title}
                 </span>
                 {index < steps.length - 1 && (
-                  <div className={`flex-1 h-1 mx-4 rounded transition-colors ${index < currentStep ? "bg-primary" : "bg-border"}`} />
+                  <div className={`flex-1 h-1 mx-4 rounded-full transition-colors ${
+                    index < currentStep ? "gradient-brand" : "bg-border"
+                  }`} />
                 )}
               </div>
             ))}
           </div>
 
+          {/* Navigation buttons */}
           <div className="flex gap-4 justify-between mb-6">
-            <Button onClick={handlePrevious} disabled={currentStep === 0} variant="outline" className="gap-2 bg-transparent">← Späť</Button>
-            <Button onClick={handleNext} className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground">
+            <Button onClick={handlePrevious} disabled={currentStep === 0} variant="outline" className="gap-2 bg-transparent rounded-xl">
+              ← Späť
+            </Button>
+            <Button onClick={handleNext} variant="hero" className="gap-2 rounded-xl">
               {currentStep === steps.length - 1 ? "Pokračovať" : "Ďalej"} →
             </Button>
           </div>
@@ -251,50 +253,51 @@ export default function ConfiguratorWizard({ configuration, onConfigurationChang
               )}
             </div>
 
+            {/* Summary sidebar - dark navy */}
             <div className="lg:col-span-1">
               <div className="sticky top-24">
-                <Card>
+                <Card className="bg-primary text-primary-foreground border-0 rounded-2xl shadow-soft">
                   <CardContent className="px-6 py-6 space-y-4">
-                    <h3 className="text-lg font-semibold text-card-foreground">Súhrn</h3>
+                    <h3 className="text-lg font-semibold">Súhrn</h3>
                     {configuration.destination && (
-                      <div><p className="text-sm text-muted-foreground">Destinácia</p><p className="font-medium text-card-foreground">{configuration.destination}</p></div>
+                      <div><p className="text-sm text-primary-foreground/60">Destinácia</p><p className="font-medium">{configuration.destination}</p></div>
                     )}
                     {configuration.months && configuration.months.length > 0 && (
-                      <div><p className="text-sm text-muted-foreground">Termíny</p><p className="font-medium text-card-foreground">{configuration.months.join(", ")}</p></div>
+                      <div><p className="text-sm text-primary-foreground/60">Termíny</p><p className="font-medium">{configuration.months.join(", ")}</p></div>
                     )}
                     {configuration.duration && (
-                      <div><p className="text-sm text-muted-foreground">Trvanie</p><p className="font-medium text-card-foreground">{configuration.duration}</p></div>
+                      <div><p className="text-sm text-primary-foreground/60">Trvanie</p><p className="font-medium">{configuration.duration}</p></div>
                     )}
                     {configuration.participants && (
-                      <div><p className="text-sm text-muted-foreground">Odhadovaný počet účastníkov</p><p className="font-medium text-card-foreground">{configuration.participants}</p></div>
+                      <div><p className="text-sm text-primary-foreground/60">Odhadovaný počet účastníkov</p><p className="font-medium">{configuration.participants}</p></div>
                     )}
                     {configuration.campType && (
-                      <div><p className="text-sm text-muted-foreground">Typ campu</p><p className="font-medium text-card-foreground">{configuration.campType}</p></div>
+                      <div><p className="text-sm text-primary-foreground/60">Typ campu</p><p className="font-medium">{configuration.campType}</p></div>
                     )}
                     {configuration.hotel && (
-                      <div><p className="text-sm text-muted-foreground">Hotel</p><p className="font-medium text-card-foreground">
+                      <div><p className="text-sm text-primary-foreground/60">Hotel</p><p className="font-medium">
                         {hotelsByDestination[configuration.destination as keyof typeof hotelsByDestination]?.find((h) => h.id === configuration.hotel)?.name || "Nevybratý"}
                       </p></div>
                     )}
                     {configuration.meals && (
-                      <div><p className="text-sm text-muted-foreground">Strava</p><p className="font-medium text-card-foreground">{configuration.meals}</p></div>
+                      <div><p className="text-sm text-primary-foreground/60">Strava</p><p className="font-medium">{configuration.meals}</p></div>
                     )}
                     {configuration.hotel && currentStep > 0 && (
-                      <div className="pt-4 border-t border-border">
-                        <p className="text-sm text-muted-foreground">Odhadovaná cena za osobu</p>
+                      <div className="pt-4 border-t border-primary-foreground/20">
+                        <p className="text-sm text-primary-foreground/60">Odhadovaná cena za osobu</p>
                         <p className="text-2xl font-bold text-accent">~ {estimatedPricePerPerson} €</p>
                       </div>
                     )}
                     {currentStep >= 2 && (
-                      <div className="pt-4 border-t border-border space-y-2">
+                      <div className="pt-4 border-t border-primary-foreground/20 space-y-2">
                         <div>
-                          <p className="text-sm text-muted-foreground">Výška odmeny na jedného účastníka</p>
-                          <p className="text-lg font-semibold text-card-foreground">{configuration.trainerReward ?? 50} €</p>
+                          <p className="text-sm text-primary-foreground/60">Výška odmeny na jedného účastníka</p>
+                          <p className="text-lg font-semibold">{configuration.trainerReward ?? 50} €</p>
                         </div>
                         {earningsRange.min > 0 && (
                           <div>
-                            <p className="text-sm text-muted-foreground">Rozsah zárobku</p>
-                            <p className="text-lg font-semibold text-card-foreground">{earningsRange.min} € - {earningsRange.max} €</p>
+                            <p className="text-sm text-primary-foreground/60">Rozsah zárobku</p>
+                            <p className="text-lg font-semibold text-accent">{earningsRange.min} € - {earningsRange.max} €</p>
                           </div>
                         )}
                       </div>

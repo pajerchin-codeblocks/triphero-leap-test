@@ -140,12 +140,12 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-foreground mb-2">Základné parametre</h2>
-        <p className="text-foreground/60">Vyber si destináciu a parametre tvojho campu</p>
+        <h2 className="text-3xl font-bold text-foreground mb-2">Základné parametre</h2>
+        <p className="text-muted-foreground text-base">Vyber si destináciu a parametre tvojho campu</p>
       </div>
 
-      <Card>
-        <CardContent className="space-y-8 px-6 py-6">
+      <Card className="shadow-soft rounded-2xl border-0">
+        <CardContent className="space-y-10 px-6 py-6">
           {/* Destination */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-4">Destinácia</label>
@@ -157,10 +157,10 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
                     handleChange("destination", dest.id)
                     onConfigurationChange({ months: [] })
                   }}
-                  className={`relative rounded-xl overflow-hidden border-2 transition transform hover:scale-105 h-24 ${
+                  className={`relative rounded-2xl overflow-hidden border-2 transition transform hover:scale-105 h-28 ${
                     configuration.destination === dest.id
-                      ? "border-accent ring-2 ring-accent"
-                      : "border-border hover:border-accent/50"
+                      ? "border-primary ring-2 ring-primary"
+                      : "border-border hover:border-primary/50"
                   }`}
                 >
                   <img src={dest.image} alt={dest.label} className="w-full h-full object-cover" />
@@ -173,8 +173,8 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
 
               <button
                 onClick={() => setShowMoreDestinations(true)}
-                className={`relative rounded-xl overflow-hidden border-2 transition transform hover:scale-105 h-24 flex items-center justify-center ${
-                  showMoreDestinations ? "border-accent ring-2 ring-accent" : "border-border hover:border-accent/50 bg-muted"
+                className={`relative rounded-2xl overflow-hidden border-2 transition transform hover:scale-105 h-28 flex items-center justify-center ${
+                  showMoreDestinations ? "border-primary ring-2 ring-primary" : "border-border hover:border-primary/50 bg-muted"
                 }`}
               >
                 <span className="text-foreground font-semibold">Všetky krajiny →</span>
@@ -185,21 +185,21 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
 
           {showMoreDestinations && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-              <Card className="w-full max-w-3xl max-h-[80vh] overflow-y-auto">
+              <Card className="w-full max-w-3xl max-h-[80vh] overflow-y-auto shadow-soft rounded-2xl border-0">
                 <CardContent className="px-6 py-6">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-semibold text-foreground">Vyber si destináciu</h3>
-                    <button onClick={() => setShowMoreDestinations(false)} className="text-foreground/60 hover:text-foreground text-xl font-bold">✕</button>
+                    <button onClick={() => setShowMoreDestinations(false)} className="text-muted-foreground hover:text-foreground text-xl font-bold">✕</button>
                   </div>
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
                     {[...initialMainDestinations, ...additionalDestinations].map((dest) => (
                       <button
                         key={dest.id}
                         onClick={() => handleDestinationFromPopup(dest.id)}
-                        className={`relative rounded-xl overflow-hidden border-2 transition transform hover:scale-105 h-24 ${
+                        className={`relative rounded-2xl overflow-hidden border-2 transition transform hover:scale-105 h-28 ${
                           configuration.destination === dest.id
-                            ? "border-accent ring-2 ring-accent"
-                            : "border-border hover:border-accent/50"
+                            ? "border-primary ring-2 ring-primary"
+                            : "border-border hover:border-primary/50"
                         }`}
                       >
                         <img src={dest.image} alt={dest.label} className="w-full h-full object-cover" />
@@ -236,8 +236,8 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
                   onClick={() => handleMonthToggle(monthObj.month)}
                   className={`p-2 rounded-lg border-2 font-medium text-sm transition ${
                     selectedMonths.includes(monthObj.month)
-                      ? "border-accent bg-accent/10 text-accent"
-                      : "border-border bg-background text-foreground hover:border-accent/50"
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-background text-foreground hover:border-primary/50"
                   }`}
                 >
                   {monthObj.label}
@@ -245,7 +245,7 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
               ))}
             </div>
             {configuration.destination && (
-              <p className="text-xs text-foreground/60 mt-2">✓ Odporúčané mesiace pre {configuration.destination}</p>
+              <p className="text-xs text-muted-foreground mt-2">✓ Odporúčané mesiace pre {configuration.destination}</p>
             )}
             {validationErrors.months && <p className="text-destructive text-xs mt-2">Toto je povinné pole</p>}
           </div>
@@ -262,8 +262,8 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
                   }}
                   className={`p-3 rounded-lg border-2 font-medium transition ${
                     configuration.duration === duration
-                      ? "border-accent bg-accent/10 text-accent"
-                      : "border-border bg-background text-foreground hover:border-accent/50"
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-background text-foreground hover:border-primary/50"
                   }`}
                 >
                   {duration}
@@ -272,7 +272,7 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
               <button
                 onClick={() => setShowCustomDuration(!showCustomDuration)}
                 className={`p-3 rounded-lg border-2 font-medium transition ${
-                  showCustomDuration ? "border-accent bg-accent/10 text-accent" : "border-border bg-background text-foreground hover:border-accent/50"
+                  showCustomDuration ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:border-primary/50"
                 }`}
               >
                 +
@@ -288,7 +288,7 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
                   placeholder="Počet dní"
                   value={customDuration.replace(/\D/g, "")}
                   onChange={(e) => handleCustomDuration(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-accent outline-none transition"
+                  className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring outline-none transition"
                   autoFocus
                 />
                 <button onClick={() => setShowCustomDuration(false)} className="px-4 py-2 bg-muted text-foreground rounded-lg hover:bg-muted/80 transition">✕</button>
@@ -306,8 +306,8 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
                   onClick={() => handleChange("participants", count)}
                   className={`p-3 rounded-lg border-2 font-medium transition ${
                     configuration.participants === count
-                      ? "border-accent bg-accent/10 text-accent"
-                      : "border-border bg-background text-foreground hover:border-accent/50"
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-background text-foreground hover:border-primary/50"
                   }`}
                 >
                   {count}
@@ -326,7 +326,7 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
                 onChange={(e) => handleCampTypeChange(e.target.value)}
                 onFocus={() => setShowCampTypeSuggestions(true)}
                 onBlur={() => setTimeout(() => setShowCampTypeSuggestions(false), 200)}
-                className={`w-full px-4 py-3 border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-accent outline-none transition ${validationErrors.campType ? "border-destructive ring-2 ring-destructive" : "border-border"}`}
+                className={`w-full px-4 py-3 border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring outline-none transition ${validationErrors.campType ? "border-destructive ring-2 ring-destructive" : "border-border"}`}
               />
               {showCampTypeSuggestions && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-background border border-border rounded-lg shadow-lg z-10">
