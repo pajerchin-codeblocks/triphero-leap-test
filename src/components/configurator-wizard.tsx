@@ -29,6 +29,9 @@ export default function ConfiguratorWizard({
   const [validationErrors, setValidationErrors] = useState<Record<string, boolean>>({});
   const [flightPricesByMonth, setFlightPricesByMonth] = useState<Array<{ month: string; minPrice: number }>>([]);
   const [stepperFloating, setStepperFloating] = useState(false);
+  const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false);
+  const stepperRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
   const stepperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
