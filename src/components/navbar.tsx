@@ -58,12 +58,8 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Desktop CTA */}
-          <div className="hidden md:block flex-shrink-0">
-            <Button variant="hero" size="sm" className="rounded-full px-6" asChild>
-              <a href="/">Začať plánovať trip</a>
-            </Button>
-          </div>
+          {/* Spacer to balance layout */}
+          <div className="hidden md:block flex-shrink-0 w-[1px]" />
 
           {/* Mobile hamburger */}
           <button
