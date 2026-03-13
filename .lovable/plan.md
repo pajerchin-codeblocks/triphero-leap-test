@@ -1,18 +1,25 @@
 
 
-# Oprava pozadia na bielu farbu
+# UI Tweaks: Hide Back Button on Step 1, Hide Navbar CTA, Align Summary Sidebar
 
-## Problem
-Aktualne `--background` je nastaveny na `0 0% 98%` (~#FAFAFA), ale referencny web pouziva cisty biely background `0 0% 100%` (#FFFFFF).
+## Changes
 
-## Zmena
+### 1. Hide "Späť" button on first step (`configurator-wizard.tsx`, line ~230)
+- Conditionally render the back button: only show when `currentStep > 0`
+- On step 0, render an empty div to maintain flex layout
 
-### `src/index.css` -- Light mode
-Zmena jednej hodnoty:
-- `--background: 0 0% 98%` --> `--background: 0 0% 100%`
+### 2. Hide "Začať plánovať trip" CTA in navbar (`navbar.tsx`)
+- Remove or hide the CTA button since user is already on the wizard page
 
-Rovnako aktualizovat sidebar:
-- `--sidebar-background: 0 0% 98%` --> `--sidebar-background: 0 0% 100%`
+### 3. Align summary sidebar to start at same height as step content (`configurator-wizard.tsx`)
+- Currently the summary sidebar is inside the same grid as step content, but the nav buttons row above pushes the content down
+- Move the "Späť / Ďalej" buttons row **inside** the left column (above the step content) instead of being a full-width row above the grid
+- This way the summary card in the right column starts at the same vertical position as the step title/content on the left
 
-Vsetko ostatne zostava bez zmeny.
+## Files
+
+| File | Change |
+|------|--------|
+| `src/components/configurator-wizard.tsx` | Hide back button on step 0; move nav buttons inside left column |
+| `src/components/navbar.tsx` | Remove CTA button |
 
