@@ -66,18 +66,8 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* CTA button */}
-          <button
-            className="hidden md:inline-flex items-center h-9 px-4 rounded-md text-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
-            style={{
-              background: "linear-gradient(135deg, hsl(234, 85%, 63%), hsl(156, 83%, 64%))",
-              color: "hsl(0, 0%, 100%)",
-              boxShadow: "0 0 40px hsla(234, 85%, 63%, 0.2)",
-            }}
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          >
-            Začať plánovať trip
-          </button>
+          {/* Spacer to balance layout */}
+          <div className="hidden md:block flex-shrink-0 w-[1px]" />
 
           {/* Mobile hamburger */}
           <button
