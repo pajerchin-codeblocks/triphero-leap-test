@@ -25,10 +25,11 @@ export default function Step3Business({ configuration, onConfigurationChange }: 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-foreground mb-6">Biznis nastavenia</h2>
+        <h2 className="text-3xl font-bold text-foreground mb-2">Biznis nastavenia</h2>
+        <p className="text-muted-foreground text-base">Nastavte si svoju odmenu za účastníkov</p>
       </div>
 
-      <Card>
+      <Card className="shadow-soft rounded-2xl border-0">
         <CardContent className="space-y-6 px-6 py-6">
           <div>
             <p className="text-sm font-semibold text-foreground mb-3">Model odmeny trénera - Garantovaná odmena na osobu</p>

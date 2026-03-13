@@ -17,13 +17,13 @@ export default function Step4TrainerInfo({ configuration, onConfigurationChange,
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-foreground mb-2">O vás ako trénerovi</h2>
-        <p className="text-muted-foreground">
+        <h2 className="text-3xl font-bold text-foreground mb-2">O vás ako trénerovi</h2>
+        <p className="text-muted-foreground text-base">
           Pomôžte nám lepšie pochopiť vaše skúsenosti a špecializáciu, aby sme mohli vytvoriť presvedčivý popis vášho campu.
         </p>
       </div>
 
-      <Card>
+      <Card className="shadow-soft rounded-2xl border-0">
         <CardContent className="space-y-6 px-6 py-6">
           <div className="space-y-2">
             <Label htmlFor="trainerName" className="text-sm font-semibold text-foreground">Vaše meno a priezvisko</Label>

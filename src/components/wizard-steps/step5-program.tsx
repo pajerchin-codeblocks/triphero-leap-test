@@ -16,13 +16,13 @@ export default function Step5Program({ configuration, onConfigurationChange, val
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-foreground mb-2">Program dňa</h2>
-        <p className="text-muted-foreground">
+        <h2 className="text-3xl font-bold text-foreground mb-2">Program dňa</h2>
+        <p className="text-muted-foreground text-base">
           Popíšte, ako by mohol vyzerať typický deň na vašom campe.
         </p>
       </div>
 
-      <Card>
+      <Card className="shadow-soft rounded-2xl border-0">
         <CardContent className="space-y-6 px-6 py-6">
           <div className="space-y-2">
             <Label htmlFor="dailyProgram" className="text-sm font-semibold text-foreground">Predstava programu dňa</Label>
