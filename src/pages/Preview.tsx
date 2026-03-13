@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Check, Heart } from "lucide-react"
-import SiteNavigation from "@/components/site-navigation"
+import Navbar from "@/components/navbar"
 
 interface CampPreviewData {
   success: boolean
