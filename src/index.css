@@ -93,6 +93,18 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: "Geist", system-ui, -apple-system, sans-serif;
+    font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer utilities {
+  .gradient-brand {
+    @apply bg-gradient-to-r from-[hsl(145,78%,59%)] to-[hsl(168,94%,60%)];
+  }
+  .shadow-soft {
+    box-shadow: 0 4px 20px -4px hsl(var(--foreground) / 0.08);
+  }
+  .shadow-glow {
+    box-shadow: 0 8px 30px -6px hsl(145 78% 59% / 0.3);
   }
 }
