@@ -306,7 +306,7 @@ export default function ConfiguratorWizard({
                   </span>
                   {index < steps.length - 1 && (
                     <div
-                      className={`flex-1 h-1 mx-4 rounded-full transition-colors ${
+                      className={`flex-1 h-1 mx-2 md:mx-4 rounded-full transition-colors ${
                         index < currentStep ? "gradient-brand" : "bg-border"
                       }`}
                     />
