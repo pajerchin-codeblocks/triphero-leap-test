@@ -32,7 +32,6 @@ export default function ConfiguratorWizard({
   const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false);
   const stepperRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
-  const stepperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onScroll = () => setStepperFloating(window.scrollY > 20);
