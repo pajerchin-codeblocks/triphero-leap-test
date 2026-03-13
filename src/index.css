@@ -101,6 +101,14 @@
   .gradient-brand {
     @apply bg-gradient-to-r from-[hsl(145,78%,59%)] to-[hsl(168,94%,60%)];
   }
+  .gradient-wizard-btn {
+    background: linear-gradient(135deg, hsl(234, 85%, 63%), hsl(156, 83%, 64%));
+    color: hsl(0, 0%, 100%);
+    box-shadow: 0 0 40px hsla(234, 85%, 63%, 0.2);
+  }
+  .gradient-wizard-btn:hover {
+    box-shadow: 0 20px 60px -15px hsla(220, 25%, 15%, 0.15);
+  }
   .shadow-soft {
     box-shadow: 0 4px 20px -4px hsl(var(--foreground) / 0.08);
   }

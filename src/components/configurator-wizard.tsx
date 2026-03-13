@@ -322,7 +322,8 @@ export default function ConfiguratorWizard({
             <div className="lg:col-span-1">
               {hasSummaryData && (
                 <div className="sticky mt-[6rem]" style={{ top: "4.5rem" }}>
-                  <Card className="bg-card text-card-foreground border rounded-2xl shadow-soft overflow-hidden">
+                  <Card className="bg-card text-card-foreground rounded-2xl shadow-soft overflow-hidden" style={{ border: '2px solid transparent', borderImage: 'linear-gradient(135deg, hsl(234, 85%, 63%), hsl(156, 83%, 64%)) 1', borderRadius: '1rem' }}>
+                  <div className="rounded-2xl overflow-hidden" style={{ background: 'hsl(var(--card))' }}>
                     <CardContent className="px-4 py-4 space-y-2">
                       <h3 className="text-base font-semibold mb-2">Súhrn</h3>
                       {configuration.destination && (
