@@ -41,11 +41,11 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           {/* Logo */}
-          <a href="https://bright-trip-studio.lovable.app" className="hover:opacity-80 transition-opacity">
+          <a href="https://bright-trip-studio.lovable.app" className="hover:opacity-80 transition-opacity flex-shrink-0">
             <img src={logoColor} alt="TripHERO" className="h-8 md:h-10" />
           </a>
 
-          {/* Desktop nav */}
+          {/* Desktop nav - centered links */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <a
@@ -56,7 +56,11 @@ export default function Navbar() {
                 {link.label}
               </a>
             ))}
-            <Button variant="hero" size="sm" asChild>
+          </div>
+
+          {/* Desktop CTA */}
+          <div className="hidden md:block flex-shrink-0">
+            <Button variant="hero" size="sm" className="rounded-full px-6" asChild>
               <a href="/">Začať plánovať trip</a>
             </Button>
           </div>
