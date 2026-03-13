@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Check, Heart } from "lucide-react"
-import SiteNavigation from "@/components/site-navigation"
+import Navbar from "@/components/navbar"
 
 interface CampPreviewData {
   success: boolean
@@ -134,7 +134,7 @@ export default function Preview() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteNavigation />
+      <Navbar />
 
       <div className="relative pt-20">
         <div className="max-w-7xl mx-auto px-4 py-8">
