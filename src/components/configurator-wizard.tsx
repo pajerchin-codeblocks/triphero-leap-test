@@ -229,13 +229,15 @@ export default function ConfiguratorWizard({
         <div className="max-w-7xl mx-auto">
           {/* Stepper + Nav buttons */}
           <div className="flex items-center justify-between mb-8 bg-muted/40 backdrop-blur-sm rounded-2xl p-4">
-            {currentStep > 0 ? (
-              <Button onClick={handlePrevious} variant="outline" className="gap-2 bg-transparent rounded-xl shrink-0">
-                ← Späť
-              </Button>
-            ) : (
-              <div className="w-[100px] shrink-0" />
-            )}
+            <Button
+              onClick={handlePrevious}
+              disabled={currentStep === 0}
+              className={`gap-2 rounded-xl shrink-0 gradient-wizard-btn font-semibold transition-all ${
+                currentStep === 0 ? "invisible" : ""
+              }`}
+            >
+              ← Späť
+            </Button>
             <div className="flex items-center flex-1 mx-4">
               {steps.map((step, index) => (
                 <div key={index} className="flex items-center flex-1">
@@ -271,7 +273,10 @@ export default function ConfiguratorWizard({
                 </div>
               ))}
             </div>
-            <Button onClick={handleNext} variant="hero" className="gap-2 rounded-xl shrink-0">
+            <Button
+              onClick={handleNext}
+              className="gap-2 rounded-xl shrink-0 gradient-wizard-btn font-semibold transition-all"
+            >
               {currentStep === steps.length - 1 ? "Pokračovať" : "Ďalej"} →
             </Button>
           </div>
@@ -292,13 +297,33 @@ export default function ConfiguratorWizard({
                   validationErrors={validationErrors}
                 />
               )}
+
+              {/* Bottom navigation buttons */}
+              <div className="mt-12 flex gap-4 justify-between">
+                <Button
+                  onClick={handlePrevious}
+                  disabled={currentStep === 0}
+                  className={`gap-2 rounded-xl gradient-wizard-btn font-semibold transition-all ${
+                    currentStep === 0 ? "invisible" : ""
+                  }`}
+                >
+                  ← Späť
+                </Button>
+                <Button
+                  onClick={handleNext}
+                  className="gap-2 rounded-xl gradient-wizard-btn font-semibold transition-all"
+                >
+                  {currentStep === steps.length - 1 ? "Pokračovať" : "Ďalej"} →
+                </Button>
+              </div>
             </div>
 
             {/* Summary sidebar */}
             <div className="lg:col-span-1">
               {hasSummaryData && (
                 <div className="sticky mt-[6rem]" style={{ top: "4.5rem" }}>
-                  <Card className="bg-card text-card-foreground border rounded-2xl shadow-soft overflow-hidden">
+                  <div className="rounded-2xl p-[2px] shadow-soft overflow-hidden" style={{ background: 'linear-gradient(135deg, hsl(234, 85%, 63%), hsl(156, 83%, 64%))' }}>
+                  <div className="rounded-[14px] overflow-hidden bg-card text-card-foreground">
                     <CardContent className="px-4 py-4 space-y-2">
                       <h3 className="text-base font-semibold mb-2">Súhrn</h3>
                       {configuration.destination && (
@@ -374,7 +399,8 @@ export default function ConfiguratorWizard({
                         </div>
                       </div>
                     )}
-                  </Card>
+                  </div>
+                  </div>
                 </div>
               )}
             </div>
