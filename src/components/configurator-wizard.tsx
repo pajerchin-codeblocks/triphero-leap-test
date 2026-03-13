@@ -316,7 +316,7 @@ export default function ConfiguratorWizard({
             </div>
             <Button
               onClick={handleNext}
-              className="gap-2 rounded-xl shrink-0 gradient-wizard-btn font-semibold transition-all"
+              className="gap-2 rounded-xl shrink-0 gradient-wizard-btn font-semibold transition-all hidden md:flex"
             >
               {currentStep === steps.length - 1 ? "Pokračovať" : "Ďalej"} →
             </Button>
