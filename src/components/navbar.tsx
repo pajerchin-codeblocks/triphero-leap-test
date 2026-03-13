@@ -1,26 +1,17 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import logoColor from "@/assets/logo-color.png"
 
 const navLinks = [
-  { label: "Tripy", href: "https://bright-trip-studio.lovable.app/trips" },
+  { label: "Tripy", href: "https://bright-trip-studio.lovable.app/trips", isPill: true },
   { label: "Lídri", href: "https://bright-trip-studio.lovable.app/leaders" },
   { label: "O nás", href: "https://bright-trip-studio.lovable.app/o-nas" },
   { label: "Kontakt", href: "https://bright-trip-studio.lovable.app/kontakt" },
 ]
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
-    window.addEventListener("scroll", onScroll, { passive: true })
-    onScroll()
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : ""
@@ -33,9 +24,15 @@ export default function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="relative z-30 transition-all duration-300 bg-background/95 backdrop-blur-md shadow-sm border-b border-border"
+        className="relative z-30 h-16 md:h-20"
+        style={{
+          background: "hsla(220, 20%, 98%, 0.95)",
+          backdropFilter: "blur(12px)",
+          boxShadow: "0 4px 20px -4px hsla(220, 25%, 15%, 0.08)",
+          borderBottom: "1px solid hsla(220, 15%, 90%, 0.5)",
+        }}
       >
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
           {/* Logo */}
           <a href="https://bright-trip-studio.lovable.app" className="hover:opacity-80 transition-opacity flex-shrink-0">
             <img src={logoColor} alt="TripHERO" className="h-8 md:h-10" />
@@ -47,20 +44,46 @@ export default function Navbar() {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-foreground/70 hover:text-foreground transition-colors font-medium text-sm"
+                className={`text-sm font-medium transition-colors ${
+                  link.isPill
+                    ? "font-bold px-3 py-1 rounded-full"
+                    : "hover:opacity-80"
+                }`}
+                style={
+                  link.isPill
+                    ? { background: "hsla(234, 85%, 63%, 0.1)", color: "hsl(234, 85%, 63%)" }
+                    : { color: "hsl(220, 25%, 15%)" }
+                }
+                onMouseEnter={(e) => {
+                  if (!link.isPill) e.currentTarget.style.color = "hsl(234, 85%, 63%)"
+                }}
+                onMouseLeave={(e) => {
+                  if (!link.isPill) e.currentTarget.style.color = "hsl(220, 25%, 15%)"
+                }}
               >
                 {link.label}
               </a>
             ))}
           </div>
 
-          {/* Spacer to balance layout */}
-          <div className="hidden md:block flex-shrink-0 w-[1px]" />
+          {/* CTA button */}
+          <button
+            className="hidden md:inline-flex items-center h-9 px-4 rounded-md text-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
+            style={{
+              background: "linear-gradient(135deg, hsl(234, 85%, 63%), hsl(156, 83%, 64%))",
+              color: "hsl(0, 0%, 100%)",
+              boxShadow: "0 0 40px hsla(234, 85%, 63%, 0.2)",
+            }}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
+            Začať plánovať trip
+          </button>
 
           {/* Mobile hamburger */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 text-foreground hover:text-accent transition-colors"
+            className="md:hidden p-2 transition-colors"
+            style={{ color: "hsl(220, 25%, 15%)" }}
             aria-label="Menu"
           >
             {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -87,17 +110,12 @@ export default function Navbar() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.1 }}
                   onClick={() => setMobileOpen(false)}
-                  className="text-2xl font-semibold text-foreground hover:text-accent transition-colors"
+                  className="text-2xl font-semibold transition-colors"
+                  style={{ color: "hsl(220, 25%, 15%)" }}
                 >
                   {link.label}
                 </motion.a>
               ))}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: navLinks.length * 0.1 }}
-              >
-              </motion.div>
             </div>
           </motion.div>
         )}
