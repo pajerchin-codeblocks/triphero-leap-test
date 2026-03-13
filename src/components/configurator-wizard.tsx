@@ -258,8 +258,8 @@ export default function ConfiguratorWizard({ configuration, onConfigurationChang
 
             {/* Summary sidebar - dark navy */}
             <div className="lg:col-span-1">
-              <div className="sticky top-24">
-                <Card className="bg-primary text-primary-foreground border-0 rounded-2xl shadow-soft">
+              <div className="sticky" style={{ top: '22rem' }}>
+                <Card className="bg-card text-card-foreground border rounded-2xl shadow-soft">
                   <CardContent className="px-6 py-6 space-y-4">
                     <h3 className="text-lg font-semibold">Súhrn</h3>
                     {configuration.destination && (
