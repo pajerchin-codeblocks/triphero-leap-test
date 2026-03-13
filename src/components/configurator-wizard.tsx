@@ -263,43 +263,43 @@ export default function ConfiguratorWizard({ configuration, onConfigurationChang
                   <CardContent className="px-6 py-6 space-y-4">
                     <h3 className="text-lg font-semibold">Súhrn</h3>
                     {configuration.destination && (
-                      <div><p className="text-sm text-primary-foreground/60">Destinácia</p><p className="font-medium">{configuration.destination}</p></div>
+                      <div><p className="text-sm text-muted-foreground">Destinácia</p><p className="font-medium">{configuration.destination}</p></div>
                     )}
                     {configuration.months && configuration.months.length > 0 && (
-                      <div><p className="text-sm text-primary-foreground/60">Termíny</p><p className="font-medium">{configuration.months.join(", ")}</p></div>
+                      <div><p className="text-sm text-muted-foreground">Termíny</p><p className="font-medium">{configuration.months.join(", ")}</p></div>
                     )}
                     {configuration.duration && (
-                      <div><p className="text-sm text-primary-foreground/60">Trvanie</p><p className="font-medium">{configuration.duration}</p></div>
+                      <div><p className="text-sm text-muted-foreground">Trvanie</p><p className="font-medium">{configuration.duration}</p></div>
                     )}
                     {configuration.participants && (
-                      <div><p className="text-sm text-primary-foreground/60">Odhadovaný počet účastníkov</p><p className="font-medium">{configuration.participants}</p></div>
+                      <div><p className="text-sm text-muted-foreground">Odhadovaný počet účastníkov</p><p className="font-medium">{configuration.participants}</p></div>
                     )}
                     {configuration.campType && (
-                      <div><p className="text-sm text-primary-foreground/60">Typ campu</p><p className="font-medium">{configuration.campType}</p></div>
+                      <div><p className="text-sm text-muted-foreground">Typ campu</p><p className="font-medium">{configuration.campType}</p></div>
                     )}
                     {configuration.hotel && (
-                      <div><p className="text-sm text-primary-foreground/60">Hotel</p><p className="font-medium">
+                      <div><p className="text-sm text-muted-foreground">Hotel</p><p className="font-medium">
                         {hotelsByDestination[configuration.destination as keyof typeof hotelsByDestination]?.find((h) => h.id === configuration.hotel)?.name || "Nevybratý"}
                       </p></div>
                     )}
                     {configuration.meals && (
-                      <div><p className="text-sm text-primary-foreground/60">Strava</p><p className="font-medium">{configuration.meals}</p></div>
+                      <div><p className="text-sm text-muted-foreground">Strava</p><p className="font-medium">{configuration.meals}</p></div>
                     )}
                     {configuration.hotel && currentStep > 0 && (
-                      <div className="pt-4 border-t border-primary-foreground/20">
-                        <p className="text-sm text-primary-foreground/60">Odhadovaná cena za osobu</p>
+                      <div className="pt-4 border-t border-border">
+                        <p className="text-sm text-muted-foreground">Odhadovaná cena za osobu</p>
                         <p className="text-2xl font-bold text-accent">~ {estimatedPricePerPerson} €</p>
                       </div>
                     )}
                     {currentStep >= 2 && (
-                      <div className="pt-4 border-t border-primary-foreground/20 space-y-2">
+                      <div className="pt-4 border-t border-border space-y-2">
                         <div>
-                          <p className="text-sm text-primary-foreground/60">Výška odmeny na jedného účastníka</p>
+                          <p className="text-sm text-muted-foreground">Výška odmeny na jedného účastníka</p>
                           <p className="text-lg font-semibold">{configuration.trainerReward ?? 50} €</p>
                         </div>
                         {earningsRange.min > 0 && (
                           <div>
-                            <p className="text-sm text-primary-foreground/60">Rozsah zárobku</p>
+                            <p className="text-sm text-muted-foreground">Rozsah zárobku</p>
                             <p className="text-lg font-semibold text-accent">{earningsRange.min} € - {earningsRange.max} €</p>
                           </div>
                         )}
