@@ -359,95 +359,195 @@ export default function ConfiguratorWizard({
               </div>
             </div>
 
-            {/* Summary sidebar */}
-            <div className="lg:col-span-1">
-              {hasSummaryData && (
-                <div className="sticky mt-[6rem]" style={{ top: "4.5rem" }}>
-                  <div className="rounded-2xl p-[2px] shadow-soft overflow-hidden" style={{ background: 'linear-gradient(135deg, hsl(234, 85%, 63%), hsl(156, 83%, 64%))' }}>
-                  <div className="rounded-[14px] overflow-hidden bg-card text-card-foreground">
-                    <CardContent className="px-4 py-4 space-y-2">
-                      <h3 className="text-base font-semibold mb-2">Súhrn</h3>
-                      {configuration.destination && (
-                        <div className="flex justify-between items-baseline">
-                          <span className="text-xs text-muted-foreground">Destinácia</span>
-                          <span className="text-sm font-medium">{configuration.destination}</span>
-                        </div>
-                      )}
-                      {configuration.months && configuration.months.length > 0 && (
-                        <div className="flex justify-between items-baseline">
-                          <span className="text-xs text-muted-foreground">Termíny</span>
-                          <span className="text-sm font-medium text-right max-w-[60%]">
-                            {configuration.months.join(", ")}
-                          </span>
-                        </div>
-                      )}
-                      {configuration.duration && (
-                        <div className="flex justify-between items-baseline">
-                          <span className="text-xs text-muted-foreground">Trvanie</span>
-                          <span className="text-sm font-medium">{configuration.duration}</span>
-                        </div>
-                      )}
-                      {configuration.participants && (
-                        <div className="flex justify-between items-baseline">
-                          <span className="text-xs text-muted-foreground">Účastníci</span>
-                          <span className="text-sm font-medium">{configuration.participants}</span>
-                        </div>
-                      )}
-                      {configuration.campType && (
-                        <div className="flex justify-between items-baseline">
-                          <span className="text-xs text-muted-foreground">Typ campu</span>
-                          <span className="text-sm font-medium">{configuration.campType}</span>
-                        </div>
-                      )}
-                      {configuration.hotel && (
-                        <div className="flex justify-between items-baseline">
-                          <span className="text-xs text-muted-foreground">Hotel</span>
-                          <span className="text-sm font-medium text-right max-w-[60%]">
-                            {hotelsByDestination[configuration.destination as keyof typeof hotelsByDestination]?.find(
-                              (h) => h.id === configuration.hotel,
-                            )?.name || "Nevybratý"}
-                          </span>
-                        </div>
-                      )}
-                      {configuration.meals && (
-                        <div className="flex justify-between items-baseline">
-                          <span className="text-xs text-muted-foreground">Strava</span>
-                          <span className="text-sm font-medium">{configuration.meals}</span>
-                        </div>
-                      )}
-                      {currentStep >= 2 && (
-                        <div className="pt-2 border-t border-border space-y-1">
+            {/* Summary sidebar — desktop only */}
+            {!isMobile && (
+              <div className="lg:col-span-1">
+                {hasSummaryData && (
+                  <div className="sticky mt-[6rem]" style={{ top: "4.5rem" }}>
+                    <div className="rounded-2xl p-[2px] shadow-soft overflow-hidden" style={{ background: 'linear-gradient(135deg, hsl(234, 85%, 63%), hsl(156, 83%, 64%))' }}>
+                    <div className="rounded-[14px] overflow-hidden bg-card text-card-foreground">
+                      <CardContent className="px-4 py-4 space-y-2">
+                        <h3 className="text-base font-semibold mb-2">Súhrn</h3>
+                        {configuration.destination && (
                           <div className="flex justify-between items-baseline">
-                            <span className="text-xs text-muted-foreground">Odmena / účastník</span>
-                            <span className="text-sm font-semibold">{configuration.trainerReward ?? 50} €</span>
+                            <span className="text-xs text-muted-foreground">Destinácia</span>
+                            <span className="text-sm font-medium">{configuration.destination}</span>
                           </div>
-                          {earningsRange.min > 0 && (
+                        )}
+                        {configuration.months && configuration.months.length > 0 && (
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-xs text-muted-foreground">Termíny</span>
+                            <span className="text-sm font-medium text-right max-w-[60%]">
+                              {configuration.months.join(", ")}
+                            </span>
+                          </div>
+                        )}
+                        {configuration.duration && (
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-xs text-muted-foreground">Trvanie</span>
+                            <span className="text-sm font-medium">{configuration.duration}</span>
+                          </div>
+                        )}
+                        {configuration.participants && (
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-xs text-muted-foreground">Účastníci</span>
+                            <span className="text-sm font-medium">{configuration.participants}</span>
+                          </div>
+                        )}
+                        {configuration.campType && (
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-xs text-muted-foreground">Typ campu</span>
+                            <span className="text-sm font-medium">{configuration.campType}</span>
+                          </div>
+                        )}
+                        {configuration.hotel && (
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-xs text-muted-foreground">Hotel</span>
+                            <span className="text-sm font-medium text-right max-w-[60%]">
+                              {hotelsByDestination[configuration.destination as keyof typeof hotelsByDestination]?.find(
+                                (h) => h.id === configuration.hotel,
+                              )?.name || "Nevybratý"}
+                            </span>
+                          </div>
+                        )}
+                        {configuration.meals && (
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-xs text-muted-foreground">Strava</span>
+                            <span className="text-sm font-medium">{configuration.meals}</span>
+                          </div>
+                        )}
+                        {currentStep >= 2 && (
+                          <div className="pt-2 border-t border-border space-y-1">
                             <div className="flex justify-between items-baseline">
-                              <span className="text-xs text-muted-foreground">Rozsah zárobku</span>
-                              <span className="text-sm font-semibold text-accent">
-                                {earningsRange.min} – {earningsRange.max} €
-                              </span>
+                              <span className="text-xs text-muted-foreground">Odmena / účastník</span>
+                              <span className="text-sm font-semibold">{configuration.trainerReward ?? 50} €</span>
                             </div>
-                          )}
+                            {earningsRange.min > 0 && (
+                              <div className="flex justify-between items-baseline">
+                                <span className="text-xs text-muted-foreground">Rozsah zárobku</span>
+                                <span className="text-sm font-semibold text-accent">
+                                  {earningsRange.min} – {earningsRange.max} €
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </CardContent>
+                      {configuration.hotel && currentStep > 0 && (
+                        <div className="px-4 py-3 border-t border-border bg-muted/30">
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-xs text-muted-foreground">Cena za osobu</span>
+                            <span className="text-xl font-bold text-accent">~ {estimatedPricePerPerson} €</span>
+                          </div>
                         </div>
                       )}
-                    </CardContent>
-                    {configuration.hotel && currentStep > 0 && (
-                      <div className="px-4 py-3 border-t border-border bg-muted/30">
-                        <div className="flex justify-between items-baseline">
-                          <span className="text-xs text-muted-foreground">Cena za osobu</span>
-                          <span className="text-xl font-bold text-accent">~ {estimatedPricePerPerson} €</span>
-                        </div>
-                      </div>
-                    )}
+                    </div>
+                    </div>
                   </div>
-                  </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Mobile floating summary bar */}
+      {isMobile && hasSummaryData && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card shadow-lg">
+          {/* Collapsed bar — always visible */}
+          <button
+            type="button"
+            onClick={() => setMobileSummaryOpen(!mobileSummaryOpen)}
+            className="w-full px-4 py-3 flex items-center justify-between"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold">Súhrn</span>
+              {mobileSummaryOpen ? (
+                <ChevronDown className="w-4 h-4 text-muted-foreground" />
+              ) : (
+                <ChevronUp className="w-4 h-4 text-muted-foreground" />
+              )}
+            </div>
+            {configuration.hotel && currentStep > 0 ? (
+              <span className="text-lg font-bold text-accent">~ {estimatedPricePerPerson} €</span>
+            ) : (
+              <span className="text-xs text-muted-foreground">Krok {currentStep + 1} z {steps.length}</span>
+            )}
+          </button>
+
+          {/* Expanded details */}
+          {mobileSummaryOpen && (
+            <div className="px-4 pb-4 space-y-2 border-t border-border max-h-[50vh] overflow-y-auto">
+              <div className="pt-3 space-y-2">
+                {configuration.destination && (
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-xs text-muted-foreground">Destinácia</span>
+                    <span className="text-sm font-medium">{configuration.destination}</span>
+                  </div>
+                )}
+                {configuration.months && configuration.months.length > 0 && (
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-xs text-muted-foreground">Termíny</span>
+                    <span className="text-sm font-medium text-right max-w-[60%]">
+                      {configuration.months.join(", ")}
+                    </span>
+                  </div>
+                )}
+                {configuration.duration && (
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-xs text-muted-foreground">Trvanie</span>
+                    <span className="text-sm font-medium">{configuration.duration}</span>
+                  </div>
+                )}
+                {configuration.participants && (
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-xs text-muted-foreground">Účastníci</span>
+                    <span className="text-sm font-medium">{configuration.participants}</span>
+                  </div>
+                )}
+                {configuration.campType && (
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-xs text-muted-foreground">Typ campu</span>
+                    <span className="text-sm font-medium">{configuration.campType}</span>
+                  </div>
+                )}
+                {configuration.hotel && (
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-xs text-muted-foreground">Hotel</span>
+                    <span className="text-sm font-medium text-right max-w-[60%]">
+                      {hotelsByDestination[configuration.destination as keyof typeof hotelsByDestination]?.find(
+                        (h) => h.id === configuration.hotel,
+                      )?.name || "Nevybratý"}
+                    </span>
+                  </div>
+                )}
+                {configuration.meals && (
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-xs text-muted-foreground">Strava</span>
+                    <span className="text-sm font-medium">{configuration.meals}</span>
+                  </div>
+                )}
+                {currentStep >= 2 && (
+                  <div className="pt-2 border-t border-border space-y-1">
+                    <div className="flex justify-between items-baseline">
+                      <span className="text-xs text-muted-foreground">Odmena / účastník</span>
+                      <span className="text-sm font-semibold">{configuration.trainerReward ?? 50} €</span>
+                    </div>
+                    {earningsRange.min > 0 && (
+                      <div className="flex justify-between items-baseline">
+                        <span className="text-xs text-muted-foreground">Rozsah zárobku</span>
+                        <span className="text-sm font-semibold text-accent">
+                          {earningsRange.min} – {earningsRange.max} €
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
