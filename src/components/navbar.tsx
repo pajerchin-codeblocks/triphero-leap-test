@@ -101,9 +101,6 @@ export default function Navbar() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: navLinks.length * 0.1 }}
               >
-                <Button variant="hero" size="lg" className="w-full mt-4" asChild>
-                  <a href="/" onClick={() => setMobileOpen(false)}>Začať plánovať trip</a>
-                </Button>
               </motion.div>
             </div>
           </motion.div>
