@@ -92,7 +92,7 @@ Typ campu: ${configuration.campType || 'neuvedený'}
 Strava: ${configuration.meals || 'neuvedená'}
 Transfer: ${configuration.transfer ? 'Áno' : 'Nie'}
 Extra služby: ${(configuration.extras || []).join(', ') || 'žiadne'}
-Špeciálne aktivity: ${(configuration.specialActivities || []).join(', ') || 'žiadne'}
+Špeciálne aktivity: ${Array.isArray(configuration.specialActivities) ? configuration.specialActivities.join(', ') : (configuration.specialActivities || 'žiadne')}
 Budget na osobu: ${pricePerPerson}€
 Hotel: ${configuration.hotelTitle || 'neuvedený'}
 Lokalita hotela: ${configuration.hotelLocation || 'neuvedená'}
