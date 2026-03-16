@@ -5,7 +5,6 @@ import { hotelsByDestination } from "@/lib/hotels-database"
 interface SummaryPageProps {
   configuration: any
   onEdit: () => void
-  onChat: () => void
 }
 
 export default function SummaryPage({ configuration, onEdit, onChat }: SummaryPageProps) {
