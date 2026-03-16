@@ -188,7 +188,7 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
           {/* Meals — show after hotel selection */}
           {configuration.hotel && availableMeals.length > 0 && (
             <div>
-              <label className="block text-sm font-semibold text-foreground mb-3">Strava</label>
+              <label className="block text-sm font-semibold text-foreground mb-3">Strava <span className="text-destructive">*</span></label>
               <div className={`grid grid-cols-2 gap-3 ${validationErrors.meals ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}>
                 {availableMeals.map(({ key, label, price }) => (
                   <button

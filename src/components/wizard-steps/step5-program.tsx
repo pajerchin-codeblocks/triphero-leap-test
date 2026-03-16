@@ -34,7 +34,7 @@ export default function Step5Program({ configuration, onConfigurationChange, val
               className={`min-h-[300px] resize-none`}
               rows={12}
             />
-            {validationErrors?.dailyProgram && <p className="text-xs text-destructive mt-1">Toto je povinné pole</p>}
+            <p className="text-xs text-muted-foreground">Nepovinné — čím detailnejšie popíšete program, tým lepšie vieme vytvoriť presný popis</p>
             <p className="text-xs text-muted-foreground">Čím detailnejšie popíšete program, tým lepšie vieme vytvoriť presný popis</p>
           </div>
 

@@ -52,7 +52,7 @@ export default function Step4TrainerInfo({ configuration, onConfigurationChange,
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="trainerSpecialization" className="text-sm font-semibold text-foreground">Špecializácia</Label>
+            <Label htmlFor="trainerSpecialization" className="text-sm font-semibold text-foreground">Špecializácia <span className="text-destructive">*</span></Label>
             <Input
               id="trainerSpecialization"
               type="text"

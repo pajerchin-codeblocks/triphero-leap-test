@@ -73,7 +73,7 @@ export default function ConfiguratorWizard({
       if (!configuration.trainerSpecialization || configuration.trainerSpecialization.trim() === "")
         errors.push("trainerSpecialization");
     } else if (step === 4) {
-      if (!configuration.dailyProgram || configuration.dailyProgram.trim() === "") errors.push("dailyProgram");
+      // No required fields in step 5
     }
     return errors;
   };
