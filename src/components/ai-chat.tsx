@@ -2,10 +2,10 @@ import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { supabase } from "@/integrations/supabase/client"
 
 interface AIChatProps {
   tripData: Record<string, unknown>
-  webhookUrl: string
   onBack: () => void
 }
 
@@ -14,7 +14,16 @@ interface ChatMessage {
   content: string
 }
 
-export default function AIChat({ tripData, webhookUrl, onBack }: AIChatProps) {
+function parseResponse(data: unknown): string | null {
+  let parsed = data
+  if (Array.isArray(parsed) && parsed.length > 0) {
+    parsed = parsed[0]
+  }
+  const obj = parsed as { output?: string; response?: string }
+  return obj?.output ?? obj?.response ?? null
+}
+
+export default function AIChat({ tripData, onBack }: AIChatProps) {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -24,31 +33,14 @@ export default function AIChat({ tripData, webhookUrl, onBack }: AIChatProps) {
   useEffect(() => {
     const fetchWelcomeMessage = async () => {
       setIsLoading(true)
-      const payload = {
-        message: "INIT",
-        tripData,
-        chatHistory: [],
-      }
       try {
-        const response = await fetch(webhookUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+        const { data, error: fnError } = await supabase.functions.invoke("generate-camp-preview", {
+          body: { message: "INIT", tripData, chatHistory: [] },
         })
-        if (!response.ok) throw new Error(`HTTP error: ${response.status}`)
-        const responseText = await response.text()
-        let data: { output?: string; response?: string }
-        try {
-          data = JSON.parse(responseText)
-        } catch {
-          throw new Error("Invalid JSON response from webhook")
-        }
-        if (Array.isArray(data) && data.length > 0) {
-          data = data[0] as { output?: string; response?: string }
-        }
-        const messageContent = (data as { output?: string; response?: string }).output ?? (data as { output?: string; response?: string }).response
-        if (messageContent) {
-          setChatHistory([{ role: "assistant", content: messageContent }])
+        if (fnError) throw new Error(fnError.message)
+        const content = parseResponse(data)
+        if (content) {
+          setChatHistory([{ role: "assistant", content }])
         } else {
           throw new Error("No message content in response")
         }
@@ -59,7 +51,7 @@ export default function AIChat({ tripData, webhookUrl, onBack }: AIChatProps) {
       }
     }
     fetchWelcomeMessage()
-  }, [tripData, webhookUrl])
+  }, [tripData])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -75,27 +67,14 @@ export default function AIChat({ tripData, webhookUrl, onBack }: AIChatProps) {
     const updatedChatHistory = [...chatHistory, newUserMessage]
     setChatHistory(updatedChatHistory)
     setIsLoading(true)
-    const payload = { message: userMessage, tripData, chatHistory: updatedChatHistory }
     try {
-      const response = await fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+      const { data, error: fnError } = await supabase.functions.invoke("generate-camp-preview", {
+        body: { message: userMessage, tripData, chatHistory: updatedChatHistory },
       })
-      if (!response.ok) throw new Error(`HTTP error: ${response.status}`)
-      const responseText = await response.text()
-      let data: { output?: string; response?: string }
-      try {
-        data = JSON.parse(responseText)
-      } catch {
-        throw new Error("Invalid JSON response from webhook")
-      }
-      if (Array.isArray(data) && data.length > 0) {
-        data = data[0] as { output?: string; response?: string }
-      }
-      const messageContent = (data as { output?: string; response?: string }).output ?? (data as { output?: string; response?: string }).response
-      if (messageContent) {
-        setChatHistory((prev) => [...prev, { role: "assistant", content: messageContent }])
+      if (fnError) throw new Error(fnError.message)
+      const content = parseResponse(data)
+      if (content) {
+        setChatHistory((prev) => [...prev, { role: "assistant", content }])
       } else {
         throw new Error("No response from assistant")
       }
@@ -165,7 +144,7 @@ export default function AIChat({ tripData, webhookUrl, onBack }: AIChatProps) {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Položite otázku..."
+                placeholder="Položte otázku..."
                 className="flex-1 px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-accent outline-none transition"
                 disabled={isLoading}
               />
