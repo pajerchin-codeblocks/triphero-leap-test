@@ -7,7 +7,7 @@ interface SummaryPageProps {
   onEdit: () => void
 }
 
-export default function SummaryPage({ configuration, onEdit, onChat }: SummaryPageProps) {
+export default function SummaryPage({ configuration, onEdit }: SummaryPageProps) {
   const formatList = (arr: string[]) => arr && arr.length > 0 ? arr.join(", ") : "—"
 
   const getHotelDetails = () => {
