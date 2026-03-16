@@ -208,9 +208,7 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
                 </button>
               ))}
             </div>
-            {configuration.destination && (
-              <p className="text-xs text-muted-foreground mt-2">✓ Odporúčané mesiace pre {configuration.destination}</p>
-            )}
+            {validationErrors.months && <p className="text-destructive text-xs mt-2">Toto je povinné pole</p>}
             {validationErrors.months && <p className="text-destructive text-xs mt-2">Toto je povinné pole</p>}
           </div>
 
