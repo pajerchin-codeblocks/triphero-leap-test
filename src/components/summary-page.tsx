@@ -119,8 +119,8 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
               <CardContent className="px-6 py-6">
                 <h3 className="font-semibold text-foreground mb-4">Ubytovanie a služby</h3>
                 <div className="space-y-3">
-                  <div><p className="text-sm text-muted-foreground">Hotel</p><p className="font-medium text-foreground">{hotelDetails ? hotelDetails.name : "—"}</p></div>
-                  <div><p className="text-sm text-muted-foreground">Trieda hotela</p><p className="font-medium text-foreground">{hotelDetails ? `${"⭐".repeat(hotelDetails.stars)}` : "—"}</p></div>
+                  <div><p className="text-sm text-muted-foreground">Hotel</p><p className="font-medium text-foreground">{configuration.hotelTitle || hotelDetails?.name || "—"}</p></div>
+                  <div><p className="text-sm text-muted-foreground">Trieda hotela</p><p className="font-medium text-foreground">{(configuration.hotelStars || hotelDetails?.stars) ? `${"⭐".repeat(configuration.hotelStars || hotelDetails?.stars)}` : "—"}</p></div>
                   <div><p className="text-sm text-muted-foreground">Strava</p><p className="font-medium text-foreground">{configuration.meals || "—"}</p></div>
                   <div><p className="text-sm text-muted-foreground">Transfer</p><p className="font-medium text-foreground">{configuration.transfer ? "Áno" : "Nie"}</p></div>
                   <div><p className="text-sm text-muted-foreground">Extra služby</p><p className="font-medium text-foreground">{formatList(configuration.extras)}</p></div>

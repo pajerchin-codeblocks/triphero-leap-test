@@ -39,6 +39,7 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
         hotelImage: wh?.image || staticHotel?.image || "",
         hotelTitle: wh?.title || staticHotel?.name || "",
         hotelLocation: wh?.location || "",
+        hotelStars: wh ? parseRatingStars(wh.rating) : (staticHotel?.stars || 0),
       })
     } else {
       onConfigurationChange({ [key]: value })
