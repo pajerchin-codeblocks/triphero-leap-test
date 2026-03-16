@@ -1,10 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { hotelsByDestination } from "@/lib/hotels-database"
-import { destinationToCountryCode, convertMonthsToWebhookFormat } from "@/lib/destination-mapping"
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { supabase } from "@/integrations/supabase/client"
 
 interface SummaryPageProps {
   configuration: any
@@ -13,10 +9,6 @@ interface SummaryPageProps {
 }
 
 export default function SummaryPage({ configuration, onEdit, onChat }: SummaryPageProps) {
-  const navigate = useNavigate()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
   const formatList = (arr: string[]) => arr && arr.length > 0 ? arr.join(", ") : "—"
 
   const getHotelDetails = () => {
@@ -43,90 +35,8 @@ export default function SummaryPage({ configuration, onEdit, onChat }: SummaryPa
     return { min: rewardPerParticipant * participants, max: rewardPerParticipant * participants, minParticipants: participants, maxParticipants: participants }
   }
 
-  const calculateTotalEarnings = () => {
-    const rewardPerParticipant = Number.parseInt(configuration.trainerReward ?? "50") || 50
-    const participantStr = configuration.participants || "8"
-    const minParticipants = Number.parseInt(participantStr.match(/(\d+)/)?.[1] || "8")
-    return rewardPerParticipant * minParticipants
-  }
-
   const displayTrainerReward = Number.parseInt(configuration.trainerReward ?? "50") || 50
   const earningsRange = calculateEarningsRange()
-
-  const handleProceedToChat = async () => {
-    if (isSubmitting) return
-    setIsSubmitting(true)
-    setError(null)
-
-    try {
-      const participantStr = configuration.participants || "8"
-      const minParticipants = Number.parseInt(participantStr.match(/(\d+)/)?.[1] || "8")
-
-      const configData = {
-        destination: destinationToCountryCode[configuration.destination] || configuration.destination || "",
-        months: convertMonthsToWebhookFormat(configuration.months || []),
-        duration: configuration.duration || "",
-        participants: configuration.participants || "",
-        campType: configuration.campType || "",
-        hotel: { id: hotelDetails?.id || "", name: hotelDetails?.name || "", stars: hotelDetails?.stars || 0 },
-        meals: configuration.meals || "",
-        transfer: configuration.transfer || false,
-        extras: configuration.extras || [],
-        trainerReward: Number.parseInt(configuration.trainerReward ?? "50") || 50,
-        totalEarnings: calculateTotalEarnings(),
-        budgetPerPerson: configuration.budgetPerPerson || 0,
-        totalPrice: (configuration.budgetPerPerson || 0) * minParticipants,
-        trainerName: configuration.trainerName || "",
-        trainerExperience: configuration.trainerExperience || "",
-        trainerSpecialization: configuration.trainerSpecialization || "",
-        trainerCertificates: configuration.trainerCertificates || "",
-        trainerBio: configuration.trainerBio || "",
-        dailyProgram: configuration.dailyProgram || "",
-        specialActivities: configuration.specialActivities || "",
-      }
-
-      const payload = {
-        action: "generatePreview",
-        sessionId: Date.now().toString(),
-        tripData: configData,
-      }
-
-      console.log("[TripHERO] Sending camp data to generate-camp-preview:", payload)
-
-      const { data, error: fnError } = await supabase.functions.invoke('generate-camp-preview', {
-        body: payload,
-      })
-
-      if (fnError) {
-        console.error("[TripHERO] Camp preview error:", fnError)
-        setError("Nepodarilo sa vygenerovať náhľad. Skúste to prosím znova.")
-        setIsSubmitting(false)
-        return
-      }
-
-      const responseData = data
-      const previewData = Array.isArray(responseData) ? responseData[0] : responseData
-      console.log("[TripHERO] Preview data:", previewData)
-
-      const slug = previewData?.slug
-      if (!slug) {
-        console.error("[TripHERO] No slug in response. Full response:", responseData)
-        setError("Nepodarilo sa vygenerovať náhľad. Skúste to prosím znova.")
-        setIsSubmitting(false)
-        return
-      }
-
-      const storageKey = `triphero_preview_${slug}`
-      localStorage.setItem(storageKey, JSON.stringify(previewData))
-      console.log("[TripHERO] Saved preview data to localStorage with key:", storageKey)
-
-      navigate(`/preview/${slug}`)
-    } catch (err) {
-      console.error("[TripHERO] Error:", err)
-      setError("Nepodarilo sa vygenerovať náhľad. Skúste to prosím znova.")
-      setIsSubmitting(false)
-    }
-  }
 
   return (
     <div className="min-h-screen bg-background py-8 px-4">
@@ -182,20 +92,11 @@ export default function SummaryPage({ configuration, onEdit, onChat }: SummaryPa
           </div>
         </div>
 
-        <div className="flex flex-col gap-2">
-          {error && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-4">
-              <p className="text-destructive text-sm">{error}</p>
-            </div>
-          )}
-          <div className="flex gap-4">
-            <Button onClick={onEdit} variant="outline" disabled={isSubmitting}>← Upraviť</Button>
-            <Button onClick={handleProceedToChat} className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground flex-1" disabled={isSubmitting}>
-              {isSubmitting ? (
-                <><div className="animate-spin w-4 h-4 border-2 border-accent-foreground border-t-transparent rounded-full" />Generujem náhľad...</>
-              ) : "Zobraziť náhľad campu"}
-            </Button>
-          </div>
+        <div className="flex gap-4">
+          <Button onClick={onEdit} variant="outline">← Upraviť</Button>
+          <Button onClick={onChat} className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground flex-1">
+            Pokračovať na AI Chat
+          </Button>
         </div>
       </div>
     </div>
