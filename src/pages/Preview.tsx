@@ -589,17 +589,23 @@ export default function Preview() {
                 </p>
               </motion.div>
 
-              <motion.div variants={fadeUp} className="grid grid-cols-3 gap-3 mb-12 h-64 md:h-80">
-                <div className="rounded-2xl overflow-hidden">
-                  <img src="/luxury-resort-pool-area-aerial.jpg" alt="Pool" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-                </div>
-                <div className="rounded-2xl overflow-hidden">
-                  <img src="/luxury-resort-beach-view.jpg" alt="Beach" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-                </div>
-                <div className="rounded-2xl overflow-hidden">
-                  <img src="/luxury-beach-resort-sunset-aerial-view.jpg" alt="Aerial" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-                </div>
-              </motion.div>
+              {campData.hotelImages?.hero ? (
+                <motion.div variants={fadeUp} className="rounded-2xl overflow-hidden mb-12 h-64 md:h-80">
+                  <img src={campData.hotelImages.hero} alt={campData.hotelImages.title || "Hotel"} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                </motion.div>
+              ) : (
+                <motion.div variants={fadeUp} className="grid grid-cols-3 gap-3 mb-12 h-64 md:h-80">
+                  <div className="rounded-2xl overflow-hidden">
+                    <img src="/luxury-resort-pool-area-aerial.jpg" alt="Pool" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                  </div>
+                  <div className="rounded-2xl overflow-hidden">
+                    <img src="/luxury-resort-beach-view.jpg" alt="Beach" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                  </div>
+                  <div className="rounded-2xl overflow-hidden">
+                    <img src="/luxury-beach-resort-sunset-aerial-view.jpg" alt="Aerial" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                  </div>
+                </motion.div>
+              )}
 
               <motion.div variants={fadeUp} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {campData.luxuryExperience.amenities?.map((amenity, idx) => (

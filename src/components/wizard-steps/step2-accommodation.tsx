@@ -27,7 +27,19 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
   const handleChange = (key: string, value: any) => {
     // Reset meals when hotel changes (meal availability may differ)
     if (key === "hotel") {
-      onConfigurationChange({ [key]: value, meals: undefined })
+      // Also store hotel image, title and location for preview
+      const wh = webhookHotels.find((h) => h.id === value)
+      const staticHotels = configuration.destination
+        ? (hotelsByDestination[configuration.destination as keyof typeof hotelsByDestination] || [])
+        : []
+      const staticHotel = staticHotels.find((h) => h.id === value)
+      onConfigurationChange({
+        [key]: value,
+        meals: undefined,
+        hotelImage: wh?.image || staticHotel?.image || "",
+        hotelTitle: wh?.title || staticHotel?.name || "",
+        hotelLocation: wh?.location || "",
+      })
     } else {
       onConfigurationChange({ [key]: value })
     }
