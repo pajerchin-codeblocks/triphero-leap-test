@@ -40,8 +40,16 @@ serve(async (req) => {
       )
     }
 
-    const data = await response.json()
-    console.log('[fetch-flight-prices] Response:', JSON.stringify(data))
+    const responseText = await response.text()
+    console.log('[fetch-flight-prices] Response text:', responseText)
+
+    let data
+    try {
+      data = JSON.parse(responseText)
+    } catch {
+      console.error('[fetch-flight-prices] Non-JSON response:', responseText)
+      data = []
+    }
 
     return new Response(JSON.stringify(data), {
       status: 200,
