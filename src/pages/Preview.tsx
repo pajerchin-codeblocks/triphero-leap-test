@@ -389,7 +389,7 @@ export default function Preview() {
                 <div className="flex-shrink-0 relative">
                   <div className="w-64 h-80 md:w-72 md:h-96 rounded-2xl overflow-hidden shadow-elevated ring-4 ring-accent/20">
                     <img
-                      src={trainerIsFemale ? "/female-fitness-trainer-professional-portrait.jpg" : "/male-fitness-trainer-professional-portrait.jpg"}
+                      src={trainerIsFemale ? ILLUSTRATIVE_TRAINER_FEMALE : ILLUSTRATIVE_TRAINER_MALE}
                       alt={campData.trainerProfile.name}
                       className="w-full h-full object-cover"
                     />
