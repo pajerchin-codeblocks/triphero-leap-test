@@ -344,6 +344,7 @@ export default function ConfiguratorWizard({
                   onConfigurationChange={onConfigurationChange}
                   validationErrors={validationErrors}
                   flightPricesByMonth={flightPricesByMonth}
+                  webhookHotels={webhookHotels}
                 />
               ) : (
                 <CurrentStep
