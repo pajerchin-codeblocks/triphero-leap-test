@@ -97,33 +97,24 @@ export default function ConfiguratorWizard({
 
       console.log("[TripHERO] Step 1 data sent successfully:", data);
 
-      const result = data as { data?: unknown; flights?: Array<{ month: string; minPrice: number }>; price?: number };
-      const raw = result?.data !== undefined ? result.data : result;
+      // Parse response — could be array wrapper or direct object
+      const result = data as any;
+      const raw = Array.isArray(result) ? result[0] : result?.data !== undefined ? result.data : result;
+      const payload = Array.isArray(raw) ? raw[0] : raw;
 
-      if (
-        Array.isArray(raw) &&
-        raw.length > 0 &&
-        raw[0] &&
-        typeof raw[0] === "object" &&
-        "month" in (raw[0] as object) &&
-        "minPrice" in (raw[0] as object)
-      ) {
+      // Extract hotels
+      if (payload?.hotels && Array.isArray(payload.hotels)) {
+        console.log("[TripHERO] Webhook hotels received:", payload.hotels.length);
+        setWebhookHotels(payload.hotels as WebhookHotel[]);
+      }
+
+      // Extract flights
+      if (payload?.flights && Array.isArray(payload.flights)) {
+        setFlightPricesByMonth(payload.flights as Array<{ month: string; minPrice: number }>);
+      } else if (Array.isArray(raw) && raw.length > 0 && raw[0]?.month !== undefined) {
         setFlightPricesByMonth(raw as Array<{ month: string; minPrice: number }>);
-      } else if (
-        Array.isArray(raw) &&
-        raw[0] &&
-        typeof raw[0] === "object" &&
-        raw[0] !== null &&
-        "flights" in (raw[0] as object)
-      ) {
-        const flights = (raw[0] as { flights: Array<{ month: string; minPrice: number }> }).flights;
-        setFlightPricesByMonth(flights);
       } else if (result?.price !== undefined) {
         setFlightPricesByMonth([{ month: "default", minPrice: result.price as number }]);
-      } else if (Array.isArray(data) && data.length > 0) {
-        setFlightPricesByMonth(data as Array<{ month: string; minPrice: number }>);
-      } else if (result?.flights) {
-        setFlightPricesByMonth(result.flights);
       }
     } catch (error) {
       console.error("[TripHERO] Error sending step 1 data:", error);
