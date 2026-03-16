@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
 import { Check, Heart } from "lucide-react"
 import Navbar from "@/components/navbar"
+import { supabase } from "@/integrations/supabase/client"
 
 interface CampPreviewData {
   success: boolean
@@ -83,35 +86,91 @@ interface CampPreviewData {
 
 export default function Preview() {
   const { slug } = useParams<{ slug: string }>()
-  const navigate = useNavigate()
   const [campData, setCampData] = useState<CampPreviewData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [accessInput, setAccessInput] = useState("")
+  const [accessError, setAccessError] = useState<string | null>(null)
+  const [isVerifying, setIsVerifying] = useState(false)
 
   const stripEmojis = (text: string) => text.replace(/:\w+:/g, "").trim()
 
+  // Add noindex meta tag
   useEffect(() => {
-    if (!slug) {
-      setLoading(false)
-      navigate("/")
-      return
-    }
+    const meta = document.createElement("meta")
+    meta.name = "robots"
+    meta.content = "noindex, nofollow"
+    document.head.appendChild(meta)
+    return () => { document.head.removeChild(meta) }
+  }, [])
+
+  const handleAccessSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!accessInput.trim() || !slug) return
+    setIsVerifying(true)
+    setAccessError(null)
     try {
-      const storageKey = `triphero_preview_${slug}`
-      const storedData = localStorage.getItem(storageKey)
-      if (storedData) {
-        const parsed = JSON.parse(storedData)
-        const data = Array.isArray(parsed) ? parsed[0] : parsed
-        setCampData(data)
-      } else {
-        navigate("/")
+      const { data, error } = await supabase.functions.invoke("preview-access", {
+        body: { action: "verify", slug, accessCode: accessInput.trim() },
+      })
+      if (error) throw new Error(error.message)
+      if (data?.error) {
+        setAccessError(data.error)
+      } else if (data?.previewData) {
+        const pd = data.previewData
+        setCampData(Array.isArray(pd) ? pd[0] : pd)
       }
-    } catch (error) {
-      console.error("[TripHERO] Error loading camp data:", error)
-      navigate("/")
+    } catch (err) {
+      setAccessError(err instanceof Error ? err.message : "Nepodarilo sa overiť prístup")
     } finally {
-      setLoading(false)
+      setIsVerifying(false)
     }
-  }, [slug, navigate])
+  }
+
+  if (!slug) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-muted-foreground">Neplatný odkaz</p>
+      </div>
+    )
+  }
+
+  // Access form
+  if (!campData) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[80vh] px-4">
+          <Card className="w-full max-w-md">
+            <CardContent className="p-8">
+              <h1 className="text-2xl font-bold text-foreground mb-2 text-center">Náhľad campu</h1>
+              <p className="text-muted-foreground text-center mb-6">
+                Pre zobrazenie náhľadu zadajte vaše meno a priezvisko
+              </p>
+              <form onSubmit={handleAccessSubmit} className="space-y-4">
+                <Input
+                  type="text"
+                  placeholder="napr. Ján Novák"
+                  value={accessInput}
+                  onChange={(e) => setAccessInput(e.target.value)}
+                  disabled={isVerifying}
+                />
+                {accessError && (
+                  <p className="text-sm text-destructive text-center">{accessError}</p>
+                )}
+                <Button
+                  type="submit"
+                  disabled={!accessInput.trim() || isVerifying}
+                  className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
+                >
+                  {isVerifying ? "Overujem..." : "Zobraziť náhľad"}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
 
   if (loading) {
     return (
@@ -122,10 +181,6 @@ export default function Preview() {
         </div>
       </div>
     )
-  }
-
-  if (!campData || !slug) {
-    return null
   }
 
   const trainerIsFemale = campData.trainerProfile.name
@@ -264,7 +319,7 @@ export default function Preview() {
                     Každý deň je starostlivo naplánovaný tak, aby si dosiahol/a maximálny pokrok
                   </p>
                   <div className="space-y-4">
-                    {campData.dayTimeline.map((item: { time: string; activity: string }, idx: number) => (
+                    {campData.dayTimeline.map((item, idx) => (
                       <div key={idx} className="flex items-start gap-3">
                         <div className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center mt-0.5">
                           <div className="w-2 h-2 rounded-full bg-accent" />
@@ -291,7 +346,7 @@ export default function Preview() {
                     <div>
                       <h3 className="text-xl font-bold text-foreground mb-3">Čo získaš</h3>
                       <ul className="space-y-2">
-                        {campData.transformation.physicalBenefits.map((benefit: string, idx: number) => (
+                        {campData.transformation.physicalBenefits.map((benefit, idx) => (
                           <li key={idx} className="flex items-start gap-2">
                             <Check className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
                             <span className="text-base text-muted-foreground">{benefit}</span>
@@ -304,7 +359,7 @@ export default function Preview() {
                     <div>
                       <h3 className="text-xl font-bold text-foreground mb-3">Mentálne benefity</h3>
                       <ul className="space-y-2">
-                        {campData.transformation.mentalBenefits.map((benefit: string, idx: number) => (
+                        {campData.transformation.mentalBenefits.map((benefit, idx) => (
                           <li key={idx} className="flex items-start gap-2">
                             <Check className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
                             <span className="text-base text-muted-foreground">{benefit}</span>
@@ -327,7 +382,7 @@ export default function Preview() {
                   <div>
                     <h3 className="text-xl font-bold text-foreground mb-3">Zariadenia hotela</h3>
                     <ul className="space-y-2">
-                      {campData.luxuryExperience.amenities?.map((amenity: string, idx: number) => (
+                      {campData.luxuryExperience.amenities?.map((amenity, idx) => (
                         <li key={idx} className="flex items-start gap-2">
                           <span className="text-accent mt-0.5">•</span>
                           <span className="text-base text-muted-foreground">{stripEmojis(amenity)}</span>
@@ -346,7 +401,7 @@ export default function Preview() {
                   </h2>
                   {campData.whatMakesItSpecial.uniquePoints && (
                     <ul className="space-y-3">
-                      {campData.whatMakesItSpecial.uniquePoints.map((point: string, idx: number) => (
+                      {campData.whatMakesItSpecial.uniquePoints.map((point, idx) => (
                         <li key={idx} className="flex items-start gap-2">
                           <Heart className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
                           <span className="text-base text-muted-foreground">{point}</span>
@@ -419,7 +474,7 @@ export default function Preview() {
 
             <div className="lg:col-span-1">
               <div className="lg:sticky lg:top-24 space-y-4">
-                <div className="bg-white dark:bg-card border border-border rounded-xl p-6 shadow-lg">
+                <div className="bg-card border border-border rounded-xl p-6 shadow-lg">
                   <h3 className="text-2xl font-bold text-foreground mb-6">Rezervácia</h3>
                   <div className="mb-6">
                     <p className="text-sm text-muted-foreground mb-2">Termín</p>
@@ -463,7 +518,7 @@ export default function Preview() {
                     >
                       Nezáväzná rezervácia
                     </Button>
-                    <Button size="lg" className="w-full bg-accent hover:bg-accent/90 text-white font-semibold">
+                    <Button size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
                       Rezervácia
                     </Button>
                   </div>
@@ -520,7 +575,7 @@ export default function Preview() {
           <p className="text-3xl font-bold mb-4">{campData.urgency.scarcity}</p>
           <p className="text-xl mb-8">{campData.urgency.deadline}</p>
           <p className="text-2xl mb-10">{campData.urgency.finalCta}</p>
-          <Button size="lg" className="bg-white text-accent hover:bg-white/90 px-16 py-8 text-2xl font-bold shadow-2xl">
+          <Button size="lg" className="bg-background text-accent hover:bg-background/90 px-16 py-8 text-2xl font-bold shadow-2xl">
             Rezervovať teraz
           </Button>
         </div>
