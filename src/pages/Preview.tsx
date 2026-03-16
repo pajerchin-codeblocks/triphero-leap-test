@@ -261,7 +261,7 @@ export default function Preview() {
               <motion.div variants={fadeUp} className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-accent/20 backdrop-blur-sm border-2 border-accent/40 overflow-hidden">
                   <img
-                    src={trainerIsFemale ? "/female-fitness-trainer-professional-portrait.jpg" : "/male-fitness-trainer-professional-portrait.jpg"}
+                    src={trainerIsFemale ? ILLUSTRATIVE_TRAINER_FEMALE : ILLUSTRATIVE_TRAINER_MALE}
                     alt={campData.trainerProfile.name}
                     className="w-full h-full object-cover"
                   />
