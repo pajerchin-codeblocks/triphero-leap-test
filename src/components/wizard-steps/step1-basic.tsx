@@ -182,7 +182,7 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
           {/* Month */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-3">
-              Preferovaný mesiac/termín
+              Preferovaný mesiac/termín <span className="text-destructive">*</span>
               <span className="ml-2 text-sm font-normal">
                 {selectedMonths.length > 0 ? (
                   <span className={selectedMonths.length >= 4 ? "text-destructive" : "text-accent"}>
