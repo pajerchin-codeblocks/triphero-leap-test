@@ -1,18 +1,23 @@
 
 
-# Oprava pozadia na bielu farbu
+## Fix: Add `destinationName` to flight prices webhook payload
 
-## Problem
-Aktualne `--background` je nastaveny na `0 0% 98%` (~#FAFAFA), ale referencny web pouziva cisty biely background `0 0% 100%` (#FFFFFF).
+The n8n workflow expects a `destinationName` field (the original Slovak name like "Taliansko") but currently only receives `destination` (the ISO country code like "IT").
 
-## Zmena
+### Change
 
-### `src/index.css` -- Light mode
-Zmena jednej hodnoty:
-- `--background: 0 0% 98%` --> `--background: 0 0% 100%`
+**`src/components/configurator-wizard.tsx`** — line 77-83, add `destinationName`:
 
-Rovnako aktualizovat sidebar:
-- `--sidebar-background: 0 0% 98%` --> `--sidebar-background: 0 0% 100%`
+```typescript
+const webhookData = {
+  destination: destinationToCountryCode[configuration.destination] || configuration.destination,
+  destinationName: configuration.destination,
+  months: convertMonthsToWebhookFormat(configuration.months || []),
+  duration: Number.parseInt(configuration.duration) || 0,
+  participants: configuration.participants || "",
+  campType: configuration.campType || "",
+};
+```
 
-Vsetko ostatne zostava bez zmeny.
+Single line addition. No other files need changes.
 
