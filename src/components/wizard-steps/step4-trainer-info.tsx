@@ -26,7 +26,7 @@ export default function Step4TrainerInfo({ configuration, onConfigurationChange,
       <Card className="shadow-soft rounded-2xl border-0">
         <CardContent className="space-y-6 px-6 py-6">
           <div className="space-y-2">
-            <Label htmlFor="trainerName" className="text-sm font-semibold text-foreground">Vaše meno a priezvisko</Label>
+            <Label htmlFor="trainerName" className="text-sm font-semibold text-foreground">Vaše meno a priezvisko <span className="text-destructive">*</span></Label>
             <Input
               id="trainerName"
               type="text"
@@ -39,7 +39,7 @@ export default function Step4TrainerInfo({ configuration, onConfigurationChange,
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="trainerExperience" className="text-sm font-semibold text-foreground">Roky skúseností v trénerstve</Label>
+            <Label htmlFor="trainerExperience" className="text-sm font-semibold text-foreground">Roky skúseností v trénerstve <span className="text-destructive">*</span></Label>
             <Input
               id="trainerExperience"
               type="text"
@@ -52,7 +52,7 @@ export default function Step4TrainerInfo({ configuration, onConfigurationChange,
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="trainerSpecialization" className="text-sm font-semibold text-foreground">Špecializácia</Label>
+            <Label htmlFor="trainerSpecialization" className="text-sm font-semibold text-foreground">Špecializácia <span className="text-destructive">*</span></Label>
             <Input
               id="trainerSpecialization"
               type="text"

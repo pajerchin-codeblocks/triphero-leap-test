@@ -31,10 +31,10 @@ export default function Step5Program({ configuration, onConfigurationChange, val
               placeholder={`Napríklad:\n\n7:00 - Ranná meditácia pri východe slnka\n8:00 - Zdravá raňajky\n9:30 - Intenzívny funkčný tréning na pláži\n12:00 - Obed a voľný čas\n16:00 - Joga a strečing\n18:00 - Večera\n20:00 - Spoločenské aktivity`}
               value={configuration.dailyProgram || ""}
               onChange={(e) => handleChange("dailyProgram", e.target.value)}
-              className={`min-h-[300px] resize-none ${validationErrors?.dailyProgram ? "border-destructive" : ""}`}
+              className={`min-h-[300px] resize-none`}
               rows={12}
             />
-            {validationErrors?.dailyProgram && <p className="text-xs text-destructive mt-1">Toto je povinné pole</p>}
+            <p className="text-xs text-muted-foreground">Nepovinné — čím detailnejšie popíšete program, tým lepšie vieme vytvoriť presný popis</p>
             <p className="text-xs text-muted-foreground">Čím detailnejšie popíšete program, tým lepšie vieme vytvoriť presný popis</p>
           </div>
 
