@@ -1,1 +1,4 @@
 project_id = "rsndlgywtwgdwsfzjrmc"
+
+[functions.preview-access]
+verify_jwt = false
