@@ -122,7 +122,7 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
           {/* Hotels */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-4">
-              Vyber hotel {configuration.destination ? `v ${configuration.destination}` : ""}
+              Vyber hotel {configuration.destination ? `v ${configuration.destination}` : ""} <span className="text-destructive">*</span>
             </label>
 
             {useWebhook ? (
