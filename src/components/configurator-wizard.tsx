@@ -60,8 +60,12 @@ export default function ConfiguratorWizard({
       if (!configuration.campType || configuration.campType.trim() === "") errors.push("campType");
     } else if (step === 1) {
       if (!configuration.hotel) errors.push("hotel");
-      if (!configuration.meals) errors.push("meals");
-      if (!configuration.selectedFlight && !configuration.flight) errors.push("flight");
+      // Only require meals if the selected hotel has any meal option
+      const wh = webhookHotels.find((h) => h.id === configuration.hotel);
+      const hasMealOptions = wh ? (wh.bb || wh.hb || wh.fb || wh.ai) : true;
+      if (hasMealOptions && !configuration.meals) errors.push("meals");
+      // Only require flight if flight data is available
+      if (flightPricesByMonth.length > 0 && !configuration.selectedFlight && !configuration.flight) errors.push("flight");
     } else if (step === 3) {
       if (!configuration.trainerName || configuration.trainerName.trim() === "") errors.push("trainerName");
       if (!configuration.trainerExperience || configuration.trainerExperience.trim() === "")
