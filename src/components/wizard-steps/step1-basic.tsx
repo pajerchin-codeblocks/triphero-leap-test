@@ -98,7 +98,7 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
     setShowMoreDestinations(false)
   }
 
-  const availableMonths = monthsByDestination[configuration.destination] || monthsByDestination["Bali"]
+  const availableMonths = allMonths
   const selectedMonths = Array.isArray(configuration.months) ? configuration.months : []
 
   return (
