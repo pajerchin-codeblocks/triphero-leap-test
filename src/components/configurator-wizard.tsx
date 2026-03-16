@@ -13,6 +13,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 import { destinationToCountryCode, convertMonthsToWebhookFormat } from "@/lib/destination-mapping";
 import { supabase } from "@/integrations/supabase/client";
+import { WebhookHotel, micros, MealKey, mealPriceKeys } from "@/lib/webhook-types";
 
 interface ConfiguratorWizardProps {
   configuration: any;
@@ -28,6 +29,7 @@ export default function ConfiguratorWizard({
   const [currentStep, setCurrentStep] = useState(0);
   const [validationErrors, setValidationErrors] = useState<Record<string, boolean>>({});
   const [flightPricesByMonth, setFlightPricesByMonth] = useState<Array<{ month: string; minPrice: number }>>([]);
+  const [webhookHotels, setWebhookHotels] = useState<WebhookHotel[]>([]);
   const [stepperFloating, setStepperFloating] = useState(false);
   const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false);
   const stepperRef = useRef<HTMLDivElement>(null);
@@ -95,33 +97,24 @@ export default function ConfiguratorWizard({
 
       console.log("[TripHERO] Step 1 data sent successfully:", data);
 
-      const result = data as { data?: unknown; flights?: Array<{ month: string; minPrice: number }>; price?: number };
-      const raw = result?.data !== undefined ? result.data : result;
+      // Parse response — could be array wrapper or direct object
+      const result = data as any;
+      const raw = Array.isArray(result) ? result[0] : result?.data !== undefined ? result.data : result;
+      const payload = Array.isArray(raw) ? raw[0] : raw;
 
-      if (
-        Array.isArray(raw) &&
-        raw.length > 0 &&
-        raw[0] &&
-        typeof raw[0] === "object" &&
-        "month" in (raw[0] as object) &&
-        "minPrice" in (raw[0] as object)
-      ) {
+      // Extract hotels
+      if (payload?.hotels && Array.isArray(payload.hotels)) {
+        console.log("[TripHERO] Webhook hotels received:", payload.hotels.length);
+        setWebhookHotels(payload.hotels as WebhookHotel[]);
+      }
+
+      // Extract flights
+      if (payload?.flights && Array.isArray(payload.flights)) {
+        setFlightPricesByMonth(payload.flights as Array<{ month: string; minPrice: number }>);
+      } else if (Array.isArray(raw) && raw.length > 0 && raw[0]?.month !== undefined) {
         setFlightPricesByMonth(raw as Array<{ month: string; minPrice: number }>);
-      } else if (
-        Array.isArray(raw) &&
-        raw[0] &&
-        typeof raw[0] === "object" &&
-        raw[0] !== null &&
-        "flights" in (raw[0] as object)
-      ) {
-        const flights = (raw[0] as { flights: Array<{ month: string; minPrice: number }> }).flights;
-        setFlightPricesByMonth(flights);
       } else if (result?.price !== undefined) {
         setFlightPricesByMonth([{ month: "default", minPrice: result.price as number }]);
-      } else if (Array.isArray(data) && data.length > 0) {
-        setFlightPricesByMonth(data as Array<{ month: string; minPrice: number }>);
-      } else if (result?.flights) {
-        setFlightPricesByMonth(result.flights);
       }
     } catch (error) {
       console.error("[TripHERO] Error sending step 1 data:", error);
@@ -190,7 +183,7 @@ export default function ConfiguratorWizard({
     let hotelPerNight = 0;
     let flightPrice = 0;
     let mealsPrice = 0;
-    const transferCost = configuration.transfer ? transferPrice : 0;
+    let transferCost = 0;
 
     const getMinParticipants = (participantStr: string) => {
       const match = participantStr?.match(/(\d+)/);
@@ -198,14 +191,18 @@ export default function ConfiguratorWizard({
     };
 
     const participants = getMinParticipants(configuration.participants);
+    const duration = Number.parseInt(configuration.duration) || 7;
 
-    if (configuration.hotel && configuration.destination) {
-      const destination = configuration.destination as keyof typeof hotelsByDestination;
-      const hotels = hotelsByDestination[destination] || [];
-      const selectedHotel = hotels.find((h) => h.id === configuration.hotel);
-      if (selectedHotel) {
-        const duration = Number.parseInt(configuration.duration) || 7;
-        hotelPerNight = selectedHotel.pricePerNight * duration;
+    if (configuration.hotel) {
+      // Try webhook hotels first
+      const wh = webhookHotels.find((h) => h.id === configuration.hotel);
+      if (wh) {
+        hotelPerNight = wh.price * duration;
+      } else if (configuration.destination) {
+        const destination = configuration.destination as keyof typeof hotelsByDestination;
+        const hotels = hotelsByDestination[destination] || [];
+        const selectedHotel = hotels.find((h) => h.id === configuration.hotel);
+        if (selectedHotel) hotelPerNight = selectedHotel.pricePerNight * duration;
       }
     }
 
@@ -216,10 +213,26 @@ export default function ConfiguratorWizard({
       flightPrice = flightsPricing[destination]?.[configuration.flight] || 0;
     }
 
-    if (configuration.meals) {
-      const duration = Number.parseInt(configuration.duration) || 7;
-      const pricePerDay = mealsPricing[configuration.meals] || 0;
-      mealsPrice = pricePerDay * duration;
+    if (configuration.meals && configuration.hotel) {
+      const wh = webhookHotels.find((h) => h.id === configuration.hotel);
+      if (wh) {
+        // Find meal price from webhook hotel
+        const mealKeys: MealKey[] = ["bb", "hb", "fb", "ai"];
+        const mealLabelsMap: Record<string, MealKey> = { "Raňajky": "bb", "Polpenzia": "hb", "Plná penzia": "fb", "All inclusive": "ai" };
+        const mk = mealLabelsMap[configuration.meals];
+        if (mk) {
+          const pricePerDay = micros(wh[mealPriceKeys[mk]]);
+          mealsPrice = pricePerDay * duration;
+        }
+      } else {
+        const pricePerDay = mealsPricing[configuration.meals] || 0;
+        mealsPrice = pricePerDay * duration;
+      }
+    }
+
+    if (configuration.transfer) {
+      const wh = webhookHotels.find((h) => h.id === configuration.hotel);
+      transferCost = wh?.transferPrice ? micros(wh.transferPrice) : transferPrice;
     }
 
     const hotelCostPerPerson = hotelPerNight / 2;
@@ -331,6 +344,7 @@ export default function ConfiguratorWizard({
                   onConfigurationChange={onConfigurationChange}
                   validationErrors={validationErrors}
                   flightPricesByMonth={flightPricesByMonth}
+                  webhookHotels={webhookHotels}
                 />
               ) : (
                 <CurrentStep
@@ -405,7 +419,8 @@ export default function ConfiguratorWizard({
                           <div className="flex justify-between items-baseline">
                             <span className="text-xs text-muted-foreground">Hotel</span>
                             <span className="text-sm font-medium text-right max-w-[60%]">
-                              {hotelsByDestination[configuration.destination as keyof typeof hotelsByDestination]?.find(
+                              {webhookHotels.find((h) => h.id === configuration.hotel)?.title ||
+                                hotelsByDestination[configuration.destination as keyof typeof hotelsByDestination]?.find(
                                 (h) => h.id === configuration.hotel,
                               )?.name || "Nevybratý"}
                             </span>
@@ -516,7 +531,8 @@ export default function ConfiguratorWizard({
                   <div className="flex justify-between items-baseline">
                     <span className="text-xs text-muted-foreground">Hotel</span>
                     <span className="text-sm font-medium text-right max-w-[60%]">
-                      {hotelsByDestination[configuration.destination as keyof typeof hotelsByDestination]?.find(
+                      {webhookHotels.find((h) => h.id === configuration.hotel)?.title ||
+                        hotelsByDestination[configuration.destination as keyof typeof hotelsByDestination]?.find(
                         (h) => h.id === configuration.hotel,
                       )?.name || "Nevybratý"}
                     </span>

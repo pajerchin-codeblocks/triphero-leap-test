@@ -1,12 +1,14 @@
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { hotelsByDestination, mealsPricing, extraServicesPricing, transferPrice, flightsPricing } from "@/lib/hotels-database"
+import { hotelsByDestination, mealsPricing, extraServicesPricing, transferPrice as staticTransferPrice } from "@/lib/hotels-database"
+import { WebhookHotel, parseRatingStars, micros, MealKey, mealLabels, mealPriceKeys } from "@/lib/webhook-types"
 
 interface Step2AccommodationProps {
   configuration: any
   onConfigurationChange: (updates: any) => void
   validationErrors?: Record<string, boolean>
   flightPricesByMonth?: Array<{ month: string; minPrice: number }>
+  webhookHotels?: WebhookHotel[]
 }
 
 const renderStars = (count: number) => (
@@ -19,11 +21,16 @@ const renderStars = (count: number) => (
   </span>
 )
 
-export default function Step2Accommodation({ configuration, onConfigurationChange, validationErrors = {}, flightPricesByMonth = [] }: Step2AccommodationProps) {
+export default function Step2Accommodation({ configuration, onConfigurationChange, validationErrors = {}, flightPricesByMonth = [], webhookHotels = [] }: Step2AccommodationProps) {
   const [customExtra, setCustomExtra] = useState("")
 
   const handleChange = (key: string, value: any) => {
-    onConfigurationChange({ [key]: value })
+    // Reset meals when hotel changes (meal availability may differ)
+    if (key === "hotel") {
+      onConfigurationChange({ [key]: value, meals: undefined })
+    } else {
+      onConfigurationChange({ [key]: value })
+    }
   }
 
   const handleToggleExtra = (extra: string) => {
@@ -42,8 +49,41 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
     }
   }
 
+  // Use webhook hotels if available, otherwise fallback to static
+  const useWebhook = webhookHotels.length > 0
   const selectedDestination = configuration.destination as keyof typeof hotelsByDestination
-  const hotels = selectedDestination ? hotelsByDestination[selectedDestination] || [] : []
+  const fallbackHotels = selectedDestination ? hotelsByDestination[selectedDestination] || [] : []
+
+  // Find selected webhook hotel for dynamic meals/transfer
+  const selectedWebhookHotel = useWebhook
+    ? webhookHotels.find((h) => h.id === configuration.hotel)
+    : undefined
+
+  // Build available meals from selected webhook hotel
+  const getAvailableMeals = (): Array<{ key: string; label: string; price: number }> => {
+    if (selectedWebhookHotel) {
+      const meals: Array<{ key: string; label: string; price: number }> = []
+      const keys: MealKey[] = ["bb", "hb", "fb", "ai"]
+      for (const k of keys) {
+        if (selectedWebhookHotel[k]) {
+          const priceKey = mealPriceKeys[k]
+          const price = micros(selectedWebhookHotel[priceKey])
+          meals.push({ key: mealLabels[k], label: mealLabels[k], price })
+        }
+      }
+      return meals
+    }
+    // Fallback to static
+    return Object.entries(mealsPricing).map(([meal, price]) => ({ key: meal, label: meal, price }))
+  }
+
+  const availableMeals = getAvailableMeals()
+
+  // Transfer info from webhook hotel
+  const transferAvailable = selectedWebhookHotel ? selectedWebhookHotel.transfer : true
+  const transferCost = selectedWebhookHotel?.transferPrice
+    ? micros(selectedWebhookHotel.transferPrice)
+    : staticTransferPrice
 
   return (
     <div className="space-y-6">
@@ -56,11 +96,42 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
         <CardContent className="space-y-10 px-6 py-6">
           {/* Hotels */}
           <div>
-            <label className="block text-sm font-semibold text-foreground mb-4">Vyber hotel v {configuration.destination}</label>
-            {hotels.length > 0 ? (
+            <label className="block text-sm font-semibold text-foreground mb-4">
+              Vyber hotel {configuration.destination ? `v ${configuration.destination}` : ""}
+            </label>
+
+            {useWebhook ? (
               <>
                 <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${validationErrors.hotel ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}>
-                  {hotels.map((hotel) => (
+                  {webhookHotels.map((hotel) => (
+                    <button
+                      key={hotel.id}
+                      onClick={() => handleChange("hotel", hotel.id)}
+                      className={`text-left rounded-2xl overflow-hidden border-2 transition transform hover:shadow-lg ${
+                        configuration.hotel === hotel.id ? "border-primary ring-2 ring-primary" : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <div className="relative overflow-hidden bg-muted h-40">
+                        <img src={hotel.image} alt={hotel.title} className="w-full h-full object-cover hover:scale-105 transition" />
+                      </div>
+                      <div className="p-4 bg-card">
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="font-bold text-foreground text-sm">{hotel.title}</h3>
+                          <span className="text-xs font-bold">{renderStars(parseRatingStars(hotel.rating))}</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mb-1">{hotel.location}</p>
+                        <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{hotel.description}</p>
+                        <p className="text-sm font-semibold text-foreground">od {hotel.price}€ / noc</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+                {validationErrors.hotel && <p className="text-destructive text-xs mt-2">Toto je povinné pole</p>}
+              </>
+            ) : fallbackHotels.length > 0 ? (
+              <>
+                <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${validationErrors.hotel ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}>
+                  {fallbackHotels.map((hotel) => (
                     <button
                       key={hotel.id}
                       onClick={() => handleChange("hotel", hotel.id)}
@@ -89,28 +160,30 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
             )}
           </div>
 
-          {/* Meals */}
-          <div>
-            <label className="block text-sm font-semibold text-foreground mb-3">Strava</label>
-            <div className={`grid grid-cols-2 gap-3 ${validationErrors.meals ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}>
-              {Object.entries(mealsPricing).map(([meal, price]) => (
-                <button
-                  key={meal}
-                  onClick={() => handleChange("meals", meal)}
-                  className={`p-3 rounded-lg border-2 font-medium transition text-center ${
-                    configuration.meals === meal ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:border-primary/50"
-                  }`}
-                >
-                  <div>{meal}</div>
-                  <div className={`text-xs mt-1 ${configuration.meals === meal ? "text-primary-foreground/70" : "text-muted-foreground"}`}>od {price}€/deň</div>
-                </button>
-              ))}
+          {/* Meals — show after hotel selection */}
+          {configuration.hotel && availableMeals.length > 0 && (
+            <div>
+              <label className="block text-sm font-semibold text-foreground mb-3">Strava</label>
+              <div className={`grid grid-cols-2 gap-3 ${validationErrors.meals ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}>
+                {availableMeals.map(({ key, label, price }) => (
+                  <button
+                    key={key}
+                    onClick={() => handleChange("meals", key)}
+                    className={`p-3 rounded-lg border-2 font-medium transition text-center ${
+                      configuration.meals === key ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:border-primary/50"
+                    }`}
+                  >
+                    <div>{label}</div>
+                    <div className={`text-xs mt-1 ${configuration.meals === key ? "text-primary-foreground/70" : "text-muted-foreground"}`}>od {price}€/deň</div>
+                  </button>
+                ))}
+              </div>
+              {validationErrors.meals && <p className="text-destructive text-xs mt-2">Toto je povinné pole</p>}
             </div>
-            {validationErrors.meals && <p className="text-destructive text-xs mt-2">Toto je povinné pole</p>}
-          </div>
+          )}
 
           {/* Flight prices from webhook */}
-          {configuration.hotel && configuration.meals && flightPricesByMonth && flightPricesByMonth.length > 0 && (
+          {flightPricesByMonth && flightPricesByMonth.length > 0 && (
             <div className="space-y-3">
               <div>
                 <p className="text-sm font-semibold text-foreground mb-1">Odhadované ceny leteniek</p>
@@ -144,20 +217,22 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
           )}
 
           {/* Transfer */}
-          <div>
-            <label className="flex items-center gap-3 p-4 border border-border rounded-lg cursor-pointer hover:bg-muted transition">
-              <input
-                type="checkbox"
-                checked={configuration.transfer || false}
-                onChange={(e) => handleChange("transfer", e.target.checked)}
-                className="w-4 h-4 rounded border border-border cursor-pointer"
-              />
-              <div className="flex-1">
-                <span className="font-medium text-foreground">Transfer zabezpečený</span>
-                <p className="text-xs text-muted-foreground">od {transferPrice}€ na osobu</p>
-              </div>
-            </label>
-          </div>
+          {transferAvailable && (
+            <div>
+              <label className="flex items-center gap-3 p-4 border border-border rounded-lg cursor-pointer hover:bg-muted transition">
+                <input
+                  type="checkbox"
+                  checked={configuration.transfer || false}
+                  onChange={(e) => handleChange("transfer", e.target.checked)}
+                  className="w-4 h-4 rounded border border-border cursor-pointer"
+                />
+                <div className="flex-1">
+                  <span className="font-medium text-foreground">Transfer zabezpečený</span>
+                  <p className="text-xs text-muted-foreground">od {transferCost}€ na osobu</p>
+                </div>
+              </label>
+            </div>
+          )}
 
           {/* Extras */}
           <div>
