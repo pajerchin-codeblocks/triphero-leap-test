@@ -419,7 +419,8 @@ export default function ConfiguratorWizard({
                           <div className="flex justify-between items-baseline">
                             <span className="text-xs text-muted-foreground">Hotel</span>
                             <span className="text-sm font-medium text-right max-w-[60%]">
-                              {hotelsByDestination[configuration.destination as keyof typeof hotelsByDestination]?.find(
+                              {webhookHotels.find((h) => h.id === configuration.hotel)?.title ||
+                                hotelsByDestination[configuration.destination as keyof typeof hotelsByDestination]?.find(
                                 (h) => h.id === configuration.hotel,
                               )?.name || "Nevybratý"}
                             </span>
