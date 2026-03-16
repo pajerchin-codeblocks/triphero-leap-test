@@ -50,6 +50,38 @@ serve(async (req) => {
 
     const slug = generateSlug(configuration.destination || 'camp', configuration.trainerName)
 
+    // Mock data defaults based on campType
+    const campTypeDefaults: Record<string, { specialization: string; program: string }> = {
+      'Fit camp': {
+        specialization: 'Funkčný tréning, HIIT a kondičné cvičenia',
+        program: 'Ranný funkčný tréning, HIIT session, kondičné cvičenia, stretching a regenerácia',
+      },
+      'Yoga retreat': {
+        specialization: 'Joga, meditácia a dychové cvičenia',
+        program: 'Ranná meditácia, vinyasa joga, dychové cvičenia, večerná restoratívna joga',
+      },
+      'Lifestyle': {
+        specialization: 'Wellness, výživa a zdravý životný štýl',
+        program: 'Ranný tréning, wellness workshop, výživové poradenstvo, relaxačné aktivity',
+      },
+      'Komunitný pobyt': {
+        specialization: 'Skupinové aktivity a team building',
+        program: 'Skupinový tréning, team building aktivity, spoločné výlety a večerný program',
+      },
+    }
+
+    const defaults = campTypeDefaults[configuration.campType] || {
+      specialization: 'Fitness a wellness',
+      program: 'Ranný tréning, hlavný tréningový blok, popoludňajšie aktivity a večerná regenerácia',
+    }
+
+    const trainerExperience = configuration.trainerExperience || '5+ rokov'
+    const trainerSpecialization = configuration.trainerSpecialization || defaults.specialization
+    const trainerCertificates = configuration.trainerCertificates || 'Certifikovaný osobný tréner'
+    const trainerBio = configuration.trainerBio || `${configuration.trainerName} je skúsený tréner so zameraním na ${trainerSpecialization.toLowerCase()}. Pomáha klientom dosahovať ich fitness ciele v inšpiratívnom prostredí.`
+    const dailyProgram = configuration.dailyProgram || defaults.program
+    const pricePerPerson = configuration.estimatedPrice || 599
+
     const prompt = `Si expertný copywriter pre fitness a wellness retreat campy. Vytvor kompletný konverzný landing page obsah v slovenčine na základe týchto údajov:
 
 Destinácia: ${configuration.destination || 'neuvedená'}
@@ -60,16 +92,19 @@ Typ campu: ${configuration.campType || 'neuvedený'}
 Strava: ${configuration.meals || 'neuvedená'}
 Transfer: ${configuration.transfer ? 'Áno' : 'Nie'}
 Extra služby: ${(configuration.extras || []).join(', ') || 'žiadne'}
-Budget na osobu: ${configuration.budgetPerPerson || 600}€
+Špeciálne aktivity: ${(configuration.specialActivities || []).join(', ') || 'žiadne'}
+Budget na osobu: ${pricePerPerson}€
+Hotel: ${configuration.hotelTitle || 'neuvedený'}
+Lokalita hotela: ${configuration.hotelLocation || 'neuvedená'}
 
 Tréner:
 - Meno: ${configuration.trainerName}
-- Skúsenosti: ${configuration.trainerExperience || 'neuvedené'}
-- Špecializácia: ${configuration.trainerSpecialization || 'neuvedená'}
-- Certifikáty: ${configuration.trainerCertificates || 'neuvedené'}
-- Bio/Príbeh: ${configuration.trainerBio || 'neuvedený'}
+- Skúsenosti: ${trainerExperience}
+- Špecializácia: ${trainerSpecialization}
+- Certifikáty: ${trainerCertificates}
+- Bio/Príbeh: ${trainerBio}
 
-Program campu (ak je zadaný): ${configuration.programDescription || 'neuvedený'}
+Program campu (ak je zadaný): ${dailyProgram}
 
 Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto presnou štruktúrou:
 {
@@ -123,7 +158,7 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
   },
   "investmentBreakdown": {
     "headline": "investícia do seba",
-    "pricePerPerson": "od ${configuration.budgetPerPerson || 600}€",
+    "pricePerPerson": "od ${pricePerPerson}€",
     "priceFrame": "cena za osobu / ${configuration.duration || '7 dní'}",
     "whatYouGet": ["položka1", "položka2", "položka3", "položka4", "položka5"],
     "notIncluded": ["položka1", "položka2"],
