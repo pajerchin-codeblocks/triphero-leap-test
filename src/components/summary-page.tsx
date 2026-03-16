@@ -93,9 +93,6 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
 
         <div className="flex gap-4">
           <Button onClick={onEdit} variant="outline">← Upraviť</Button>
-          <Button onClick={onChat} className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground flex-1">
-            Pokračovať na AI Chat
-          </Button>
         </div>
       </div>
     </div>
