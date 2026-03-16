@@ -22,10 +22,18 @@ import Navbar from "@/components/navbar"
 import { supabase } from "@/integrations/supabase/client"
 import { motion } from "framer-motion"
 
+const ILLUSTRATIVE_TRAINER_FEMALE = "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&h=600&fit=crop&crop=face"
+const ILLUSTRATIVE_TRAINER_MALE = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=600&fit=crop&crop=face"
+
 interface CampPreviewData {
   success: boolean
   sessionId: string
   slug: string
+  hotelImages?: {
+    hero: string
+    title: string
+    location: string
+  }
   hero: {
     headline: string
     subheadline: string
@@ -223,8 +231,8 @@ export default function Preview() {
       ═══════════════════════════════════════════ */}
       <section className="relative min-h-[90vh] flex items-end overflow-hidden">
         <img
-          src="/luxury-beach-resort-sunset-aerial-view.jpg"
-          alt={campData.luxuryExperience?.hotelName || "Resort"}
+          src={campData.hotelImages?.hero || "/luxury-beach-resort-sunset-aerial-view.jpg"}
+          alt={campData.hotelImages?.title || campData.luxuryExperience?.hotelName || "Resort"}
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--primary))] via-[hsl(var(--primary)/0.5)] to-transparent" />
@@ -253,7 +261,7 @@ export default function Preview() {
               <motion.div variants={fadeUp} className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-accent/20 backdrop-blur-sm border-2 border-accent/40 overflow-hidden">
                   <img
-                    src={trainerIsFemale ? "/female-fitness-trainer-professional-portrait.jpg" : "/male-fitness-trainer-professional-portrait.jpg"}
+                    src={trainerIsFemale ? ILLUSTRATIVE_TRAINER_FEMALE : ILLUSTRATIVE_TRAINER_MALE}
                     alt={campData.trainerProfile.name}
                     className="w-full h-full object-cover"
                   />
@@ -381,7 +389,7 @@ export default function Preview() {
                 <div className="flex-shrink-0 relative">
                   <div className="w-64 h-80 md:w-72 md:h-96 rounded-2xl overflow-hidden shadow-elevated ring-4 ring-accent/20">
                     <img
-                      src={trainerIsFemale ? "/female-fitness-trainer-professional-portrait.jpg" : "/male-fitness-trainer-professional-portrait.jpg"}
+                      src={trainerIsFemale ? ILLUSTRATIVE_TRAINER_FEMALE : ILLUSTRATIVE_TRAINER_MALE}
                       alt={campData.trainerProfile.name}
                       className="w-full h-full object-cover"
                     />
@@ -581,17 +589,23 @@ export default function Preview() {
                 </p>
               </motion.div>
 
-              <motion.div variants={fadeUp} className="grid grid-cols-3 gap-3 mb-12 h-64 md:h-80">
-                <div className="rounded-2xl overflow-hidden">
-                  <img src="/luxury-resort-pool-area-aerial.jpg" alt="Pool" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-                </div>
-                <div className="rounded-2xl overflow-hidden">
-                  <img src="/luxury-resort-beach-view.jpg" alt="Beach" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-                </div>
-                <div className="rounded-2xl overflow-hidden">
-                  <img src="/luxury-beach-resort-sunset-aerial-view.jpg" alt="Aerial" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-                </div>
-              </motion.div>
+              {campData.hotelImages?.hero ? (
+                <motion.div variants={fadeUp} className="rounded-2xl overflow-hidden mb-12 h-64 md:h-80">
+                  <img src={campData.hotelImages.hero} alt={campData.hotelImages.title || "Hotel"} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                </motion.div>
+              ) : (
+                <motion.div variants={fadeUp} className="grid grid-cols-3 gap-3 mb-12 h-64 md:h-80">
+                  <div className="rounded-2xl overflow-hidden">
+                    <img src="/luxury-resort-pool-area-aerial.jpg" alt="Pool" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                  </div>
+                  <div className="rounded-2xl overflow-hidden">
+                    <img src="/luxury-resort-beach-view.jpg" alt="Beach" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                  </div>
+                  <div className="rounded-2xl overflow-hidden">
+                    <img src="/luxury-beach-resort-sunset-aerial-view.jpg" alt="Aerial" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                  </div>
+                </motion.div>
+              )}
 
               <motion.div variants={fadeUp} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {campData.luxuryExperience.amenities?.map((amenity, idx) => (

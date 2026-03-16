@@ -200,12 +200,17 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
       )
     }
 
-    // Add metadata
+    // Add metadata + hotel images from webhook
     const fullPreviewData = {
       success: true,
       sessionId: crypto.randomUUID(),
       slug,
       ...previewData,
+      hotelImages: {
+        hero: configuration.hotelImage || '',
+        title: configuration.hotelTitle || '',
+        location: configuration.hotelLocation || '',
+      },
     }
 
     // Save to database
