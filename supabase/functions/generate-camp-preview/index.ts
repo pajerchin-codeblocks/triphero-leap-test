@@ -249,6 +249,9 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
         hero: configuration.hotelImage || '',
         title: configuration.hotelTitle || '',
         location: configuration.hotelLocation || '',
+        description: configuration.hotelDescription || '',
+        stars: configuration.hotelStars || 0,
+        pricePerNight: configuration.hotelPrice || 0,
       },
     }
 
