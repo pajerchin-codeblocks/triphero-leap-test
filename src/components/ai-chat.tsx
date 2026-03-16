@@ -23,12 +23,42 @@ function parseResponse(data: unknown): string | null {
   return obj?.output ?? obj?.response ?? null
 }
 
+function extractPreviewData(data: unknown): { slug: string; previewData: unknown } | null {
+  let parsed = data
+  if (Array.isArray(parsed) && parsed.length > 0) {
+    parsed = parsed[0]
+  }
+  const obj = parsed as Record<string, unknown>
+  if (obj?.slug && typeof obj.slug === 'string') {
+    return { slug: obj.slug, previewData: obj }
+  }
+  return null
+}
+
+async function savePreviewToDB(slug: string, previewData: unknown, trainerName: string) {
+  try {
+    const { error } = await supabase.functions.invoke("preview-access", {
+      body: { action: "save", slug, previewData, trainerName },
+    })
+    if (error) {
+      console.error("[TripHERO] Failed to save preview to DB:", error)
+    } else {
+      console.log("[TripHERO] Preview saved to DB:", slug)
+    }
+  } catch (err) {
+    console.error("[TripHERO] Error saving preview:", err)
+  }
+}
+
 export default function AIChat({ tripData, onBack }: AIChatProps) {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [previewSlug, setPreviewSlug] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  const trainerName = (tripData.trainerName as string) || ""
 
   useEffect(() => {
     const fetchWelcomeMessage = async () => {
@@ -43,6 +73,13 @@ export default function AIChat({ tripData, onBack }: AIChatProps) {
           setChatHistory([{ role: "assistant", content }])
         } else {
           throw new Error("No message content in response")
+        }
+
+        // Check if response contains preview data with slug
+        const preview = extractPreviewData(data)
+        if (preview && trainerName) {
+          setPreviewSlug(preview.slug)
+          savePreviewToDB(preview.slug, preview.previewData, trainerName)
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Nepodarilo sa načítať uvítaciu správu")
@@ -78,12 +115,21 @@ export default function AIChat({ tripData, onBack }: AIChatProps) {
       } else {
         throw new Error("No response from assistant")
       }
+
+      // Check if response contains preview data with slug
+      const preview = extractPreviewData(data)
+      if (preview && trainerName) {
+        setPreviewSlug(preview.slug)
+        savePreviewToDB(preview.slug, preview.previewData, trainerName)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Nastala chyba pri komunikácii")
     } finally {
       setIsLoading(false)
     }
   }
+
+  const previewUrl = previewSlug ? `${window.location.origin}/preview/${previewSlug}` : null
 
   return (
     <div className="min-h-screen bg-background py-8 px-4">
@@ -161,15 +207,44 @@ export default function AIChat({ tripData, onBack }: AIChatProps) {
         </div>
 
         <div className="lg:col-span-1">
-          <div className="sticky top-8">
-            <h3 className="text-lg font-semibold text-foreground mb-4">Konfigurácia JSON</h3>
-            <Card>
-              <CardContent className="p-4 bg-card border-border overflow-x-auto max-h-[600px] overflow-y-auto">
-                <pre className="text-xs text-card-foreground font-mono whitespace-pre-wrap break-words">
-                  {JSON.stringify(tripData, null, 2)}
-                </pre>
-              </CardContent>
-            </Card>
+          <div className="sticky top-8 space-y-6">
+            {previewUrl && (
+              <Card className="border-2 border-accent">
+                <CardContent className="p-4">
+                  <h3 className="text-lg font-semibold text-foreground mb-2">🔗 Odkaz na preview</h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Tréner sa prihlási svojím menom: <strong>{trainerName}</strong>
+                  </p>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={previewUrl}
+                      className="flex-1 px-3 py-2 text-xs border border-border rounded-lg bg-muted text-foreground"
+                    />
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="bg-transparent"
+                      onClick={() => navigator.clipboard.writeText(previewUrl)}
+                    >
+                      Kopírovať
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            <div>
+              <h3 className="text-lg font-semibold text-foreground mb-4">Konfigurácia JSON</h3>
+              <Card>
+                <CardContent className="p-4 bg-card border-border overflow-x-auto max-h-[600px] overflow-y-auto">
+                  <pre className="text-xs text-card-foreground font-mono whitespace-pre-wrap break-words">
+                    {JSON.stringify(tripData, null, 2)}
+                  </pre>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </div>
