@@ -95,7 +95,11 @@ Extra služby: ${(configuration.extras || []).join(', ') || 'žiadne'}
 Špeciálne aktivity: ${Array.isArray(configuration.specialActivities) ? configuration.specialActivities.join(', ') : (configuration.specialActivities || 'žiadne')}
 Budget na osobu: ${pricePerPerson}€
 Hotel: ${configuration.hotelTitle || 'neuvedený'}
+Popis hotela: ${configuration.hotelDescription || 'neuvedený'}
 Lokalita hotela: ${configuration.hotelLocation || 'neuvedená'}
+Trieda hotela: ${configuration.hotelStars || 'neuvedená'} hviezdičiek
+Cena hotela za noc: ${configuration.hotelPrice || 'neuvedená'}€
+Dostupná strava: ${configuration.hotelMealOptions || 'neuvedená'}
 
 Tréner:
 - Meno: ${configuration.trainerName}
@@ -245,6 +249,9 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
         hero: configuration.hotelImage || '',
         title: configuration.hotelTitle || '',
         location: configuration.hotelLocation || '',
+        description: configuration.hotelDescription || '',
+        stars: configuration.hotelStars || 0,
+        pricePerNight: configuration.hotelPrice || 0,
       },
     }
 

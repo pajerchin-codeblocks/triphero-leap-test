@@ -33,6 +33,12 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
         ? (hotelsByDestination[configuration.destination as keyof typeof hotelsByDestination] || [])
         : []
       const staticHotel = staticHotels.find((h) => h.id === value)
+      // Build available meal labels for this hotel
+      const mealKeys: Array<"bb" | "hb" | "fb" | "ai"> = ["bb", "hb", "fb", "ai"]
+      const hotelMealOptions = wh
+        ? mealKeys.filter((k) => wh[k]).map((k) => mealLabels[k]).join(", ")
+        : ""
+
       onConfigurationChange({
         [key]: value,
         meals: undefined,
@@ -40,6 +46,12 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
         hotelTitle: wh?.title || staticHotel?.name || "",
         hotelLocation: wh?.location || "",
         hotelStars: wh ? parseRatingStars(wh.rating) : (staticHotel?.stars || 0),
+        hotelDescription: wh?.description || staticHotel?.description || "",
+        hotelPrice: wh?.price || staticHotel?.pricePerNight || 0,
+        hotelRating: wh?.rating || "",
+        hotelTransfer: wh ? wh.transfer : false,
+        hotelTransferPrice: wh?.transferPrice ? micros(wh.transferPrice) : 0,
+        hotelMealOptions,
       })
     } else {
       onConfigurationChange({ [key]: value })
