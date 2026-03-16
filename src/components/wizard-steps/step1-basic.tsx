@@ -213,7 +213,7 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-foreground mb-3">Dĺžka pobytu</label>
+            <label className="block text-sm font-semibold text-foreground mb-3">Dĺžka pobytu <span className="text-destructive">*</span></label>
             <div className={`grid grid-cols-2 sm:grid-cols-4 gap-3 ${validationErrors.duration ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}>
               {["4 dni", "5 dní", "6 dní"].map((duration) => (
                 <button
