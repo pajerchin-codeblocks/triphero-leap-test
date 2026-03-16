@@ -76,6 +76,7 @@ export default function ConfiguratorWizard({
     try {
       const webhookData = {
         destination: destinationToCountryCode[configuration.destination] || configuration.destination,
+        destinationName: configuration.destination,
         months: convertMonthsToWebhookFormat(configuration.months || []),
         duration: Number.parseInt(configuration.duration) || 0,
         participants: configuration.participants || "",
