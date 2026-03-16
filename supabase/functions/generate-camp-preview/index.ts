@@ -158,7 +158,7 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
   },
   "investmentBreakdown": {
     "headline": "investícia do seba",
-    "pricePerPerson": "od ${configuration.budgetPerPerson || 600}€",
+    "pricePerPerson": "od ${pricePerPerson}€",
     "priceFrame": "cena za osobu / ${configuration.duration || '7 dní'}",
     "whatYouGet": ["položka1", "položka2", "položka3", "položka4", "položka5"],
     "notIncluded": ["položka1", "položka2"],
