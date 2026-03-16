@@ -28,56 +28,20 @@ const additionalDestinations = [
   { id: "Japonsko", label: "Japonsko", image: "/destinations/japan.jpg" },
 ]
 
-const monthsByDestination: Record<string, { month: string; number: number; label: string }[]> = {
-  Turecko: [
-    { month: "Apríl", number: 4, label: "Apr" },
-    { month: "Máj", number: 5, label: "Máj" },
-    { month: "Jún", number: 6, label: "Jún" },
-    { month: "Júl", number: 7, label: "Júl" },
-    { month: "August", number: 8, label: "Aug" },
-    { month: "September", number: 9, label: "Sep" },
-    { month: "Október", number: 10, label: "Okt" },
-    { month: "November", number: 11, label: "Nov" },
-  ],
-  Grécko: [
-    { month: "Apríl", number: 4, label: "Apr" },
-    { month: "Máj", number: 5, label: "Máj" },
-    { month: "Jún", number: 6, label: "Jún" },
-    { month: "Júl", number: 7, label: "Júl" },
-    { month: "August", number: 8, label: "Aug" },
-    { month: "September", number: 9, label: "Sep" },
-    { month: "Október", number: 10, label: "Okt" },
-  ],
-  Egypt: [
-    { month: "Október", number: 10, label: "Okt" },
-    { month: "November", number: 11, label: "Nov" },
-    { month: "December", number: 12, label: "Dec" },
-    { month: "Január", number: 1, label: "Jan" },
-    { month: "Február", number: 2, label: "Feb" },
-    { month: "Marec", number: 3, label: "Mar" },
-    { month: "Apríl", number: 4, label: "Apr" },
-  ],
-  Portugalsko: [
-    { month: "Február", number: 2, label: "Feb" },
-    { month: "Marec", number: 3, label: "Mar" },
-    { month: "Apríl", number: 4, label: "Apr" },
-    { month: "Máj", number: 5, label: "Máj" },
-    { month: "Jún", number: 6, label: "Jún" },
-    { month: "Júl", number: 7, label: "Júl" },
-    { month: "August", number: 8, label: "Aug" },
-    { month: "September", number: 9, label: "Sep" },
-    { month: "Október", number: 10, label: "Okt" },
-    { month: "November", number: 11, label: "Nov" },
-  ],
-  Bali: [
-    { month: "Apríl", number: 4, label: "Apr" },
-    { month: "Máj", number: 5, label: "Máj" },
-    { month: "Jún", number: 6, label: "Jún" },
-    { month: "Júl", number: 7, label: "Júl" },
-    { month: "August", number: 8, label: "Aug" },
-    { month: "September", number: 9, label: "Sep" },
-  ],
-}
+const allMonths = [
+  { month: "Január", number: 1, label: "Jan" },
+  { month: "Február", number: 2, label: "Feb" },
+  { month: "Marec", number: 3, label: "Mar" },
+  { month: "Apríl", number: 4, label: "Apr" },
+  { month: "Máj", number: 5, label: "Máj" },
+  { month: "Jún", number: 6, label: "Jún" },
+  { month: "Júl", number: 7, label: "Júl" },
+  { month: "August", number: 8, label: "Aug" },
+  { month: "September", number: 9, label: "Sep" },
+  { month: "Október", number: 10, label: "Okt" },
+  { month: "November", number: 11, label: "Nov" },
+  { month: "December", number: 12, label: "Dec" },
+]
 
 const campTypeOptions = ["Fit camp", "Yoga retreat", "Lifestyle", "Komunitný pobyt", "Iné"]
 
@@ -134,7 +98,7 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
     setShowMoreDestinations(false)
   }
 
-  const availableMonths = monthsByDestination[configuration.destination] || monthsByDestination["Bali"]
+  const availableMonths = allMonths
   const selectedMonths = Array.isArray(configuration.months) ? configuration.months : []
 
   return (
@@ -244,9 +208,7 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
                 </button>
               ))}
             </div>
-            {configuration.destination && (
-              <p className="text-xs text-muted-foreground mt-2">✓ Odporúčané mesiace pre {configuration.destination}</p>
-            )}
+            {validationErrors.months && <p className="text-destructive text-xs mt-2">Toto je povinné pole</p>}
             {validationErrors.months && <p className="text-destructive text-xs mt-2">Toto je povinné pole</p>}
           </div>
 
@@ -333,7 +295,10 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
                   {campTypeOptions.map((type) => (
                     <button
                       key={type}
-                      onClick={() => handleSelectCampType(type)}
+                      onMouseDown={(e) => {
+                        e.preventDefault()
+                        handleSelectCampType(type)
+                      }}
                       className="w-full px-4 py-2 text-left hover:bg-muted transition first:rounded-t-lg last:rounded-b-lg"
                     >
                       {type}
