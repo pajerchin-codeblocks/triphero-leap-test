@@ -14,7 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      camp_previews: {
+        Row: {
+          access_code: string
+          created_at: string | null
+          id: string
+          preview_data: Json
+          slug: string
+          trainer_name: string
+        }
+        Insert: {
+          access_code: string
+          created_at?: string | null
+          id?: string
+          preview_data: Json
+          slug: string
+          trainer_name: string
+        }
+        Update: {
+          access_code?: string
+          created_at?: string | null
+          id?: string
+          preview_data?: Json
+          slug?: string
+          trainer_name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
