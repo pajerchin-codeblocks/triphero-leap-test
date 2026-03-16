@@ -5,10 +5,9 @@ import { hotelsByDestination } from "@/lib/hotels-database"
 interface SummaryPageProps {
   configuration: any
   onEdit: () => void
-  onChat: () => void
 }
 
-export default function SummaryPage({ configuration, onEdit, onChat }: SummaryPageProps) {
+export default function SummaryPage({ configuration, onEdit }: SummaryPageProps) {
   const formatList = (arr: string[]) => arr && arr.length > 0 ? arr.join(", ") : "—"
 
   const getHotelDetails = () => {
@@ -94,9 +93,6 @@ export default function SummaryPage({ configuration, onEdit, onChat }: SummaryPa
 
         <div className="flex gap-4">
           <Button onClick={onEdit} variant="outline">← Upraviť</Button>
-          <Button onClick={onChat} className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground flex-1">
-            Pokračovať na AI Chat
-          </Button>
         </div>
       </div>
     </div>
