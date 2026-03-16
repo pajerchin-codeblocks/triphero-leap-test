@@ -1,6 +1,10 @@
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { hotelsByDestination } from "@/lib/hotels-database"
+import { supabase } from "@/integrations/supabase/client"
+import { Sparkles, Copy, ExternalLink, Loader2 } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 interface SummaryPageProps {
   configuration: any
@@ -8,6 +12,11 @@ interface SummaryPageProps {
 }
 
 export default function SummaryPage({ configuration, onEdit }: SummaryPageProps) {
+  const [generating, setGenerating] = useState(false)
+  const [previewLink, setPreviewLink] = useState<string | null>(null)
+  const [trainerNameForAccess, setTrainerNameForAccess] = useState<string | null>(null)
+  const { toast } = useToast()
+
   const formatList = (arr: string[]) => arr && arr.length > 0 ? arr.join(", ") : "—"
 
   const getHotelDetails = () => {
@@ -37,12 +46,58 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
   const displayTrainerReward = Number.parseInt(configuration.trainerReward ?? "50") || 50
   const earningsRange = calculateEarningsRange()
 
+  const handleGeneratePreview = async () => {
+    if (!configuration.trainerName) {
+      toast({
+        title: "Chýba meno trénera",
+        description: "Vráťte sa späť a vyplňte meno trénera v kroku 4.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setGenerating(true)
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-camp-preview', {
+        body: { configuration },
+      })
+
+      if (error) throw error
+      if (!data?.success) throw new Error(data?.error || 'Generovanie zlyhalo')
+
+      const link = `${window.location.origin}/preview/${data.slug}`
+      setPreviewLink(link)
+      setTrainerNameForAccess(data.trainerName)
+
+      toast({
+        title: "Preview vygenerovaný! 🎉",
+        description: "Zdieľajte odkaz s potenciálnymi účastníkmi.",
+      })
+    } catch (err: any) {
+      console.error('Generate preview error:', err)
+      toast({
+        title: "Chyba pri generovaní",
+        description: err.message || "Skúste to znova neskôr.",
+        variant: "destructive",
+      })
+    } finally {
+      setGenerating(false)
+    }
+  }
+
+  const copyLink = () => {
+    if (previewLink) {
+      navigator.clipboard.writeText(previewLink)
+      toast({ title: "Odkaz skopírovaný!" })
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Súhrn vášho campu</h1>
-          <p className="text-muted-foreground">Skontrolujte detaily pred pokračovaním</p>
+          <p className="text-muted-foreground">Skontrolujte detaily a vygenerujte preview stránku</p>
         </div>
 
         <div className="flex flex-col gap-6 mb-8">
@@ -91,8 +146,48 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
           </div>
         </div>
 
+        {/* Preview link result */}
+        {previewLink && (
+          <Card className="mb-8 border-2 border-primary/30 bg-primary/5">
+            <CardContent className="px-6 py-6">
+              <h3 className="font-semibold text-foreground mb-2">✅ Preview stránka je pripravená!</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Prístupový kód je meno trénera: <span className="font-semibold text-foreground">{trainerNameForAccess}</span>
+              </p>
+              <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
+                <span className="text-sm text-foreground truncate flex-1">{previewLink}</span>
+                <Button size="sm" variant="ghost" onClick={copyLink}>
+                  <Copy className="h-4 w-4" />
+                </Button>
+                <Button size="sm" variant="ghost" asChild>
+                  <a href={previewLink} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <div className="flex gap-4">
           <Button onClick={onEdit} variant="outline">← Upraviť</Button>
+          <Button
+            onClick={handleGeneratePreview}
+            disabled={generating}
+            className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground"
+          >
+            {generating ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Generujem preview...
+              </>
+            ) : (
+              <>
+                <Sparkles className="h-4 w-4" />
+                {previewLink ? "Vygenerovať znova" : "Vygenerovať preview"}
+              </>
+            )}
+          </Button>
         </div>
       </div>
     </div>
