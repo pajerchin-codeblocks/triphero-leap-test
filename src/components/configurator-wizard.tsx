@@ -65,7 +65,7 @@ export default function ConfiguratorWizard({
       const hasMealOptions = wh ? (wh.bb || wh.hb || wh.fb || wh.ai) : true;
       if (hasMealOptions && !configuration.meals) errors.push("meals");
       // Only require flight if flight data is available
-      if (flightPricesByMonth.length > 0 && !configuration.selectedFlight && !configuration.flight) errors.push("flight");
+      // Flight selection is optional — don't block progression
     } else if (step === 3) {
       if (!configuration.trainerName || configuration.trainerName.trim() === "") errors.push("trainerName");
       if (!configuration.trainerExperience || configuration.trainerExperience.trim() === "")
