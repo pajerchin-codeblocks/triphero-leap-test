@@ -231,8 +231,8 @@ export default function Preview() {
       ═══════════════════════════════════════════ */}
       <section className="relative min-h-[90vh] flex items-end overflow-hidden">
         <img
-          src="/luxury-beach-resort-sunset-aerial-view.jpg"
-          alt={campData.luxuryExperience?.hotelName || "Resort"}
+          src={campData.hotelImages?.hero || "/luxury-beach-resort-sunset-aerial-view.jpg"}
+          alt={campData.hotelImages?.title || campData.luxuryExperience?.hotelName || "Resort"}
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--primary))] via-[hsl(var(--primary)/0.5)] to-transparent" />
