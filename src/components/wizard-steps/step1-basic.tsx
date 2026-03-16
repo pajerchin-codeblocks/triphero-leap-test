@@ -112,7 +112,7 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
         <CardContent className="space-y-10 px-6 py-6">
           {/* Destination */}
           <div>
-            <label className="block text-sm font-semibold text-foreground mb-4">Destinácia</label>
+            <label className="block text-sm font-semibold text-foreground mb-4">Destinácia <span className="text-destructive">*</span></label>
             <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 ${validationErrors.destination ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}>
               {mainDestinations.map((dest) => (
                 <button
