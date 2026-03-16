@@ -295,7 +295,10 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
                   {campTypeOptions.map((type) => (
                     <button
                       key={type}
-                      onClick={() => handleSelectCampType(type)}
+                      onMouseDown={(e) => {
+                        e.preventDefault()
+                        handleSelectCampType(type)
+                      }}
                       className="w-full px-4 py-2 text-left hover:bg-muted transition first:rounded-t-lg last:rounded-b-lg"
                     >
                       {type}

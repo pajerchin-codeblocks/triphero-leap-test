@@ -143,6 +143,8 @@ export default function ConfiguratorWizard({
       setCurrentStep(currentStep + 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
+      // Store calculated price before completing
+      onConfigurationChange({ estimatedPrice: calculateEstimatedPrice() });
       onComplete();
     }
   };
