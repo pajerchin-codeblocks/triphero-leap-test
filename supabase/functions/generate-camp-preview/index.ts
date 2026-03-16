@@ -95,7 +95,11 @@ Extra služby: ${(configuration.extras || []).join(', ') || 'žiadne'}
 Špeciálne aktivity: ${Array.isArray(configuration.specialActivities) ? configuration.specialActivities.join(', ') : (configuration.specialActivities || 'žiadne')}
 Budget na osobu: ${pricePerPerson}€
 Hotel: ${configuration.hotelTitle || 'neuvedený'}
+Popis hotela: ${configuration.hotelDescription || 'neuvedený'}
 Lokalita hotela: ${configuration.hotelLocation || 'neuvedená'}
+Trieda hotela: ${configuration.hotelStars || 'neuvedená'} hviezdičiek
+Cena hotela za noc: ${configuration.hotelPrice || 'neuvedená'}€
+Dostupná strava: ${configuration.hotelMealOptions || 'neuvedená'}
 
 Tréner:
 - Meno: ${configuration.trainerName}
