@@ -415,7 +415,15 @@ export default function ConfiguratorWizard({
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              {currentStep === 1 ? (
+              {currentStep === 0 ? (
+                <Step1Basic
+                  configuration={configuration}
+                  onConfigurationChange={onConfigurationChange}
+                  validationErrors={validationErrors}
+                  availableDestinations={availableDestinations}
+                  destinationsLoading={destinationsLoading}
+                />
+              ) : currentStep === 1 ? (
                 <Step2Accommodation
                   configuration={configuration}
                   onConfigurationChange={onConfigurationChange}
