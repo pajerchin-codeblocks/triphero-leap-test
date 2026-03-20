@@ -64,6 +64,17 @@ export default function ConfiguratorWizard({
     CR: "/destinations/costarica.jpg", AU: "/destinations/australia.jpg", JP: "/destinations/japan.jpg",
   };
 
+  const nameToImage: Record<string, string> = {
+    "Turecko": "/destinations/turkey.jpg", "Grécko": "/destinations/greece.jpg",
+    "Egypt": "/destinations/egypt.jpg", "Portugalsko": "/destinations/portugal.jpg",
+    "Bali": "/destinations/bali.jpg", "Španielsko": "/destinations/spanish.jpg",
+    "Taliansko": "/destinations/italy.jpg", "Francúzsko": "/destinations/france.jpg",
+    "Maroko": "/destinations/morocco.jpg", "Thajsko": "/destinations/thailand.jpg",
+    "Vietnam": "/destinations/vietnam.jpg", "Mexiko": "/destinations/mexico.jpg",
+    "Kostarika": "/destinations/costarica.jpg", "Austrália": "/destinations/australia.jpg",
+    "Japonsko": "/destinations/japan.jpg",
+  };
+
   useEffect(() => {
     const fetchDestinations = async () => {
       try {
@@ -86,10 +97,14 @@ export default function ConfiguratorWizard({
         }
 
         const mapped = items.map((item: any) => {
+          if (typeof item === "string") {
+            // Webhook returns plain string names like "Turecko", "Bali"
+            return { id: item, label: item, image: nameToImage[item] || `/destinations/${item.toLowerCase()}.jpg` };
+          }
           // Support {id, name, image}, {code, name}, {countryCode, label}, etc.
           const code = item.code || item.countryCode || item.id || "";
           const name = item.name || item.label || item.destinationName || countryCodeToName[code] || code;
-          const image = item.image || countryCodeToImage[code] || `/destinations/${name.toLowerCase()}.jpg`;
+          const image = item.image || countryCodeToImage[code] || nameToImage[name] || `/destinations/${name.toLowerCase()}.jpg`;
           const id = countryCodeToName[code] || name;
           return { id, label: id, image };
         });
