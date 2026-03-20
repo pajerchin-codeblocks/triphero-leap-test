@@ -34,6 +34,7 @@ const allMonths = [
 const campTypeOptions = ["Fit camp", "Yoga retreat", "Lifestyle", "Komunitný pobyt", "Iné"]
 
 export default function Step1Basic({ configuration, onConfigurationChange, validationErrors = {}, availableDestinations, destinationsLoading }: Step1BasicProps) {
+  const [showMoreDestinations, setShowMoreDestinations] = useState(false)
   const [showCustomDuration, setShowCustomDuration] = useState(false)
   const [customDuration, setCustomDuration] = useState(configuration.duration || "")
   const [campTypeInput, setCampTypeInput] = useState(configuration.campType || "")
