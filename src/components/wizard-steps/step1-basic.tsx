@@ -34,6 +34,7 @@ const allMonths = [
 const campTypeOptions = ["Fit camp", "Yoga retreat", "Lifestyle", "Komunitný pobyt", "Iné"]
 
 export default function Step1Basic({ configuration, onConfigurationChange, validationErrors = {}, availableDestinations, destinationsLoading }: Step1BasicProps) {
+  const [showMoreDestinations, setShowMoreDestinations] = useState(false)
   const [showCustomDuration, setShowCustomDuration] = useState(false)
   const [customDuration, setCustomDuration] = useState(configuration.duration || "")
   const [campTypeInput, setCampTypeInput] = useState(configuration.campType || "")
@@ -97,28 +98,75 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
                 Momentálne nie sú dostupné žiadne destinácie. Skúste to neskôr.
               </div>
             ) : (
-              <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 ${validationErrors.destination ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}>
-                {availableDestinations.map((dest) => (
-                  <button
-                    key={dest.id}
-                    onClick={() => {
-                      handleChange("destination", dest.id)
-                      onConfigurationChange({ months: [] })
-                    }}
-                    className={`relative rounded-2xl overflow-hidden border-2 transition transform hover:scale-105 h-28 ${
-                      configuration.destination === dest.id
-                        ? "border-primary ring-2 ring-primary"
-                        : "border-border hover:border-primary/50"
-                    }`}
-                  >
-                    <img src={dest.image} alt={dest.label} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black/30 hover:bg-black/20 transition" />
-                    <div className="absolute inset-0 flex items-end p-2">
-                      <span className="text-white text-xs font-semibold text-balance">{dest.label}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
+              <>
+                <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 ${validationErrors.destination ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}>
+                  {availableDestinations.slice(0, 5).map((dest) => (
+                    <button
+                      key={dest.id}
+                      onClick={() => {
+                        handleChange("destination", dest.id)
+                        onConfigurationChange({ months: [] })
+                      }}
+                      className={`relative rounded-2xl overflow-hidden border-2 transition transform hover:scale-105 h-28 ${
+                        configuration.destination === dest.id
+                          ? "border-primary ring-2 ring-primary"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <img src={dest.image} alt={dest.label} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/30 hover:bg-black/20 transition" />
+                      <div className="absolute inset-0 flex items-end p-2">
+                        <span className="text-white text-xs font-semibold text-balance">{dest.label}</span>
+                      </div>
+                    </button>
+                  ))}
+
+                  {availableDestinations.length > 5 && (
+                    <button
+                      onClick={() => setShowMoreDestinations(true)}
+                      className="relative rounded-2xl overflow-hidden border-2 transition transform hover:scale-105 h-28 flex items-center justify-center border-border hover:border-primary/50 bg-muted"
+                    >
+                      <span className="text-foreground font-semibold">Všetky krajiny →</span>
+                    </button>
+                  )}
+                </div>
+
+                {showMoreDestinations && (
+                  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <Card className="w-full max-w-3xl max-h-[80vh] overflow-y-auto shadow-soft rounded-2xl border-0">
+                      <CardContent className="px-6 py-6">
+                        <div className="flex justify-between items-center mb-4">
+                          <h3 className="text-lg font-semibold text-foreground">Vyber si destináciu</h3>
+                          <button onClick={() => setShowMoreDestinations(false)} className="text-muted-foreground hover:text-foreground text-xl font-bold">✕</button>
+                        </div>
+                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                          {availableDestinations.map((dest) => (
+                            <button
+                              key={dest.id}
+                              onClick={() => {
+                                handleChange("destination", dest.id)
+                                onConfigurationChange({ months: [] })
+                                setShowMoreDestinations(false)
+                              }}
+                              className={`relative rounded-2xl overflow-hidden border-2 transition transform hover:scale-105 h-28 ${
+                                configuration.destination === dest.id
+                                  ? "border-primary ring-2 ring-primary"
+                                  : "border-border hover:border-primary/50"
+                              }`}
+                            >
+                              <img src={dest.image} alt={dest.label} className="w-full h-full object-cover" />
+                              <div className="absolute inset-0 bg-black/30 hover:bg-black/20 transition" />
+                              <div className="absolute inset-0 flex items-end p-2">
+                                <span className="text-white text-xs font-semibold text-balance">{dest.label}</span>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+              </>
             )}
             {validationErrors.destination && <p className="text-destructive text-xs mt-2">Toto je povinné pole</p>}
           </div>
