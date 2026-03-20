@@ -35,6 +35,77 @@ export default function ConfiguratorWizard({
   const stepperRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
 
+  // Destinations from webhook
+  const [availableDestinations, setAvailableDestinations] = useState<Array<{ id: string; label: string; image: string }>>([]);
+  const [destinationsLoading, setDestinationsLoading] = useState(true);
+
+  // Fallback destinations if webhook fails
+  const fallbackDestinations = [
+    { id: "Turecko", label: "Turecko", image: "/destinations/turkey.jpg" },
+    { id: "Grécko", label: "Grécko", image: "/destinations/greece.jpg" },
+    { id: "Egypt", label: "Egypt", image: "/destinations/egypt.jpg" },
+    { id: "Portugalsko", label: "Portugalsko", image: "/destinations/portugal.jpg" },
+    { id: "Bali", label: "Bali", image: "/destinations/bali.jpg" },
+  ];
+
+  // Country code to Slovak name mapping for webhook response
+  const countryCodeToName: Record<string, string> = {
+    TR: "Turecko", GR: "Grécko", EG: "Egypt", PT: "Portugalsko", ID: "Bali",
+    ES: "Španielsko", IT: "Taliansko", FR: "Francúzsko", MA: "Maroko",
+    TH: "Thajsko", VN: "Vietnam", MX: "Mexiko", CR: "Kostarika",
+    AU: "Austrália", JP: "Japonsko",
+  };
+
+  const countryCodeToImage: Record<string, string> = {
+    TR: "/destinations/turkey.jpg", GR: "/destinations/greece.jpg", EG: "/destinations/egypt.jpg",
+    PT: "/destinations/portugal.jpg", ID: "/destinations/bali.jpg", ES: "/destinations/spanish.jpg",
+    IT: "/destinations/italy.jpg", FR: "/destinations/france.jpg", MA: "/destinations/morocco.jpg",
+    TH: "/destinations/thailand.jpg", VN: "/destinations/vietnam.jpg", MX: "/destinations/mexico.jpg",
+    CR: "/destinations/costarica.jpg", AU: "/destinations/australia.jpg", JP: "/destinations/japan.jpg",
+  };
+
+  useEffect(() => {
+    const fetchDestinations = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("fetch-destinations", { body: {} });
+        if (error) {
+          console.error("[TripHERO] Destinations webhook error:", error);
+          setAvailableDestinations(fallbackDestinations);
+          return;
+        }
+
+        console.log("[TripHERO] Destinations response:", data);
+
+        // Parse response — flexible to handle different formats
+        const raw = Array.isArray(data) ? data : data?.destinations ? data.destinations : data?.data ? data.data : [];
+        const items = Array.isArray(raw) ? raw : [];
+
+        if (items.length === 0) {
+          setAvailableDestinations(fallbackDestinations);
+          return;
+        }
+
+        const mapped = items.map((item: any) => {
+          // Support {id, name, image}, {code, name}, {countryCode, label}, etc.
+          const code = item.code || item.countryCode || item.id || "";
+          const name = item.name || item.label || item.destinationName || countryCodeToName[code] || code;
+          const image = item.image || countryCodeToImage[code] || `/destinations/${name.toLowerCase()}.jpg`;
+          const id = countryCodeToName[code] || name;
+          return { id, label: id, image };
+        });
+
+        setAvailableDestinations(mapped.length > 0 ? mapped : fallbackDestinations);
+      } catch (err) {
+        console.error("[TripHERO] Failed to fetch destinations:", err);
+        setAvailableDestinations(fallbackDestinations);
+      } finally {
+        setDestinationsLoading(false);
+      }
+    };
+
+    fetchDestinations();
+  }, []);
+
   useEffect(() => {
     const onScroll = () => setStepperFloating(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
