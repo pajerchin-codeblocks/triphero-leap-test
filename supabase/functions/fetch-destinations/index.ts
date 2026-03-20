@@ -22,8 +22,9 @@ serve(async (req) => {
     console.log('[fetch-destinations] Calling webhook:', webhookUrl)
 
     const response = await fetch(webhookUrl, {
-      method: 'GET',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
     })
 
     if (!response.ok) {
