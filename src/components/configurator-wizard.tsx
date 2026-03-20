@@ -120,7 +120,7 @@ export default function ConfiguratorWizard({
     { title: "Program dňa", component: Step5Program },
   ];
 
-  const CurrentStep = steps[currentStep].component;
+  const CurrentStep = steps[currentStep].component as React.ComponentType<{ configuration: any; onConfigurationChange: (updates: any) => void; validationErrors?: Record<string, boolean> }>;
 
   const validateStep = (step: number): string[] => {
     const errors: string[] = [];
