@@ -75,14 +75,27 @@ serve(async (req) => {
       program: 'Ranný tréning, hlavný tréningový blok, popoludňajšie aktivity a večerná regenerácia',
     }
 
+    const trainerExpProvided = !!configuration.trainerExperience
+    const trainerSpecProvided = !!configuration.trainerSpecialization
+    const trainerCertProvided = !!configuration.trainerCertificates
+    const trainerBioProvided = !!configuration.trainerBio
+    const programProvided = !!configuration.dailyProgram
+
     const trainerExperience = configuration.trainerExperience || '5+ rokov'
     const trainerSpecialization = configuration.trainerSpecialization || defaults.specialization
-    const trainerCertificates = configuration.trainerCertificates || 'Certifikovaný osobný tréner'
+    const trainerCertificates = configuration.trainerCertificates || ''
     const trainerBio = configuration.trainerBio || `${configuration.trainerName} je skúsený tréner so zameraním na ${trainerSpecialization.toLowerCase()}. Pomáha klientom dosahovať ich fitness ciele v inšpiratívnom prostredí.`
     const dailyProgram = configuration.dailyProgram || defaults.program
     const pricePerPerson = configuration.estimatedPrice || 599
 
     const prompt = `Si expertný copywriter pre fitness a wellness retreat campy. Vytvor kompletný konverzný landing page obsah v slovenčine na základe týchto údajov:
+
+DÔLEŽITÉ PRAVIDLÁ:
+- Polia označené (ZADANÉ TRÉNEROM) použi PRESNE tak ako sú. Nepridávaj, neupravuj, nedopĺňaj ďalšie položky.
+- Polia označené (NEZADANÉ) môžeš voľne vymyslieť — OKREM certifikátov.
+- Certifikáty: ak nie sú zadané, vráť PRÁZDNE pole []. Nikdy nevymýšľaj certifikáty.
+- Pre dayTimeline: ak tréner zadal napr. len 2 časové sloty, vráť PRESNE tie 2. Nepridávaj ďalšie.
+- Pre credentials: ak tréner zadal 1 certifikát, vráť pole s 1 položkou. Nepridávaj ďalšie.
 
 Destinácia: ${configuration.destination || 'neuvedená'}
 Termín: ${configuration.months?.join(', ') || configuration.month || 'neuvedený'}
@@ -103,12 +116,12 @@ Dostupná strava: ${configuration.hotelMealOptions || 'neuvedená'}
 
 Tréner:
 - Meno: ${configuration.trainerName}
-- Skúsenosti: ${trainerExperience}
-- Špecializácia: ${trainerSpecialization}
-- Certifikáty: ${trainerCertificates}
-- Bio/Príbeh: ${trainerBio}
+- Skúsenosti: ${trainerExperience} ${trainerExpProvided ? '(ZADANÉ TRÉNEROM - použi presne)' : '(NEZADANÉ - vymysli)'}
+- Špecializácia: ${trainerSpecialization} ${trainerSpecProvided ? '(ZADANÉ TRÉNEROM - použi presne)' : '(NEZADANÉ - vymysli)'}
+- Certifikáty: ${trainerCertificates} ${trainerCertProvided ? '(ZADANÉ TRÉNEROM - použi PRESNE tieto, nepridávaj ďalšie)' : '(NEZADANÉ - vráť prázdne pole [], NEVYMÝŠĽAJ)'}
+- Bio/Príbeh: ${trainerBio} ${trainerBioProvided ? '(ZADANÉ TRÉNEROM - použi presne)' : '(NEZADANÉ - vymysli)'}
 
-Program campu (ak je zadaný): ${dailyProgram}
+Program campu: ${dailyProgram} ${programProvided ? '(ZADANÉ TRÉNEROM - použi PRESNE tieto sloty, nepridávaj ďalšie)' : '(NEZADANÉ - vymysli kompletný denný program 6-8 slotov)'}
 
 Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto presnou štruktúrou:
 {
@@ -126,22 +139,13 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
   "trainerProfile": {
     "name": "${configuration.trainerName}",
     "bio": "profesionálny bio 3-4 vety",
-    "credentials": ["certifikát1", "certifikát2", "certifikát3"],
+    "credentials": "pole certifikátov — ak ZADANÉ, použi PRESNE tie. Ak NEZADANÉ, vráť prázdne pole [].",
     "headline": "krátky headline trénera",
     "specialization": "špecializácia",
     "experience": "roky skúseností",
     "philosophy": "filozofia tréningu 1-2 vety"
   },
-  "dayTimeline": [
-    {"time": "07:00", "activity": "popis aktivity"},
-    {"time": "08:00", "activity": "popis aktivity"},
-    {"time": "10:00", "activity": "popis aktivity"},
-    {"time": "12:00", "activity": "popis aktivity"},
-    {"time": "14:00", "activity": "popis aktivity"},
-    {"time": "16:00", "activity": "popis aktivity"},
-    {"time": "18:00", "activity": "popis aktivity"},
-    {"time": "20:00", "activity": "popis aktivity"}
-  ],
+  "dayTimeline": "pole objektov {time, activity} — ak program ZADANÝ TRÉNEROM, použi PRESNE tie sloty (rovnaký počet). Ak NEZADANÝ, vytvor 6-8 slotov.",
   "transformation": {
     "headline": "transformačný headline",
     "emotionalImpact": "emocionálny dopad 2-3 vety",
