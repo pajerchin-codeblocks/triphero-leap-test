@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import Step1Basic from "./wizard-steps/step1-basic";
 import Step2Accommodation from "./wizard-steps/step2-accommodation";
 import Step3Business from "./wizard-steps/step3-business";
@@ -32,6 +33,7 @@ export default function ConfiguratorWizard({
   const [webhookHotels, setWebhookHotels] = useState<WebhookHotel[]>([]);
   const [stepperFloating, setStepperFloating] = useState(false);
   const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false);
+  const [webhookLoading, setWebhookLoading] = useState(false);
   const stepperRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
 
@@ -222,7 +224,12 @@ export default function ConfiguratorWizard({
     setValidationErrors({});
 
     if (currentStep === 0) {
+      setWebhookLoading(true);
+      setCurrentStep(1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
       await sendStep1DataToWebhook();
+      setWebhookLoading(false);
+      return;
     }
 
     if (currentStep < steps.length - 1) {
@@ -262,7 +269,14 @@ export default function ConfiguratorWizard({
         }
       }
       setValidationErrors({});
-      if (currentStep === 0) await sendStep1DataToWebhook();
+      if (currentStep === 0) {
+        setWebhookLoading(true);
+        setCurrentStep(index);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        await sendStep1DataToWebhook();
+        setWebhookLoading(false);
+        return;
+      }
       setCurrentStep(index);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -430,7 +444,15 @@ export default function ConfiguratorWizard({
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              {currentStep === 0 ? (
+              {webhookLoading ? (
+                <div className="flex flex-col items-center justify-center py-32 space-y-6">
+                  <Spinner className="size-12 text-primary" />
+                  <div className="text-center space-y-2">
+                    <h3 className="text-xl font-semibold text-foreground">Hľadáme najlepšie hotely a letenky</h3>
+                    <p className="text-muted-foreground text-sm">pre tvoju destináciu {configuration.destination || ""}...</p>
+                  </div>
+                </div>
+              ) : currentStep === 0 ? (
                 <Step1Basic
                   configuration={configuration}
                   onConfigurationChange={onConfigurationChange}
