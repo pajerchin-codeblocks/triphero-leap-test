@@ -224,7 +224,12 @@ export default function ConfiguratorWizard({
     setValidationErrors({});
 
     if (currentStep === 0) {
+      setWebhookLoading(true);
+      setCurrentStep(1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
       await sendStep1DataToWebhook();
+      setWebhookLoading(false);
+      return;
     }
 
     if (currentStep < steps.length - 1) {
