@@ -577,6 +577,7 @@ export default function ConfiguratorWizard({
                             <span className="text-xs text-muted-foreground">Cena za osobu</span>
                             <span className="text-xl font-bold text-accent">~ {estimatedPricePerPerson} €</span>
                           </div>
+                          <p className="text-[10px] text-muted-foreground mt-1">* Konečná cena sa môže líšiť</p>
                         </div>
                       )}
                     </div>
