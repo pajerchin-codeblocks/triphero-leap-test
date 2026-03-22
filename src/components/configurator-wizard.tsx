@@ -33,6 +33,7 @@ export default function ConfiguratorWizard({
   const [webhookHotels, setWebhookHotels] = useState<WebhookHotel[]>([]);
   const [stepperFloating, setStepperFloating] = useState(false);
   const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false);
+  const [webhookLoading, setWebhookLoading] = useState(false);
   const stepperRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
 
