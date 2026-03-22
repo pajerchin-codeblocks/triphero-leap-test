@@ -444,7 +444,15 @@ export default function ConfiguratorWizard({
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              {currentStep === 0 ? (
+              {webhookLoading ? (
+                <div className="flex flex-col items-center justify-center py-32 space-y-6">
+                  <Spinner className="size-12 text-primary" />
+                  <div className="text-center space-y-2">
+                    <h3 className="text-xl font-semibold text-foreground">Hľadáme najlepšie hotely a letenky</h3>
+                    <p className="text-muted-foreground text-sm">pre tvoju destináciu {configuration.destination || ""}...</p>
+                  </div>
+                </div>
+              ) : currentStep === 0 ? (
                 <Step1Basic
                   configuration={configuration}
                   onConfigurationChange={onConfigurationChange}
