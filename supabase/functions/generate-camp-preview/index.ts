@@ -121,7 +121,7 @@ Tréner:
 - Certifikáty: ${trainerCertificates} ${trainerCertProvided ? '(ZADANÉ TRÉNEROM - použi PRESNE tieto, nepridávaj ďalšie)' : '(NEZADANÉ - vráť prázdne pole [], NEVYMÝŠĽAJ)'}
 - Bio/Príbeh: ${trainerBio} ${trainerBioProvided ? '(ZADANÉ TRÉNEROM - použi presne)' : '(NEZADANÉ - vymysli)'}
 
-Program campu: ${dailyProgram} ${programProvided ? '(ZADANÉ TRÉNEROM - použi PRESNE tieto sloty, nepridávaj ďalšie)' : '(NEZADANÉ - vymysli kompletný denný program 6-8 slotov)'}
+Program campu: ${dailyProgram} ${programProvided ? '(ZADANÉ TRÉNEROM - použi PRESNE tieto sloty a časy, nepridávaj ďalšie. Ale VYLEPŠI popisy aktivít - prepíš ich marketingovo príťažlivejšie a emotívnejšie, zachovaj pôvodný význam)' : '(NEZADANÉ - vymysli kompletný denný program 6-8 slotov)'}
 
 Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto presnou štruktúrou:
 {
