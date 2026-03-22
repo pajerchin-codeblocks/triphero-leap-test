@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import Step1Basic from "./wizard-steps/step1-basic";
 import Step2Accommodation from "./wizard-steps/step2-accommodation";
 import Step3Business from "./wizard-steps/step3-business";
