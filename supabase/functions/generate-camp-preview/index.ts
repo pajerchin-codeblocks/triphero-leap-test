@@ -90,6 +90,13 @@ serve(async (req) => {
 
     const prompt = `Si expertný copywriter pre fitness a wellness retreat campy. Vytvor kompletný konverzný landing page obsah v slovenčine na základe týchto údajov:
 
+DÔLEŽITÉ PRAVIDLÁ:
+- Polia označené (ZADANÉ TRÉNEROM) použi PRESNE tak ako sú. Nepridávaj, neupravuj, nedopĺňaj ďalšie položky.
+- Polia označené (NEZADANÉ) môžeš voľne vymyslieť — OKREM certifikátov.
+- Certifikáty: ak nie sú zadané, vráť PRÁZDNE pole []. Nikdy nevymýšľaj certifikáty.
+- Pre dayTimeline: ak tréner zadal napr. len 2 časové sloty, vráť PRESNE tie 2. Nepridávaj ďalšie.
+- Pre credentials: ak tréner zadal 1 certifikát, vráť pole s 1 položkou. Nepridávaj ďalšie.
+
 Destinácia: ${configuration.destination || 'neuvedená'}
 Termín: ${configuration.months?.join(', ') || configuration.month || 'neuvedený'}
 Trvanie: ${configuration.duration || 'neuvedené'}
@@ -109,12 +116,12 @@ Dostupná strava: ${configuration.hotelMealOptions || 'neuvedená'}
 
 Tréner:
 - Meno: ${configuration.trainerName}
-- Skúsenosti: ${trainerExperience}
-- Špecializácia: ${trainerSpecialization}
-- Certifikáty: ${trainerCertificates}
-- Bio/Príbeh: ${trainerBio}
+- Skúsenosti: ${trainerExperience} ${trainerExpProvided ? '(ZADANÉ TRÉNEROM - použi presne)' : '(NEZADANÉ - vymysli)'}
+- Špecializácia: ${trainerSpecialization} ${trainerSpecProvided ? '(ZADANÉ TRÉNEROM - použi presne)' : '(NEZADANÉ - vymysli)'}
+- Certifikáty: ${trainerCertificates} ${trainerCertProvided ? '(ZADANÉ TRÉNEROM - použi PRESNE tieto, nepridávaj ďalšie)' : '(NEZADANÉ - vráť prázdne pole [], NEVYMÝŠĽAJ)'}
+- Bio/Príbeh: ${trainerBio} ${trainerBioProvided ? '(ZADANÉ TRÉNEROM - použi presne)' : '(NEZADANÉ - vymysli)'}
 
-Program campu (ak je zadaný): ${dailyProgram}
+Program campu: ${dailyProgram} ${programProvided ? '(ZADANÉ TRÉNEROM - použi PRESNE tieto sloty, nepridávaj ďalšie)' : '(NEZADANÉ - vymysli kompletný denný program 6-8 slotov)'}
 
 Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto presnou štruktúrou:
 {
