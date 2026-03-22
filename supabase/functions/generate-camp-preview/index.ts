@@ -75,9 +75,15 @@ serve(async (req) => {
       program: 'Ranný tréning, hlavný tréningový blok, popoludňajšie aktivity a večerná regenerácia',
     }
 
+    const trainerExpProvided = !!configuration.trainerExperience
+    const trainerSpecProvided = !!configuration.trainerSpecialization
+    const trainerCertProvided = !!configuration.trainerCertificates
+    const trainerBioProvided = !!configuration.trainerBio
+    const programProvided = !!configuration.dailyProgram
+
     const trainerExperience = configuration.trainerExperience || '5+ rokov'
     const trainerSpecialization = configuration.trainerSpecialization || defaults.specialization
-    const trainerCertificates = configuration.trainerCertificates || 'Certifikovaný osobný tréner'
+    const trainerCertificates = configuration.trainerCertificates || ''
     const trainerBio = configuration.trainerBio || `${configuration.trainerName} je skúsený tréner so zameraním na ${trainerSpecialization.toLowerCase()}. Pomáha klientom dosahovať ich fitness ciele v inšpiratívnom prostredí.`
     const dailyProgram = configuration.dailyProgram || defaults.program
     const pricePerPerson = configuration.estimatedPrice || 599
