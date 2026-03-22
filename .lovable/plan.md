@@ -1,43 +1,25 @@
 
 
-## Úprava AI promptu: rešpektovať čiastočné dáta, nevymýšľať certifikáty
+## Pridanie disclaimeru k cene za osobu
 
-### Zmeny v `supabase/functions/generate-camp-preview/index.ts`
+### Čo sa zmení
+Pridať malý text pod/vedľa zobrazenej ceny za osobu informujúci, že konečná cena sa môže líšiť.
 
-**1. Flagy na detekciu user inputu (pred promptom):**
-```typescript
-const trainerExpProvided = !!configuration.trainerExperience
-const trainerSpecProvided = !!configuration.trainerSpecialization  
-const trainerCertProvided = !!configuration.trainerCertificates
-const trainerBioProvided = !!configuration.trainerBio
-const programProvided = !!configuration.dailyProgram
+### Zmeny v `src/components/configurator-wizard.tsx`
+
+**Desktop sidebar** (riadky 575-580) — pridať pod cenu riadok:
+```
+<p className="text-[10px] text-muted-foreground mt-1">* Konečná cena sa môže líšiť</p>
 ```
 
-Fallbacky zostanú pre všetky polia **okrem certifikátov** — ak user nevyplní certifikáty, pošle sa prázdny string (AI si nesmie vymýšľať).
-
-**2. Pravidlá do promptu:**
+**Mobile floating bar** (riadok 610) — pridať pod cenu v collapsed bare rovnaký text menším písmom, prípadne na tom istom riadku vedľa ceny:
 ```
-DÔLEŽITÉ PRAVIDLÁ:
-- Polia označené (ZADANÉ TRÉNEROM) použi PRESNE. Nepridávaj, neupravuj.
-- Polia označené (NEZADANÉ) môžeš voľne vymyslieť — OKREM certifikátov.
-- Certifikáty: ak nie sú zadané, vráť PRÁZDNE pole []. Nikdy nevymýšľaj certifikáty.
-- Pre dayTimeline: ak zadané napr. 2 sloty, vráť PRESNE tie 2.
-- Pre credentials: ak zadaný 1 certifikát, vráť pole s 1 položkou.
+<div className="text-right">
+  <span className="text-lg font-bold text-accent">~ {estimatedPricePerPerson} €</span>
+  <p className="text-[9px] text-muted-foreground">* Cena sa môže líšiť</p>
+</div>
 ```
-
-**3. Sekcia Tréner v prompte — s flagmi:**
-```
-- Skúsenosti: ${trainerExperience} ${trainerExpProvided ? '(ZADANÉ TRÉNEROM)' : '(NEZADANÉ - vymysli)'}
-- Špecializácia: ${trainerSpecialization} ${trainerSpecProvided ? '(ZADANÉ TRÉNEROM)' : '(NEZADANÉ - vymysli)'}
-- Certifikáty: ${trainerCertificates} ${trainerCertProvided ? '(ZADANÉ TRÉNEROM - použi PRESNE tieto)' : '(NEZADANÉ - vráť prázdne pole, NEVYMÝŠĽAJ)'}
-- Bio: ${trainerBio} ${trainerBioProvided ? '(ZADANÉ TRÉNEROM)' : '(NEZADANÉ - vymysli)'}
-Program dňa: ${dailyProgram} ${programProvided ? '(ZADANÉ TRÉNEROM - použi PRESNE tieto sloty)' : '(NEZADANÉ - vymysli program)'}
-```
-
-**4. Odstrániť fallback pre certifikáty** — riadok kde sa nastavuje `trainerCertificates` na `'Certifikovaný osobný tréner'` sa zmení na prázdny string.
-
-**5. Zmeniť dayTimeline v JSON šablóne** z pevných 8 slotov na dynamický popis.
 
 ### Dopad
-Jeden súbor. Certifikáty sa nikdy nevymýšľajú. Ostatné polia sa vymýšľajú len ak sú úplne prázdne, čiastočný input sa rešpektuje presne.
+Jeden súbor, 2 miesta. Text bude dostatočne malý aby nerušil UX, ale jasne informoval o orientačnosti ceny.
 
