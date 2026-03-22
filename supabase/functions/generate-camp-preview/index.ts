@@ -94,7 +94,7 @@ DÔLEŽITÉ PRAVIDLÁ:
 - Polia označené (ZADANÉ TRÉNEROM) použi PRESNE tak ako sú. Nepridávaj, neupravuj, nedopĺňaj ďalšie položky.
 - Polia označené (NEZADANÉ) môžeš voľne vymyslieť — OKREM certifikátov.
 - Certifikáty: ak nie sú zadané, vráť PRÁZDNE pole []. Nikdy nevymýšľaj certifikáty.
-- Pre dayTimeline: ak tréner zadal napr. len 2 časové sloty, vráť PRESNE tie 2. Nepridávaj ďalšie.
+- Pre dayTimeline: ak tréner zadal sloty, použi PRESNE rovnaký počet a časy. Nepridávaj ďalšie sloty. Ale VYLEPŠI popisy aktivít — prepíš ich marketingovo príťažlivejšie, emotívnejšie a profesionálnejšie. Zachovaj pôvodný význam, len to podaj krajšie.
 - Pre credentials: ak tréner zadal 1 certifikát, vráť pole s 1 položkou. Nepridávaj ďalšie.
 
 Destinácia: ${configuration.destination || 'neuvedená'}
@@ -121,7 +121,7 @@ Tréner:
 - Certifikáty: ${trainerCertificates} ${trainerCertProvided ? '(ZADANÉ TRÉNEROM - použi PRESNE tieto, nepridávaj ďalšie)' : '(NEZADANÉ - vráť prázdne pole [], NEVYMÝŠĽAJ)'}
 - Bio/Príbeh: ${trainerBio} ${trainerBioProvided ? '(ZADANÉ TRÉNEROM - použi presne)' : '(NEZADANÉ - vymysli)'}
 
-Program campu: ${dailyProgram} ${programProvided ? '(ZADANÉ TRÉNEROM - použi PRESNE tieto sloty, nepridávaj ďalšie)' : '(NEZADANÉ - vymysli kompletný denný program 6-8 slotov)'}
+Program campu: ${dailyProgram} ${programProvided ? '(ZADANÉ TRÉNEROM - použi PRESNE tieto sloty a časy, nepridávaj ďalšie. Ale VYLEPŠI popisy aktivít - prepíš ich marketingovo príťažlivejšie a emotívnejšie, zachovaj pôvodný význam)' : '(NEZADANÉ - vymysli kompletný denný program 6-8 slotov)'}
 
 Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto presnou štruktúrou:
 {
