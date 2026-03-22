@@ -1,33 +1,26 @@
 
 
-## Dynamické načítanie destinácií z webhooku
+## Loading obrazovka medzi krokom 1 a 2
 
 ### Problém
-Destinácie sú hardcoded v `step1-basic.tsx`. Potrebujeme volať webhook na získanie len tých destinácií, ktoré majú aktívny hotel.
+Pri prechode z kroku 1 do kroku 2 sa volá `sendStep1DataToWebhook()`, ale wizard okamžite prepne na krok 2 bez čakania na dáta. Používateľ vidí prázdny krok 2 kým sa hotely a letenky načítavajú.
 
 ### Riešenie
 
-#### 1. Nová edge funkcia `supabase/functions/fetch-destinations/index.ts`
-- Proxy na webhook `https://n8n.codeblocks.sk/webhook/2b1bdb2e-2c9f-4c0a-9f5f-2f7d7b0c3a1e`
-- Štandardné CORS hlavičky, GET/POST request na n8n
-- Vráti pole destinácií z webhooku
+**Súbor: `src/components/configurator-wizard.tsx`**
 
-#### 2. `src/components/wizard-steps/step1-basic.tsx`
-- Odstrániť hardcoded `initialMainDestinations` a `additionalDestinations`
-- Pridať prop `availableDestinations` (pole `{ id, label, image }`)
-- Zobraziť loading spinner kým sa destinácie načítavajú
-- Ak webhook vráti prázdny zoznam alebo zlyhá, zobraziť fallback správu
-- Odstrániť "Všetky krajiny →" popup (už nie je potrebný — zobrazujú sa len aktívne destinácie)
+1. Pridať stav `webhookLoading` (boolean)
+2. V `handleNext` pri `currentStep === 0`:
+   - Nastaviť `webhookLoading = true`
+   - Počkať na `sendStep1DataToWebhook()`
+   - Nastaviť `webhookLoading = false`
+   - Až potom prepnúť na krok 2
+3. Rovnako v `handleStepClick` ak prechádza cez krok 0 → ďalší
+4. Ak `webhookLoading === true`, namiesto obsahu kroku zobraziť loading obrazovku:
+   - Centrovaný spinner s animáciou
+   - Text "Hľadáme najlepšie hotely a letenky pre tvoju destináciu..."
+   - Prípadne progress bar alebo skeleton cards pre vizuálny feedback
 
-#### 3. `src/components/configurator-wizard.tsx`
-- Na mount zavolať edge funkciu `fetch-destinations`
-- Uložiť výsledok do stanu `availableDestinations`
-- Odovzdať do `Step1Basic` ako prop
-- Webhook odpoveď: predpokladáme pole objektov s `id`/`name`/`image` alebo country code — zmapovať na UI formát pomocou `countryCodeToDestination` ak treba
-
-#### 4. `src/lib/destination-mapping.ts`
-- Prípadne rozšíriť mapping ak webhook vráti nové krajiny
-
-### Otvorená otázka
-Aký formát vracia webhook? Budeme potrebovať otestovať response a prispôsobiť parsing. Implementácia bude predpokladať pole objektov a prispôsobí sa podľa skutočnej odpovede.
+### Dopad
+Jeden súbor, cca 20 riadkov zmien. Používateľ uvidí príjemnú loading animáciu namiesto prázdneho kroku 2.
 
