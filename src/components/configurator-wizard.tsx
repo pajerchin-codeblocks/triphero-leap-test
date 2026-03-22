@@ -608,7 +608,10 @@ export default function ConfiguratorWizard({
               )}
             </div>
             {configuration.hotel && currentStep > 0 ? (
-              <span className="text-lg font-bold text-accent">~ {estimatedPricePerPerson} €</span>
+              <div className="text-right">
+                <span className="text-lg font-bold text-accent">~ {estimatedPricePerPerson} €</span>
+                <p className="text-[9px] text-muted-foreground">* Cena sa môže líšiť</p>
+              </div>
             ) : (
               <span className="text-xs text-muted-foreground">Krok {currentStep + 1} z {steps.length}</span>
             )}
