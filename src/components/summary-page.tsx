@@ -100,8 +100,7 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
           <p className="text-muted-foreground">Skontrolujte detaily a vygenerujte preview stránku</p>
         </div>
 
-        <div className="flex flex-col gap-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <Card>
               <CardContent className="px-6 py-6">
                 <h3 className="font-semibold text-foreground mb-4">Základné informácie</h3>
@@ -127,10 +126,8 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
                 </div>
               </CardContent>
             </Card>
-          </div>
 
-          <div className="flex justify-center">
-            <Card className="border-2 border-accent bg-accent/5 w-full md:w-1/2">
+            <Card className="border-2 border-accent bg-accent/5">
               <CardContent className="px-6 py-6">
                 <h3 className="font-semibold text-foreground mb-4">Biznis nastavenia</h3>
                 <div className="space-y-3">
@@ -143,7 +140,6 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
                 </div>
               </CardContent>
             </Card>
-          </div>
         </div>
 
         {/* Preview link result */}
@@ -169,7 +165,7 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
           </Card>
         )}
 
-        <div className="flex gap-4">
+        <div className="flex gap-4 justify-center">
           <Button onClick={onEdit} variant="outline">← Upraviť</Button>
           <Button
             onClick={handleGeneratePreview}
