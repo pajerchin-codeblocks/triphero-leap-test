@@ -165,7 +165,7 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
           </Card>
         )}
 
-        <div className="flex gap-4">
+        <div className="flex gap-4 justify-center">
           <Button onClick={onEdit} variant="outline">← Upraviť</Button>
           <Button
             onClick={handleGeneratePreview}
