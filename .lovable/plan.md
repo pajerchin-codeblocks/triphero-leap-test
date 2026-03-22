@@ -1,26 +1,43 @@
 
 
-## Loading obrazovka medzi krokom 1 a 2
+## Úprava AI promptu: rešpektovať čiastočné dáta, nevymýšľať certifikáty
 
-### Problém
-Pri prechode z kroku 1 do kroku 2 sa volá `sendStep1DataToWebhook()`, ale wizard okamžite prepne na krok 2 bez čakania na dáta. Používateľ vidí prázdny krok 2 kým sa hotely a letenky načítavajú.
+### Zmeny v `supabase/functions/generate-camp-preview/index.ts`
 
-### Riešenie
+**1. Flagy na detekciu user inputu (pred promptom):**
+```typescript
+const trainerExpProvided = !!configuration.trainerExperience
+const trainerSpecProvided = !!configuration.trainerSpecialization  
+const trainerCertProvided = !!configuration.trainerCertificates
+const trainerBioProvided = !!configuration.trainerBio
+const programProvided = !!configuration.dailyProgram
+```
 
-**Súbor: `src/components/configurator-wizard.tsx`**
+Fallbacky zostanú pre všetky polia **okrem certifikátov** — ak user nevyplní certifikáty, pošle sa prázdny string (AI si nesmie vymýšľať).
 
-1. Pridať stav `webhookLoading` (boolean)
-2. V `handleNext` pri `currentStep === 0`:
-   - Nastaviť `webhookLoading = true`
-   - Počkať na `sendStep1DataToWebhook()`
-   - Nastaviť `webhookLoading = false`
-   - Až potom prepnúť na krok 2
-3. Rovnako v `handleStepClick` ak prechádza cez krok 0 → ďalší
-4. Ak `webhookLoading === true`, namiesto obsahu kroku zobraziť loading obrazovku:
-   - Centrovaný spinner s animáciou
-   - Text "Hľadáme najlepšie hotely a letenky pre tvoju destináciu..."
-   - Prípadne progress bar alebo skeleton cards pre vizuálny feedback
+**2. Pravidlá do promptu:**
+```
+DÔLEŽITÉ PRAVIDLÁ:
+- Polia označené (ZADANÉ TRÉNEROM) použi PRESNE. Nepridávaj, neupravuj.
+- Polia označené (NEZADANÉ) môžeš voľne vymyslieť — OKREM certifikátov.
+- Certifikáty: ak nie sú zadané, vráť PRÁZDNE pole []. Nikdy nevymýšľaj certifikáty.
+- Pre dayTimeline: ak zadané napr. 2 sloty, vráť PRESNE tie 2.
+- Pre credentials: ak zadaný 1 certifikát, vráť pole s 1 položkou.
+```
+
+**3. Sekcia Tréner v prompte — s flagmi:**
+```
+- Skúsenosti: ${trainerExperience} ${trainerExpProvided ? '(ZADANÉ TRÉNEROM)' : '(NEZADANÉ - vymysli)'}
+- Špecializácia: ${trainerSpecialization} ${trainerSpecProvided ? '(ZADANÉ TRÉNEROM)' : '(NEZADANÉ - vymysli)'}
+- Certifikáty: ${trainerCertificates} ${trainerCertProvided ? '(ZADANÉ TRÉNEROM - použi PRESNE tieto)' : '(NEZADANÉ - vráť prázdne pole, NEVYMÝŠĽAJ)'}
+- Bio: ${trainerBio} ${trainerBioProvided ? '(ZADANÉ TRÉNEROM)' : '(NEZADANÉ - vymysli)'}
+Program dňa: ${dailyProgram} ${programProvided ? '(ZADANÉ TRÉNEROM - použi PRESNE tieto sloty)' : '(NEZADANÉ - vymysli program)'}
+```
+
+**4. Odstrániť fallback pre certifikáty** — riadok kde sa nastavuje `trainerCertificates` na `'Certifikovaný osobný tréner'` sa zmení na prázdny string.
+
+**5. Zmeniť dayTimeline v JSON šablóne** z pevných 8 slotov na dynamický popis.
 
 ### Dopad
-Jeden súbor, cca 20 riadkov zmien. Používateľ uvidí príjemnú loading animáciu namiesto prázdneho kroku 2.
+Jeden súbor. Certifikáty sa nikdy nevymýšľajú. Ostatné polia sa vymýšľajú len ak sú úplne prázdne, čiastočný input sa rešpektuje presne.
 
