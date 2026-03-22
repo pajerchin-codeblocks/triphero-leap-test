@@ -1,25 +1,29 @@
+## Kompaktnejší súhrn 
 
+### Zmeny v `src/components/summary-page.tsx`
 
-## Pridanie disclaimeru k cene za osobu
+**1. Layout: 3 karty v jednom rade**
 
-### Čo sa zmení
-Pridať malý text pod/vedľa zobrazenej ceny za osobu informujúci, že konečná cena sa môže líšiť.
+- Zmeniť grid z `grid-cols-1 md:grid-cols-2` + samostatný centered div na `grid-cols-1 md:grid-cols-3`
+- Všetky 3 karty (Základné info, Ubytovanie, Biznis) budú v jednom rade
+- Odstrániť obalový `flex flex-col` a `flex justify-center` wrapper okolo biznis karty
+- Biznis karta dostane plnú šírku v gridu (`w-full` namiesto `md:w-1/2`)
+- &nbsp;
 
-### Zmeny v `src/components/configurator-wizard.tsx`
+**2 Buttony centrované pod kartami**
 
-**Desktop sidebar** (riadky 575-580) — pridať pod cenu riadok:
-```
-<p className="text-[10px] text-muted-foreground mt-1">* Konečná cena sa môže líšiť</p>
-```
+- Zmeniť `<div className="flex gap-4">` na `<div className="flex gap-4 justify-center">`
 
-**Mobile floating bar** (riadok 610) — pridať pod cenu v collapsed bare rovnaký text menším písmom, prípadne na tom istom riadku vedľa ceny:
-```
-<div className="text-right">
-  <span className="text-lg font-bold text-accent">~ {estimatedPricePerPerson} €</span>
-  <p className="text-[9px] text-muted-foreground">* Cena sa môže líšiť</p>
-</div>
+### Výsledná štruktúra
+
+```text
+┌──────────────┬──────────────┬──────────────┐
+│  Základné    │  Ubytovanie  │    Biznis    │
+│  informácie  │  a služby    │  nastavenia  │
+└──────────────┴──────────────┴──────────────┘
+          [ ← Upraviť ]  [ Vygenerovať ]
 ```
 
 ### Dopad
-Jeden súbor, 2 miesta. Text bude dostatočne malý aby nerušil UX, ale jasne informoval o orientačnosti ceny.
 
+Jeden súbor, kompaktnejší layout.
