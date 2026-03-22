@@ -139,22 +139,13 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
   "trainerProfile": {
     "name": "${configuration.trainerName}",
     "bio": "profesionálny bio 3-4 vety",
-    "credentials": ["certifikát1", "certifikát2", "certifikát3"],
+    "credentials": "pole certifikátov — ak ZADANÉ, použi PRESNE tie. Ak NEZADANÉ, vráť prázdne pole [].",
     "headline": "krátky headline trénera",
     "specialization": "špecializácia",
     "experience": "roky skúseností",
     "philosophy": "filozofia tréningu 1-2 vety"
   },
-  "dayTimeline": [
-    {"time": "07:00", "activity": "popis aktivity"},
-    {"time": "08:00", "activity": "popis aktivity"},
-    {"time": "10:00", "activity": "popis aktivity"},
-    {"time": "12:00", "activity": "popis aktivity"},
-    {"time": "14:00", "activity": "popis aktivity"},
-    {"time": "16:00", "activity": "popis aktivity"},
-    {"time": "18:00", "activity": "popis aktivity"},
-    {"time": "20:00", "activity": "popis aktivity"}
-  ],
+  "dayTimeline": "pole objektov {time, activity} — ak program ZADANÝ TRÉNEROM, použi PRESNE tie sloty (rovnaký počet). Ak NEZADANÝ, vytvor 6-8 slotov.",
   "transformation": {
     "headline": "transformačný headline",
     "emotionalImpact": "emocionálny dopad 2-3 vety",
