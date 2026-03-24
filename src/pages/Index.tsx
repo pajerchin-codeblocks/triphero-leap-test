@@ -26,7 +26,7 @@ export default function Home() {
     setConfiguration((prev) => ({ ...prev, ...updates }))
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pt-16 md:pt-20">
       <Navbar />
       <div>
         {currentStep === "wizard" ? (

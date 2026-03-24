@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import logoColor from "@/assets/logo-color.png"
 
 const navLinks = [
@@ -24,18 +25,12 @@ export default function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="relative z-30 h-16 md:h-20"
-        style={{
-          background: "hsla(220, 20%, 98%, 0.95)",
-          backdropFilter: "blur(12px)",
-          boxShadow: "0 4px 20px -4px hsla(220, 25%, 15%, 0.08)",
-          borderBottom: "1px solid hsla(220, 15%, 90%, 0.5)",
-        }}
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-background/95 backdrop-blur-md shadow-soft border-b border-border/50 h-16 md:h-20"
       >
-        <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
+        <div className="container px-4 md:px-6 lg:px-8 h-full flex items-center justify-between">
           {/* Logo */}
-          <a href="https://bright-trip-studio.lovable.app" className="hover:opacity-80 transition-opacity flex-shrink-0">
-            <img src={logoColor} alt="TripHERO" className="h-8 md:h-10" />
+          <a href="https://bright-trip-studio.lovable.app" className="hover:opacity-80 transition-opacity flex-shrink-0 flex items-center">
+            <img src={logoColor} alt="TripHERO" className="h-8 md:h-10 w-auto transition-all duration-300" />
           </a>
 
           {/* Desktop nav - centered links */}
@@ -44,36 +39,28 @@ export default function Navbar() {
               <a
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors ${
+                className={`text-sm font-medium transition-all duration-300 ${
                   link.isPill
-                    ? "font-bold px-3 py-1 rounded-full"
-                    : "hover:opacity-80"
+                    ? "bg-primary/10 text-primary font-bold px-3 py-1 rounded-full"
+                    : "text-foreground hover:text-primary"
                 }`}
-                style={
-                  link.isPill
-                    ? { background: "hsla(234, 85%, 63%, 0.1)", color: "hsl(234, 85%, 63%)" }
-                    : { color: "hsl(220, 25%, 15%)" }
-                }
-                onMouseEnter={(e) => {
-                  if (!link.isPill) e.currentTarget.style.color = "hsl(234, 85%, 63%)"
-                }}
-                onMouseLeave={(e) => {
-                  if (!link.isPill) e.currentTarget.style.color = "hsl(220, 25%, 15%)"
-                }}
               >
                 {link.label}
               </a>
             ))}
           </div>
 
-          {/* Spacer to balance layout */}
-          <div className="hidden md:block flex-shrink-0 w-[1px]" />
+          {/* Desktop CTA */}
+          <div className="hidden md:flex items-center gap-3">
+            <Button variant="hero" size="sm" asChild>
+              <a href="https://bright-trip-studio.lovable.app/trips">Vytvoriť camp</a>
+            </Button>
+          </div>
 
           {/* Mobile hamburger */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 transition-colors"
-            style={{ color: "hsl(220, 25%, 15%)" }}
+            className="md:hidden p-2 transition-colors text-foreground"
             aria-label="Menu"
           >
             {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -100,8 +87,7 @@ export default function Navbar() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.1 }}
                   onClick={() => setMobileOpen(false)}
-                  className="text-2xl font-semibold transition-colors"
-                  style={{ color: "hsl(220, 25%, 15%)" }}
+                  className="text-2xl font-semibold transition-colors text-foreground"
                 >
                   {link.label}
                 </motion.a>
