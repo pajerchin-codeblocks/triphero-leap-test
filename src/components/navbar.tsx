@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button"
 import logoColor from "@/assets/logo-color.png"
 
 const navLinks = [
-  { label: "Tripy", href: "https://bright-trip-studio.lovable.app/trips", isPill: true },
-  { label: "Lídri", href: "https://bright-trip-studio.lovable.app/leaders" },
-  { label: "O nás", href: "https://bright-trip-studio.lovable.app/o-nas" },
-  { label: "Kontakt", href: "https://bright-trip-studio.lovable.app/kontakt" },
+  { label: "Tripy", href: "https://new.triphero.sk/trips", isPill: true },
+  { label: "Lídri", href: "https://new.triphero.sk/leaders" },
+  { label: "O nás", href: "https://new.triphero.sk/o-nas" },
+  { label: "Kontakt", href: "https://new.triphero.sk/kontakt" },
 ]
 
 export default function Navbar() {
@@ -29,7 +29,7 @@ export default function Navbar() {
       >
         <div className="container px-4 md:px-6 lg:px-8 h-full flex items-center justify-between">
           {/* Logo */}
-          <a href="https://bright-trip-studio.lovable.app" className="hover:opacity-80 transition-opacity flex-shrink-0 flex items-center">
+          <a href="https://new.triphero.sk" className="hover:opacity-80 transition-opacity flex-shrink-0 flex items-center">
             <img src={logoColor} alt="TripHERO" className="h-8 md:h-10 w-auto transition-all duration-300" />
           </a>
 
@@ -53,7 +53,7 @@ export default function Navbar() {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
             <Button variant="hero" size="sm" asChild>
-              <a href="https://bright-trip-studio.lovable.app/trips">Vytvoriť camp</a>
+              <a href="https://new.triphero.sk/trips">Vytvoriť camp</a>
             </Button>
           </div>
 
