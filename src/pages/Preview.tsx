@@ -463,7 +463,7 @@ export default function Preview() {
               variants={stagger}
             >
               <motion.div variants={fadeUp} className="text-center mb-16">
-                <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Tvoj deň v kempe</h2>
+                <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Tvoj deň na tripe</h2>
                 <p className="text-lg text-muted-foreground">
                   Každý deň je starostlivo naplánovaný pre maximálny zážitok
                 </p>
