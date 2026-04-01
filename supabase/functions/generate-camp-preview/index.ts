@@ -158,9 +158,9 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
     "amenities": ["amenita1", "amenita2", "amenita3", "amenita4", "amenita5", "amenita6"],
     "hotelName": "názov hotela ak je známy"
   },
-  "whatMakesItSpecial": {
-    "headline": "čo robí tento camp výnimočným",
-    "uniquePoints": ["bod1", "bod2", "bod3"],
+   "whatMakesItSpecial": {
+     "headline": "čo robí tento trip výnimočným",
+     "uniquePoints": ["bod1", "bod2", "bod3"],
     "groupDynamics": "popis skupinovej dynamiky",
     "exclusivity": "popis exkluzivity"
   },
