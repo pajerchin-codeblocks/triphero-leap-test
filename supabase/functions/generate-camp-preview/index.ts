@@ -70,10 +70,10 @@ serve(async (req) => {
        },
      }
 
-    const defaults = campTypeDefaults[configuration.campType] || {
-      specialization: 'Fitness a wellness',
-      program: 'Ranný tréning, hlavný tréningový blok, popoludňajšie aktivity a večerná regenerácia',
-    }
+     const defaults = tripTypeDefaults[configuration.campType] || {
+       specialization: 'Fitness a wellness',
+       program: 'Ranný tréning, hlavný tréningový blok, popoludňajšie aktivity a večerná regenerácia',
+     }
 
     const trainerExpProvided = !!configuration.trainerExperience
     const trainerSpecProvided = !!configuration.trainerSpecialization
