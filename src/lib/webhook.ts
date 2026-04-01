@@ -17,7 +17,7 @@ export interface TripConfigurationData {
     months: string[]
     duration: string
     participants: string
-    campType: string
+    tripType: string
 
     // Ubytovanie a služby
     hotel: {
