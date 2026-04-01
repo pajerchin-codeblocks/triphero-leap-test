@@ -9,7 +9,7 @@ import {
   Heart,
   MapPin,
   Calendar,
-  Users,
+  
   Clock,
   Star,
   Dumbbell,
@@ -85,12 +85,6 @@ interface TripPreviewData {
     whatYouGet: string[]
     notIncluded: string[]
     paymentOptions: string
-  }
-  urgency: {
-    scarcity: string
-    deadline: string
-    earlyBird: string | null
-    finalCta: string
   }
   practicalInfo: {
     targetAudience: string
@@ -237,17 +231,6 @@ export default function Preview() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--primary))] via-[hsl(var(--primary)/0.5)] to-transparent" />
 
-        {/* Scarcity badge */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="absolute top-6 right-6 z-10"
-        >
-          <Badge className="bg-accent text-accent-foreground px-4 py-2 text-sm font-semibold shadow-glow border-0">
-            {campData.urgency.scarcity || "Limitovaný počet miest"}
-          </Badge>
-        </motion.div>
 
         <div className="relative z-10 w-full px-4 pb-16 pt-32 md:px-8 lg:px-16">
           <div className="max-w-5xl">
@@ -323,7 +306,7 @@ export default function Preview() {
             {[
               { icon: Calendar, label: "Termín", value: campData.investmentBreakdown?.priceFrame?.match(/\d{1,2}\.\d{1,2}\.\d{4}/)?.[0] || "Podľa dohody" },
               { icon: MapPin, label: "Destinácia", value: campData.luxuryExperience?.hotelName || "Premium resort" },
-              { icon: Users, label: "Kapacita", value: campData.urgency?.scarcity || "Limitované miesta" },
+              
               { icon: Sparkles, label: "Cena od", value: campData.investmentBreakdown?.pricePerPerson || "Na vyžiadanie" },
             ].map((item, idx) => (
               <div
@@ -728,11 +711,6 @@ export default function Preview() {
                 <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Investícia od</p>
                 <p className="text-5xl md:text-6xl font-bold text-accent mb-4">{campData.investmentBreakdown.pricePerPerson}</p>
                 <p className="text-muted-foreground leading-relaxed">{campData.investmentBreakdown.priceFrame}</p>
-                {campData.urgency.earlyBird && (
-                  <div className="mt-4 bg-accent/10 rounded-lg px-4 py-2 inline-block">
-                    <p className="text-sm text-accent font-semibold">{campData.urgency.earlyBird}</p>
-                  </div>
-                )}
               </div>
             </motion.div>
 
@@ -866,16 +844,12 @@ export default function Preview() {
             {campData.closingStory.finalCta}
           </motion.p>
 
-          <motion.div variants={fadeUp} className="mb-6">
-            <p className="text-primary-foreground/60 text-sm">{campData.urgency.deadline}</p>
-          </motion.div>
-
           <motion.div variants={fadeUp}>
             <Button
               size="lg"
               className="gradient-wizard-btn text-lg md:text-xl px-12 py-7 font-bold shadow-2xl hover:scale-[1.03] active:scale-[0.98] transition-all duration-300"
             >
-              {campData.urgency.finalCta || "Rezervovať si miesto"}
+              {campData.closingStory.finalCta || "Rezervovať si miesto"}
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
           </motion.div>
