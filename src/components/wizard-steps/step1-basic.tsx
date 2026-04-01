@@ -31,7 +31,7 @@ const allMonths = [
   { month: "December", number: 12, label: "Dec" },
 ]
 
-const campTypeOptions = ["Fit camp", "Yoga retreat", "Lifestyle", "Komunitný pobyt", "Iné"]
+const campTypeOptions = ["Poznávacie", "Mindfulness", "Futbal", "Pilates", "Joga", "Golf", "E-športy", "Beh", "Turistika", "Fitcamp", "Triatlon", "Mix"]
 
 export default function Step1Basic({ configuration, onConfigurationChange, validationErrors = {}, availableDestinations, destinationsLoading }: Step1BasicProps) {
   const [showMoreDestinations, setShowMoreDestinations] = useState(false)
