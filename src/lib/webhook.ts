@@ -9,7 +9,7 @@ export const FLIGHT_PRICES_WEBHOOK_URL = "https://n8n.codeblocks.sk/webhook/73b1
 
 const WEBHOOK_URL = TRIP_PREVIEW_WEBHOOK_URL
 
-export interface CampConfigurationData {
+export interface TripConfigurationData {
   timestamp: string
   configuration: {
     // Základné informácie
