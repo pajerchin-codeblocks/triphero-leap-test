@@ -80,7 +80,7 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold text-foreground mb-2">Základné parametre</h2>
-        <p className="text-muted-foreground text-base">Vyber si destináciu a parametre tvojho campu</p>
+        <p className="text-muted-foreground text-base">Vyber si destináciu a parametre tvojho tripu</p>
       </div>
 
       <Card className="shadow-soft rounded-2xl border-0">
