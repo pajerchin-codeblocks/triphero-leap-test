@@ -50,25 +50,25 @@ serve(async (req) => {
 
     const slug = generateSlug(configuration.destination || 'trip', configuration.trainerName)
 
-    // Mock data defaults based on campType
-    const campTypeDefaults: Record<string, { specialization: string; program: string }> = {
-      'Fit camp': {
-        specialization: 'Funkčný tréning, HIIT a kondičné cvičenia',
-        program: 'Ranný funkčný tréning, HIIT session, kondičné cvičenia, stretching a regenerácia',
-      },
-      'Yoga retreat': {
-        specialization: 'Joga, meditácia a dychové cvičenia',
-        program: 'Ranná meditácia, vinyasa joga, dychové cvičenia, večerná restoratívna joga',
-      },
-      'Lifestyle': {
-        specialization: 'Wellness, výživa a zdravý životný štýl',
-        program: 'Ranný tréning, wellness workshop, výživové poradenstvo, relaxačné aktivity',
-      },
-      'Komunitný pobyt': {
-        specialization: 'Skupinové aktivity a team building',
-        program: 'Skupinový tréning, team building aktivity, spoločné výlety a večerný program',
-      },
-    }
+     // Mock data defaults based on tripType
+     const tripTypeDefaults: Record<string, { specialization: string; program: string }> = {
+       'Poznávacie': {
+         specialization: 'Kultúrne zážitky, historické pamiatky a lokálna gastronómia',
+         program: 'Ranný program, prehliadka pamätihodností, lokálna kuchyňa, večerný program',
+       },
+       'Mindfulness': {
+         specialization: 'Meditácia, dychové cvičenia a mindfulness praktiky',
+         program: 'Ranná meditácia, mindfulness workshop, dychové cvičenia, večerná relaxácia',
+       },
+       'Joga': {
+         specialization: 'Joga, meditácia a dychové cvičenia',
+         program: 'Ranná meditácia, vinyasa joga, dychové cvičenia, večerná restoratívna joga',
+       },
+       'Fitcamp': {
+         specialization: 'Funkčný tréning, HIIT a kondičné cvičenia',
+         program: 'Ranný funkčný tréning, HIIT session, kondičné cvičenia, stretching a regenerácia',
+       },
+     }
 
     const defaults = campTypeDefaults[configuration.campType] || {
       specialization: 'Fitness a wellness',
