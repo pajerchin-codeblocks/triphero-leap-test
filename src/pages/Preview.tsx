@@ -9,7 +9,7 @@ import {
   Heart,
   MapPin,
   Calendar,
-  Users,
+  
   Clock,
   Star,
   Dumbbell,
