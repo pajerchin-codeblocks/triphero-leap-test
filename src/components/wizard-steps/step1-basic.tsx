@@ -80,7 +80,7 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold text-foreground mb-2">Základné parametre</h2>
-        <p className="text-muted-foreground text-base">Vyber si destináciu a parametre tvojho campu</p>
+        <p className="text-muted-foreground text-base">Vyber si destináciu a parametre tvojho tripu</p>
       </div>
 
       <Card className="shadow-soft rounded-2xl border-0">
@@ -270,11 +270,11 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-foreground mb-3">Typ campu <span className="text-destructive">*</span></label>
+            <label className="block text-sm font-semibold text-foreground mb-3">Typ tripu <span className="text-destructive">*</span></label>
             <div className="relative">
               <input
                 type="text"
-                placeholder="Napíš typ campu..."
+                placeholder="Napíš typ tripu..."
                 value={campTypeInput}
                 onChange={(e) => handleCampTypeChange(e.target.value)}
                 onFocus={() => setShowCampTypeSuggestions(true)}

@@ -19,7 +19,7 @@ export default function Step4TrainerInfo({ configuration, onConfigurationChange,
       <div>
         <h2 className="text-3xl font-bold text-foreground mb-2">O vás ako trénerovi</h2>
         <p className="text-muted-foreground text-base">
-          Pomôžte nám lepšie pochopiť vaše skúsenosti a špecializáciu, aby sme mohli vytvoriť presvedčivý popis vášho campu.
+          Pomôžte nám lepšie pochopiť vaše skúsenosti a špecializáciu, aby sme mohli vytvoriť presvedčivý popis vášho tripu.
         </p>
       </div>
 
@@ -81,7 +81,7 @@ export default function Step4TrainerInfo({ configuration, onConfigurationChange,
             <Label htmlFor="trainerBio" className="text-sm font-semibold text-foreground">Váš príbeh a prístup k trénovaniu</Label>
             <Textarea
               id="trainerBio"
-              placeholder="Popíšte svoju filozofiu tréningu, čo vás motivuje, a prečo by sa účastníci mali prihlásiť práve na váš camp..."
+              placeholder="Popíšte svoju filozofiu tréningu, čo vás motivuje, a prečo by sa účastníci mali prihlásiť práve na váš trip..."
               value={configuration.trainerBio || ""}
               onChange={(e) => handleChange("trainerBio", e.target.value)}
               className="min-h-[150px] resize-none"

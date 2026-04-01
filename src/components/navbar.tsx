@@ -53,7 +53,7 @@ export default function Navbar() {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
             <Button variant="hero" size="sm" asChild>
-              <a href="https://new.triphero.sk/trips">Vytvoriť camp</a>
+              <a href="https://new.triphero.sk/trips">Vytvoriť trip</a>
             </Button>
           </div>
 

@@ -48,32 +48,32 @@ serve(async (req) => {
       )
     }
 
-    const slug = generateSlug(configuration.destination || 'camp', configuration.trainerName)
+    const slug = generateSlug(configuration.destination || 'trip', configuration.trainerName)
 
-    // Mock data defaults based on campType
-    const campTypeDefaults: Record<string, { specialization: string; program: string }> = {
-      'Fit camp': {
-        specialization: 'Funkčný tréning, HIIT a kondičné cvičenia',
-        program: 'Ranný funkčný tréning, HIIT session, kondičné cvičenia, stretching a regenerácia',
-      },
-      'Yoga retreat': {
-        specialization: 'Joga, meditácia a dychové cvičenia',
-        program: 'Ranná meditácia, vinyasa joga, dychové cvičenia, večerná restoratívna joga',
-      },
-      'Lifestyle': {
-        specialization: 'Wellness, výživa a zdravý životný štýl',
-        program: 'Ranný tréning, wellness workshop, výživové poradenstvo, relaxačné aktivity',
-      },
-      'Komunitný pobyt': {
-        specialization: 'Skupinové aktivity a team building',
-        program: 'Skupinový tréning, team building aktivity, spoločné výlety a večerný program',
-      },
-    }
+     // Mock data defaults based on tripType
+     const tripTypeDefaults: Record<string, { specialization: string; program: string }> = {
+       'Poznávacie': {
+         specialization: 'Kultúrne zážitky, historické pamiatky a lokálna gastronómia',
+         program: 'Ranný program, prehliadka pamätihodností, lokálna kuchyňa, večerný program',
+       },
+       'Mindfulness': {
+         specialization: 'Meditácia, dychové cvičenia a mindfulness praktiky',
+         program: 'Ranná meditácia, mindfulness workshop, dychové cvičenia, večerná relaxácia',
+       },
+       'Joga': {
+         specialization: 'Joga, meditácia a dychové cvičenia',
+         program: 'Ranná meditácia, vinyasa joga, dychové cvičenia, večerná restoratívna joga',
+       },
+       'Fitcamp': {
+         specialization: 'Funkčný tréning, HIIT a kondičné cvičenia',
+         program: 'Ranný funkčný tréning, HIIT session, kondičné cvičenia, stretching a regenerácia',
+       },
+     }
 
-    const defaults = campTypeDefaults[configuration.campType] || {
-      specialization: 'Fitness a wellness',
-      program: 'Ranný tréning, hlavný tréningový blok, popoludňajšie aktivity a večerná regenerácia',
-    }
+     const defaults = tripTypeDefaults[configuration.campType] || {
+       specialization: 'Fitness a wellness',
+       program: 'Ranný tréning, hlavný tréningový blok, popoludňajšie aktivity a večerná regenerácia',
+     }
 
     const trainerExpProvided = !!configuration.trainerExperience
     const trainerSpecProvided = !!configuration.trainerSpecialization
@@ -88,7 +88,7 @@ serve(async (req) => {
     const dailyProgram = configuration.dailyProgram || defaults.program
     const pricePerPerson = configuration.estimatedPrice || 599
 
-    const prompt = `Si expertný copywriter pre fitness a wellness retreat campy. Vytvor kompletný konverzný landing page obsah v slovenčine na základe týchto údajov:
+    const prompt = `Si expertný copywriter pre fitness a wellness retreat tripy. Vytvor kompletný konverzný landing page obsah v slovenčine na základe týchto údajov:
 
 DÔLEŽITÉ PRAVIDLÁ:
 - Polia označené (ZADANÉ TRÉNEROM) použi PRESNE tak ako sú. Nepridávaj, neupravuj, nedopĺňaj ďalšie položky.
@@ -101,7 +101,7 @@ Destinácia: ${configuration.destination || 'neuvedená'}
 Termín: ${configuration.months?.join(', ') || configuration.month || 'neuvedený'}
 Trvanie: ${configuration.duration || 'neuvedené'}
 Počet účastníkov: ${configuration.participants || 'neuvedený'}
-Typ campu: ${configuration.campType || 'neuvedený'}
+Typ tripu: ${configuration.campType || 'neuvedený'}
 Strava: ${configuration.meals || 'neuvedená'}
 Transfer: ${configuration.transfer ? 'Áno' : 'Nie'}
 Extra služby: ${(configuration.extras || []).join(', ') || 'žiadne'}
@@ -121,7 +121,7 @@ Tréner:
 - Certifikáty: ${trainerCertificates} ${trainerCertProvided ? '(ZADANÉ TRÉNEROM - použi PRESNE tieto, nepridávaj ďalšie)' : '(NEZADANÉ - vráť prázdne pole [], NEVYMÝŠĽAJ)'}
 - Bio/Príbeh: ${trainerBio} ${trainerBioProvided ? '(ZADANÉ TRÉNEROM - použi presne)' : '(NEZADANÉ - vymysli)'}
 
-Program campu: ${dailyProgram} ${programProvided ? '(ZADANÉ TRÉNEROM - použi PRESNE tieto sloty a časy, nepridávaj ďalšie. Ale VYLEPŠI popisy aktivít - prepíš ich marketingovo príťažlivejšie a emotívnejšie, zachovaj pôvodný význam)' : '(NEZADANÉ - vymysli kompletný denný program 6-8 slotov)'}
+Program tripu: ${dailyProgram} ${programProvided ? '(ZADANÉ TRÉNEROM - použi PRESNE tieto sloty a časy, nepridávaj ďalšie. Ale VYLEPŠI popisy aktivít - prepíš ich marketingovo príťažlivejšie a emotívnejšie, zachovaj pôvodný význam)' : '(NEZADANÉ - vymysli kompletný denný program 6-8 slotov)'}
 
 Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto presnou štruktúrou:
 {
@@ -133,8 +133,8 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
   },
   "storyHook": {
     "opening": "úvodná veta príbehu, 2-3 vety",
-    "problem": "problém ktorý camp rieši, 2-3 vety",
-    "solution": "riešenie ktoré camp ponúka, 2-3 vety"
+    "problem": "problém ktorý trip rieši, 2-3 vety",
+    "solution": "riešenie ktoré trip ponúka, 2-3 vety"
   },
   "trainerProfile": {
     "name": "${configuration.trainerName}",
@@ -158,9 +158,9 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
     "amenities": ["amenita1", "amenita2", "amenita3", "amenita4", "amenita5", "amenita6"],
     "hotelName": "názov hotela ak je známy"
   },
-  "whatMakesItSpecial": {
-    "headline": "čo robí tento camp výnimočným",
-    "uniquePoints": ["bod1", "bod2", "bod3"],
+   "whatMakesItSpecial": {
+     "headline": "čo robí tento trip výnimočným",
+     "uniquePoints": ["bod1", "bod2", "bod3"],
     "groupDynamics": "popis skupinovej dynamiky",
     "exclusivity": "popis exkluzivity"
   },
@@ -179,7 +179,7 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
     "finalCta": "finálne CTA"
   },
   "practicalInfo": {
-    "targetAudience": "pre koho je camp určený",
+    "targetAudience": "pre koho je trip určený",
     "fitnessLevel": "požadovaná fitness úroveň",
     "whatToBring": ["vec1", "vec2", "vec3", "vec4"],
     "faq": [

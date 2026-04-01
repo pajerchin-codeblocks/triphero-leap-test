@@ -25,7 +25,7 @@ import { motion } from "framer-motion"
 const ILLUSTRATIVE_TRAINER_FEMALE = "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&h=600&fit=crop&crop=face"
 const ILLUSTRATIVE_TRAINER_MALE = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=600&fit=crop&crop=face"
 
-interface CampPreviewData {
+interface TripPreviewData {
   success: boolean
   sessionId: string
   slug: string
@@ -118,7 +118,7 @@ const stagger = {
 
 export default function Preview() {
   const { slug } = useParams<{ slug: string }>()
-  const [campData, setCampData] = useState<CampPreviewData | null>(null)
+  const [campData, setCampData] = useState<TripPreviewData | null>(null)
   const [loading, setLoading] = useState(false)
   const [accessInput, setAccessInput] = useState("")
   const [accessError, setAccessError] = useState<string | null>(null)
@@ -177,7 +177,7 @@ export default function Preview() {
                 <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
                   <Sparkles className="w-8 h-8 text-accent" />
                 </div>
-                <h1 className="text-2xl font-bold text-foreground mb-2">Náhľad campu</h1>
+                <h1 className="text-2xl font-bold text-foreground mb-2">Náhľad tripu</h1>
                 <p className="text-muted-foreground">
                   Pre zobrazenie náhľadu zadajte vaše meno a priezvisko
                 </p>
@@ -214,7 +214,7 @@ export default function Preview() {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Načítavam náhľad campu...</p>
+          <p className="text-muted-foreground">Načítavam náhľad tripu...</p>
         </div>
       </div>
     )
@@ -463,7 +463,7 @@ export default function Preview() {
               variants={stagger}
             >
               <motion.div variants={fadeUp} className="text-center mb-16">
-                <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Tvoj deň v kempe</h2>
+                <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Tvoj deň na tripe</h2>
                 <p className="text-lg text-muted-foreground">
                   Každý deň je starostlivo naplánovaný pre maximálny zážitok
                 </p>
@@ -641,7 +641,7 @@ export default function Preview() {
                 variants={fadeUp}
                 className="text-3xl md:text-5xl font-bold text-foreground text-center mb-12"
               >
-                {campData.whatMakesItSpecial.headline || "Prečo práve tento kemp?"}
+                {campData.whatMakesItSpecial.headline || "Prečo práve tento trip?"}
               </motion.h2>
 
               {campData.whatMakesItSpecial.uniquePoints && (
@@ -686,8 +686,8 @@ export default function Preview() {
             </motion.h2>
             <div className="grid md:grid-cols-2 gap-6">
               {[
-                { text: "Najlepšia investícia do seba za posledné roky. Vrátila som sa ako nový človek.", name: "Účastníčka campu" },
-                { text: "Tréningy, jedlo, prostredie — všetko bolo na úplne inom leveli.", name: "Účastník campu" },
+                 { text: "Najlepšia investícia do seba za posledné roky. Vrátila som sa ako nový človek.", name: "Účastníčka tripu" },
+                 { text: "Tréningy, jedlo, prostredie — všetko bolo na úplne inom leveli.", name: "Účastník tripu" },
               ].map((t, idx) => (
                 <motion.div
                   key={idx}

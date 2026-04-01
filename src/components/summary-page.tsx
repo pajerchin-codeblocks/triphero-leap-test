@@ -96,7 +96,7 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Súhrn vášho campu</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Súhrn vášho tripu</h1>
           <p className="text-muted-foreground">Skontrolujte detaily a vygenerujte preview stránku</p>
         </div>
 
@@ -109,7 +109,7 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
                   <div><p className="text-sm text-muted-foreground">Termín</p><p className="font-medium text-foreground">{configuration.months?.length > 0 ? configuration.months.join(", ") : "—"}</p></div>
                   <div><p className="text-sm text-muted-foreground">Trvanie</p><p className="font-medium text-foreground">{configuration.duration || "—"}</p></div>
                   <div><p className="text-sm text-muted-foreground">Počet účastníkov</p><p className="font-medium text-foreground">{configuration.participants || "—"}</p></div>
-                  <div><p className="text-sm text-muted-foreground">Typ campu</p><p className="font-medium text-foreground">{configuration.campType || "—"}</p></div>
+                  <div><p className="text-sm text-muted-foreground">Typ tripu</p><p className="font-medium text-foreground">{configuration.campType || "—"}</p></div>
                 </div>
               </CardContent>
             </Card>
