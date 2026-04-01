@@ -48,7 +48,7 @@ serve(async (req) => {
       )
     }
 
-    const slug = generateSlug(configuration.destination || 'camp', configuration.trainerName)
+    const slug = generateSlug(configuration.destination || 'trip', configuration.trainerName)
 
     // Mock data defaults based on campType
     const campTypeDefaults: Record<string, { specialization: string; program: string }> = {
