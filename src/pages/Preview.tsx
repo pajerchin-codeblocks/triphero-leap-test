@@ -86,12 +86,6 @@ interface TripPreviewData {
     notIncluded: string[]
     paymentOptions: string
   }
-  urgency: {
-    scarcity: string
-    deadline: string
-    earlyBird: string | null
-    finalCta: string
-  }
   practicalInfo: {
     targetAudience: string
     fitnessLevel: string

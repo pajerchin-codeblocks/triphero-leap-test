@@ -175,12 +175,6 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
     "notIncluded": ["položka1", "položka2"],
     "paymentOptions": "možnosti platby"
   },
-  "urgency": {
-    "scarcity": "správa o obmedzenej kapacite",
-    "deadline": "deadline na prihlásenie",
-    "earlyBird": "early bird ponuka alebo null",
-    "finalCta": "finálne CTA"
-  },
   "practicalInfo": {
     "targetAudience": "pre koho je trip určený",
     "fitnessLevel": "požadovaná fitness úroveň",
