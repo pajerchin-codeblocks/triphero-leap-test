@@ -177,7 +177,7 @@ export default function Preview() {
                 <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
                   <Sparkles className="w-8 h-8 text-accent" />
                 </div>
-                <h1 className="text-2xl font-bold text-foreground mb-2">Náhľad campu</h1>
+                <h1 className="text-2xl font-bold text-foreground mb-2">Náhľad tripu</h1>
                 <p className="text-muted-foreground">
                   Pre zobrazenie náhľadu zadajte vaše meno a priezvisko
                 </p>
