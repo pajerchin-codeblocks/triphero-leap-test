@@ -270,7 +270,7 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-foreground mb-3">Typ campu <span className="text-destructive">*</span></label>
+            <label className="block text-sm font-semibold text-foreground mb-3">Typ tripu <span className="text-destructive">*</span></label>
             <div className="relative">
               <input
                 type="text"
