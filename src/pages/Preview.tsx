@@ -717,11 +717,6 @@ export default function Preview() {
                 <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Investícia od</p>
                 <p className="text-5xl md:text-6xl font-bold text-accent mb-4">{campData.investmentBreakdown.pricePerPerson}</p>
                 <p className="text-muted-foreground leading-relaxed">{campData.investmentBreakdown.priceFrame}</p>
-                {campData.urgency.earlyBird && (
-                  <div className="mt-4 bg-accent/10 rounded-lg px-4 py-2 inline-block">
-                    <p className="text-sm text-accent font-semibold">{campData.urgency.earlyBird}</p>
-                  </div>
-                )}
               </div>
             </motion.div>
 
