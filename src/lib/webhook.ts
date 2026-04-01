@@ -1,7 +1,7 @@
 /**
  * n8n webhook URLs (z triphero-leap).
  * V Supabase Edge Functions nastav env:
- * - N8N_CAMP_PREVIEW_WEBHOOK_URL = TRIP_PREVIEW_WEBHOOK_URL (náhľad tripu)
+ * - N8N_TRIP_PREVIEW_WEBHOOK_URL = TRIP_PREVIEW_WEBHOOK_URL (náhľad tripu)
  * - N8N_FLIGHT_PRICES_WEBHOOK_URL = FLIGHT_PRICES_WEBHOOK_URL (step1 – ceny letov)
  */
 export const TRIP_PREVIEW_WEBHOOK_URL = "https://n8n.codeblocks.sk/webhook/3b6f62b9-dc0c-4902-bfd7-956f0bb23021"
