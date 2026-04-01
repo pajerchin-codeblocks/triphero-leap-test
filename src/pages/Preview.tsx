@@ -118,7 +118,7 @@ const stagger = {
 
 export default function Preview() {
   const { slug } = useParams<{ slug: string }>()
-  const [campData, setCampData] = useState<CampPreviewData | null>(null)
+  const [campData, setCampData] = useState<TripPreviewData | null>(null)
   const [loading, setLoading] = useState(false)
   const [accessInput, setAccessInput] = useState("")
   const [accessError, setAccessError] = useState<string | null>(null)
