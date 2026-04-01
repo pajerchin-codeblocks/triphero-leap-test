@@ -179,7 +179,7 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
     "finalCta": "finálne CTA"
   },
   "practicalInfo": {
-    "targetAudience": "pre koho je camp určený",
+    "targetAudience": "pre koho je trip určený",
     "fitnessLevel": "požadovaná fitness úroveň",
     "whatToBring": ["vec1", "vec2", "vec3", "vec4"],
     "faq": [

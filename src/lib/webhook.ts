@@ -39,8 +39,8 @@ export interface TripConfigurationData {
   }
 }
 
-export async function sendCampConfiguration(
-  data: CampConfigurationData,
+export async function sendTripConfiguration(
+   data: TripConfigurationData,
 ): Promise<{ success: boolean; error?: string }> {
   console.log("[TripHERO] Sending data to webhook:", WEBHOOK_URL)
   console.log("[TripHERO] Payload:", JSON.stringify(data, null, 2))

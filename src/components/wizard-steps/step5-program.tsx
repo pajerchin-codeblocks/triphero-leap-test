@@ -48,7 +48,7 @@ export default function Step5Program({ configuration, onConfigurationChange, val
               className="min-h-[100px] resize-none"
               rows={4}
             />
-            <p className="text-xs text-muted-foreground">Pridajte extra zážitky, ktoré urobia váš camp nezabudnuteľným</p>
+            <p className="text-xs text-muted-foreground">Pridajte extra zážitky, ktoré urobia váš trip nezabudnuteľným</p>
           </div>
         </CardContent>
       </Card>

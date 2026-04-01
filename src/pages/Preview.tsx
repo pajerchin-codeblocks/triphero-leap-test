@@ -686,8 +686,8 @@ export default function Preview() {
             </motion.h2>
             <div className="grid md:grid-cols-2 gap-6">
               {[
-                { text: "Najlepšia investícia do seba za posledné roky. Vrátila som sa ako nový človek.", name: "Účastníčka campu" },
-                { text: "Tréningy, jedlo, prostredie — všetko bolo na úplne inom leveli.", name: "Účastník campu" },
+                 { text: "Najlepšia investícia do seba za posledné roky. Vrátila som sa ako nový človek.", name: "Účastníčka tripu" },
+                 { text: "Tréningy, jedlo, prostredie — všetko bolo na úplne inom leveli.", name: "Účastník tripu" },
               ].map((t, idx) => (
                 <motion.div
                   key={idx}

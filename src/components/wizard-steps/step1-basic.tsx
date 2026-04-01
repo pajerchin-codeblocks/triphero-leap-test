@@ -274,7 +274,7 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
             <div className="relative">
               <input
                 type="text"
-                placeholder="Napíš typ campu..."
+                placeholder="Napíš typ tripu..."
                 value={campTypeInput}
                 onChange={(e) => handleCampTypeChange(e.target.value)}
                 onFocus={() => setShowCampTypeSuggestions(true)}
