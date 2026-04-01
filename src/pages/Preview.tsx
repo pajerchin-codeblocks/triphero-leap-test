@@ -237,17 +237,6 @@ export default function Preview() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--primary))] via-[hsl(var(--primary)/0.5)] to-transparent" />
 
-        {/* Scarcity badge */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="absolute top-6 right-6 z-10"
-        >
-          <Badge className="bg-accent text-accent-foreground px-4 py-2 text-sm font-semibold shadow-glow border-0">
-            {campData.urgency.scarcity || "Limitovaný počet miest"}
-          </Badge>
-        </motion.div>
 
         <div className="relative z-10 w-full px-4 pb-16 pt-32 md:px-8 lg:px-16">
           <div className="max-w-5xl">
