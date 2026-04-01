@@ -1,19 +1,19 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { useState } from "react"
-import { Spinner } from "@/components/ui/spinner"
+import { Card, CardContent } from "@/components/ui/card";
+import { useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
 
 export interface DestinationItem {
-  id: string
-  label: string
-  image: string
+  id: string;
+  label: string;
+  image: string;
 }
 
 interface Step1BasicProps {
-  configuration: any
-  onConfigurationChange: (updates: any) => void
-  validationErrors?: Record<string, boolean>
-  availableDestinations: DestinationItem[]
-  destinationsLoading: boolean
+  configuration: any;
+  onConfigurationChange: (updates: any) => void;
+  validationErrors?: Record<string, boolean>;
+  availableDestinations: DestinationItem[];
+  destinationsLoading: boolean;
 }
 
 const allMonths = [
@@ -29,52 +29,71 @@ const allMonths = [
   { month: "Október", number: 10, label: "Okt" },
   { month: "November", number: 11, label: "Nov" },
   { month: "December", number: 12, label: "Dec" },
-]
+];
 
-const campTypeOptions = ["Poznávacie", "Mindfulness", "Futbal", "Pilates", "Joga", "Golf", "E-športy", "Beh", "Turistika", "Fitcamp", "Triatlon", "Mix"]
+const campTypeOptions = [
+  "Poznávací",
+  "Mindfulness",
+  "Futbal",
+  "Pilates",
+  "Joga",
+  "Golf",
+  "E-športy",
+  "Beh",
+  "Turistika",
+  "Fitcamp",
+  "Triatlon",
+  "Mix",
+];
 
-export default function Step1Basic({ configuration, onConfigurationChange, validationErrors = {}, availableDestinations, destinationsLoading }: Step1BasicProps) {
-  const [showMoreDestinations, setShowMoreDestinations] = useState(false)
-  const [showCustomDuration, setShowCustomDuration] = useState(false)
-  const [customDuration, setCustomDuration] = useState(configuration.duration || "")
-  const [campTypeInput, setCampTypeInput] = useState(configuration.campType || "")
-  const [showCampTypeSuggestions, setShowCampTypeSuggestions] = useState(false)
+export default function Step1Basic({
+  configuration,
+  onConfigurationChange,
+  validationErrors = {},
+  availableDestinations,
+  destinationsLoading,
+}: Step1BasicProps) {
+  const [showMoreDestinations, setShowMoreDestinations] = useState(false);
+  const [showCustomDuration, setShowCustomDuration] = useState(false);
+  const [customDuration, setCustomDuration] = useState(configuration.duration || "");
+  const [campTypeInput, setCampTypeInput] = useState(configuration.campType || "");
+  const [showCampTypeSuggestions, setShowCampTypeSuggestions] = useState(false);
 
   const handleChange = (key: string, value: string) => {
-    onConfigurationChange({ [key]: value })
-  }
+    onConfigurationChange({ [key]: value });
+  };
 
   const handleMonthToggle = (monthName: string) => {
-    const selectedMonths = Array.isArray(configuration.months) ? configuration.months : []
-    const isSelected = selectedMonths.includes(monthName)
+    const selectedMonths = Array.isArray(configuration.months) ? configuration.months : [];
+    const isSelected = selectedMonths.includes(monthName);
 
     if (isSelected) {
-      onConfigurationChange({ months: selectedMonths.filter((m: string) => m !== monthName) })
+      onConfigurationChange({ months: selectedMonths.filter((m: string) => m !== monthName) });
     } else if (selectedMonths.length < 4) {
-      onConfigurationChange({ months: [...selectedMonths, monthName] })
+      onConfigurationChange({ months: [...selectedMonths, monthName] });
     }
-  }
+  };
 
   const handleCustomDuration = (value: string) => {
-    const numValue = value.replace(/\D/g, "")
+    const numValue = value.replace(/\D/g, "");
     if (numValue && Number.parseInt(numValue) > 0) {
-      setCustomDuration(numValue)
-      handleChange("duration", `${numValue} dní`)
+      setCustomDuration(numValue);
+      handleChange("duration", `${numValue} dní`);
     }
-  }
+  };
 
   const handleCampTypeChange = (value: string) => {
-    setCampTypeInput(value)
-    onConfigurationChange({ campType: value })
-  }
+    setCampTypeInput(value);
+    onConfigurationChange({ campType: value });
+  };
 
   const handleSelectCampType = (type: string) => {
-    handleChange("campType", type)
-    setCampTypeInput(type)
-    setShowCampTypeSuggestions(false)
-  }
+    handleChange("campType", type);
+    setCampTypeInput(type);
+    setShowCampTypeSuggestions(false);
+  };
 
-  const selectedMonths = Array.isArray(configuration.months) ? configuration.months : []
+  const selectedMonths = Array.isArray(configuration.months) ? configuration.months : [];
 
   return (
     <div className="space-y-6">
@@ -87,7 +106,9 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
         <CardContent className="space-y-10 px-6 py-6">
           {/* Destination */}
           <div>
-            <label className="block text-sm font-semibold text-foreground mb-4">Destinácia <span className="text-destructive">*</span></label>
+            <label className="block text-sm font-semibold text-foreground mb-4">
+              Destinácia <span className="text-destructive">*</span>
+            </label>
             {destinationsLoading ? (
               <div className="flex items-center gap-3 py-8 justify-center text-muted-foreground">
                 <Spinner className="size-5" />
@@ -99,13 +120,15 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
               </div>
             ) : (
               <>
-                <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 ${validationErrors.destination ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}>
+                <div
+                  className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 ${validationErrors.destination ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}
+                >
                   {availableDestinations.slice(0, 5).map((dest) => (
                     <button
                       key={dest.id}
                       onClick={() => {
-                        handleChange("destination", dest.id)
-                        onConfigurationChange({ months: [] })
+                        handleChange("destination", dest.id);
+                        onConfigurationChange({ months: [] });
                       }}
                       className={`relative rounded-2xl overflow-hidden border-2 transition transform hover:scale-105 h-28 ${
                         configuration.destination === dest.id
@@ -137,16 +160,21 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
                       <CardContent className="px-6 py-6">
                         <div className="flex justify-between items-center mb-4">
                           <h3 className="text-lg font-semibold text-foreground">Vyber si destináciu</h3>
-                          <button onClick={() => setShowMoreDestinations(false)} className="text-muted-foreground hover:text-foreground text-xl font-bold">✕</button>
+                          <button
+                            onClick={() => setShowMoreDestinations(false)}
+                            className="text-muted-foreground hover:text-foreground text-xl font-bold"
+                          >
+                            ✕
+                          </button>
                         </div>
                         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
                           {availableDestinations.map((dest) => (
                             <button
                               key={dest.id}
                               onClick={() => {
-                                handleChange("destination", dest.id)
-                                onConfigurationChange({ months: [] })
-                                setShowMoreDestinations(false)
+                                handleChange("destination", dest.id);
+                                onConfigurationChange({ months: [] });
+                                setShowMoreDestinations(false);
                               }}
                               className={`relative rounded-2xl overflow-hidden border-2 transition transform hover:scale-105 h-28 ${
                                 configuration.destination === dest.id
@@ -185,7 +213,9 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
                 )}
               </span>
             </label>
-            <div className={`grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 ${validationErrors.months ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}>
+            <div
+              className={`grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 ${validationErrors.months ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}
+            >
               {allMonths.map((monthObj) => (
                 <button
                   key={monthObj.month}
@@ -204,14 +234,18 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-foreground mb-3">Dĺžka pobytu <span className="text-destructive">*</span></label>
-            <div className={`grid grid-cols-2 sm:grid-cols-4 gap-3 ${validationErrors.duration ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}>
+            <label className="block text-sm font-semibold text-foreground mb-3">
+              Dĺžka pobytu <span className="text-destructive">*</span>
+            </label>
+            <div
+              className={`grid grid-cols-2 sm:grid-cols-4 gap-3 ${validationErrors.duration ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}
+            >
               {["4 dni", "5 dní", "6 dní"].map((duration) => (
                 <button
                   key={duration}
                   onClick={() => {
-                    handleChange("duration", duration)
-                    setShowCustomDuration(false)
+                    handleChange("duration", duration);
+                    setShowCustomDuration(false);
                   }}
                   className={`p-3 rounded-lg border-2 font-medium transition ${
                     configuration.duration === duration
@@ -225,7 +259,9 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
               <button
                 onClick={() => setShowCustomDuration(!showCustomDuration)}
                 className={`p-3 rounded-lg border-2 font-medium transition ${
-                  showCustomDuration ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:border-primary/50"
+                  showCustomDuration
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-background text-foreground hover:border-primary/50"
                 }`}
               >
                 +
@@ -244,7 +280,12 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
                   className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring outline-none transition"
                   autoFocus
                 />
-                <button onClick={() => setShowCustomDuration(false)} className="px-4 py-2 bg-muted text-foreground rounded-lg hover:bg-muted/80 transition">✕</button>
+                <button
+                  onClick={() => setShowCustomDuration(false)}
+                  className="px-4 py-2 bg-muted text-foreground rounded-lg hover:bg-muted/80 transition"
+                >
+                  ✕
+                </button>
               </div>
             )}
             {validationErrors.duration && <p className="text-destructive text-xs mt-2">Toto je povinné pole</p>}
@@ -270,7 +311,9 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-foreground mb-3">Typ tripu <span className="text-destructive">*</span></label>
+            <label className="block text-sm font-semibold text-foreground mb-3">
+              Typ tripu <span className="text-destructive">*</span>
+            </label>
             <div className="relative">
               <input
                 type="text"
@@ -287,8 +330,8 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
                     <button
                       key={type}
                       onMouseDown={(e) => {
-                        e.preventDefault()
-                        handleSelectCampType(type)
+                        e.preventDefault();
+                        handleSelectCampType(type);
                       }}
                       className="w-full px-4 py-2 text-left hover:bg-muted transition first:rounded-t-lg last:rounded-b-lg"
                     >
@@ -303,5 +346,5 @@ export default function Step1Basic({ configuration, onConfigurationChange, valid
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
