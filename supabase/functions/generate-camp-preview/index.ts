@@ -133,7 +133,7 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
   },
   "storyHook": {
     "opening": "úvodná veta príbehu, 2-3 vety",
-    "problem": "problém ktorý camp rieši, 2-3 vety",
+    "problem": "problém ktorý trip rieši, 2-3 vety",
     "solution": "riešenie ktoré camp ponúka, 2-3 vety"
   },
   "trainerProfile": {
