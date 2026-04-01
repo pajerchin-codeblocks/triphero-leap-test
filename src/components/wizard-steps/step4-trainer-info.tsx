@@ -19,7 +19,7 @@ export default function Step4TrainerInfo({ configuration, onConfigurationChange,
       <div>
         <h2 className="text-3xl font-bold text-foreground mb-2">O vás ako trénerovi</h2>
         <p className="text-muted-foreground text-base">
-          Pomôžte nám lepšie pochopiť vaše skúsenosti a špecializáciu, aby sme mohli vytvoriť presvedčivý popis vášho campu.
+          Pomôžte nám lepšie pochopiť vaše skúsenosti a špecializáciu, aby sme mohli vytvoriť presvedčivý popis vášho tripu.
         </p>
       </div>
 
