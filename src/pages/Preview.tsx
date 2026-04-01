@@ -850,16 +850,12 @@ export default function Preview() {
             {campData.closingStory.finalCta}
           </motion.p>
 
-          <motion.div variants={fadeUp} className="mb-6">
-            <p className="text-primary-foreground/60 text-sm">{campData.urgency.deadline}</p>
-          </motion.div>
-
           <motion.div variants={fadeUp}>
             <Button
               size="lg"
               className="gradient-wizard-btn text-lg md:text-xl px-12 py-7 font-bold shadow-2xl hover:scale-[1.03] active:scale-[0.98] transition-all duration-300"
             >
-              {campData.urgency.finalCta || "Rezervovať si miesto"}
+              {campData.closingStory.finalCta || "Rezervovať si miesto"}
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
           </motion.div>
