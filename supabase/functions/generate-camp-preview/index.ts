@@ -101,7 +101,7 @@ Destinácia: ${configuration.destination || 'neuvedená'}
 Termín: ${configuration.months?.join(', ') || configuration.month || 'neuvedený'}
 Trvanie: ${configuration.duration || 'neuvedené'}
 Počet účastníkov: ${configuration.participants || 'neuvedený'}
-Typ campu: ${configuration.campType || 'neuvedený'}
+Typ tripu: ${configuration.campType || 'neuvedený'}
 Strava: ${configuration.meals || 'neuvedená'}
 Transfer: ${configuration.transfer ? 'Áno' : 'Nie'}
 Extra služby: ${(configuration.extras || []).join(', ') || 'žiadne'}
