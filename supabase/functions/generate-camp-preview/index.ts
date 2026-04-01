@@ -88,7 +88,7 @@ serve(async (req) => {
     const dailyProgram = configuration.dailyProgram || defaults.program
     const pricePerPerson = configuration.estimatedPrice || 599
 
-    const prompt = `Si expertný copywriter pre fitness a wellness retreat campy. Vytvor kompletný konverzný landing page obsah v slovenčine na základe týchto údajov:
+    const prompt = `Si expertný copywriter pre fitness a wellness retreat tripy. Vytvor kompletný konverzný landing page obsah v slovenčine na základe týchto údajov:
 
 DÔLEŽITÉ PRAVIDLÁ:
 - Polia označené (ZADANÉ TRÉNEROM) použi PRESNE tak ako sú. Nepridávaj, neupravuj, nedopĺňaj ďalšie položky.
