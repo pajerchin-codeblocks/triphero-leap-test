@@ -533,7 +533,7 @@ export default function ConfiguratorWizard({
                         )}
                         {configuration.campType && (
                           <div className="flex justify-between items-baseline">
-                            <span className="text-xs text-muted-foreground">Typ campu</span>
+                            <span className="text-xs text-muted-foreground">Typ tripu</span>
                             <span className="text-sm font-medium">{configuration.campType}</span>
                           </div>
                         )}
