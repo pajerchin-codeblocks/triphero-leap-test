@@ -312,7 +312,7 @@ export default function Preview() {
             {[
               { icon: Calendar, label: "Termín", value: campData.investmentBreakdown?.priceFrame?.match(/\d{1,2}\.\d{1,2}\.\d{4}/)?.[0] || "Podľa dohody" },
               { icon: MapPin, label: "Destinácia", value: campData.luxuryExperience?.hotelName || "Premium resort" },
-              { icon: Users, label: "Kapacita", value: campData.urgency?.scarcity || "Limitované miesta" },
+              
               { icon: Sparkles, label: "Cena od", value: campData.investmentBreakdown?.pricePerPerson || "Na vyžiadanie" },
             ].map((item, idx) => (
               <div
