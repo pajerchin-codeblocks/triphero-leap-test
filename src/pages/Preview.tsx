@@ -641,7 +641,7 @@ export default function Preview() {
                 variants={fadeUp}
                 className="text-3xl md:text-5xl font-bold text-foreground text-center mb-12"
               >
-                {campData.whatMakesItSpecial.headline || "Prečo práve tento kemp?"}
+                {campData.whatMakesItSpecial.headline || "Prečo práve tento trip?"}
               </motion.h2>
 
               {campData.whatMakesItSpecial.uniquePoints && (
