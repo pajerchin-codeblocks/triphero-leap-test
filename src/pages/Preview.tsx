@@ -221,6 +221,14 @@ export default function Preview() {
   return (
     <div className="min-h-screen bg-background">
       {/* ═══════════════════════════════════════════
+          DEMO BANNER — Top
+      ═══════════════════════════════════════════ */}
+      <div className="bg-accent/10 border-b border-accent/20 py-2.5 px-4 text-center sticky top-0 z-50 backdrop-blur-md">
+        <p className="text-sm font-medium text-accent-foreground/80">
+          ✨ Toto je <span className="font-bold text-accent">ukážková ponuka</span> pre klienta — vygenerované cez TripHero
+        </p>
+      </div>
+      {/* ═══════════════════════════════════════════
           HERO SECTION — Full viewport immersive
       ═══════════════════════════════════════════ */}
       <section className="relative min-h-[90vh] flex items-end overflow-hidden">
@@ -877,6 +885,15 @@ export default function Preview() {
 
       {/* Bottom spacer for sticky bar on mobile */}
       <div className="h-20 lg:hidden" />
+
+      {/* ═══════════════════════════════════════════
+          DEMO BANNER — Footer
+      ═══════════════════════════════════════════ */}
+      <div className="bg-accent/10 border-t border-accent/20 py-4 px-4 text-center">
+        <p className="text-sm text-muted-foreground">
+          Táto stránka je <span className="font-semibold text-foreground">ukážka ponuky</span> vygenerovaná cez TripHero. Nie je to finálna ponuka.
+        </p>
+      </div>
     </div>
   )
 }
