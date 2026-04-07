@@ -654,7 +654,9 @@ export default function Preview() {
 
       {/* ═══════════════════════════════════════════
           SOCIAL PROOF — Testimonial placeholder
+          (zakomentované — možno sa použije v budúcnosti)
       ═══════════════════════════════════════════ */}
+      {/*
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto">
           <motion.div
@@ -690,6 +692,7 @@ export default function Preview() {
           </motion.div>
         </div>
       </section>
+      */}
 
       {/* ═══════════════════════════════════════════
           INVESTMENT BREAKDOWN — Premium pricing
