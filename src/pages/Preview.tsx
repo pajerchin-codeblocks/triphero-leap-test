@@ -22,8 +22,8 @@ import Navbar from "@/components/navbar"
 import { supabase } from "@/integrations/supabase/client"
 import { motion } from "framer-motion"
 
-const ILLUSTRATIVE_TRAINER_FEMALE = "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&h=600&fit=crop&crop=face"
-const ILLUSTRATIVE_TRAINER_MALE = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=600&fit=crop&crop=face"
+import avatarMale from "@/assets/avatar-male.png"
+import avatarFemale from "@/assets/avatar-female.png"
 
 interface TripPreviewData {
   success: boolean
