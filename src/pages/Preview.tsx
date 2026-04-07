@@ -221,6 +221,14 @@ export default function Preview() {
   return (
     <div className="min-h-screen bg-background">
       {/* ═══════════════════════════════════════════
+          DEMO BANNER — Top
+      ═══════════════════════════════════════════ */}
+      <div className="bg-accent/10 border-b border-accent/20 py-2.5 px-4 text-center sticky top-0 z-50 backdrop-blur-md">
+        <p className="text-sm font-medium text-accent-foreground/80">
+          ✨ Toto je <span className="font-bold text-accent">ukážková ponuka</span> pre klienta — vygenerované cez TripHero
+        </p>
+      </div>
+      {/* ═══════════════════════════════════════════
           HERO SECTION — Full viewport immersive
       ═══════════════════════════════════════════ */}
       <section className="relative min-h-[90vh] flex items-end overflow-hidden">
