@@ -22,8 +22,8 @@ import Navbar from "@/components/navbar"
 import { supabase } from "@/integrations/supabase/client"
 import { motion } from "framer-motion"
 
-const ILLUSTRATIVE_TRAINER_FEMALE = "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&h=600&fit=crop&crop=face"
-const ILLUSTRATIVE_TRAINER_MALE = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=600&fit=crop&crop=face"
+import avatarMale from "@/assets/avatar-male.png"
+import avatarFemale from "@/assets/avatar-female.png"
 
 interface TripPreviewData {
   success: boolean
@@ -244,7 +244,7 @@ export default function Preview() {
               <motion.div variants={fadeUp} className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-accent/20 backdrop-blur-sm border-2 border-accent/40 overflow-hidden">
                   <img
-                    src={trainerIsFemale ? ILLUSTRATIVE_TRAINER_FEMALE : ILLUSTRATIVE_TRAINER_MALE}
+                    src={trainerIsFemale ? avatarFemale : avatarMale}
                     alt={campData.trainerProfile.name}
                     className="w-full h-full object-cover"
                   />
@@ -372,7 +372,7 @@ export default function Preview() {
                 <div className="flex-shrink-0 relative">
                   <div className="w-64 h-80 md:w-72 md:h-96 rounded-2xl overflow-hidden shadow-elevated ring-4 ring-accent/20">
                     <img
-                      src={trainerIsFemale ? ILLUSTRATIVE_TRAINER_FEMALE : ILLUSTRATIVE_TRAINER_MALE}
+                      src={trainerIsFemale ? avatarFemale : avatarMale}
                       alt={campData.trainerProfile.name}
                       className="w-full h-full object-cover"
                     />
