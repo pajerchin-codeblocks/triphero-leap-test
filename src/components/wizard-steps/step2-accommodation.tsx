@@ -145,7 +145,7 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
                           <span className="text-xs font-bold">{renderStars(parseRatingStars(hotel.rating))}</span>
                         </div>
                         <p className="text-xs text-muted-foreground mb-1">{hotel.location}</p>
-                        <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{hotel.description}</p>
+                        <div className="text-xs text-muted-foreground mb-2 line-clamp-2 [&>p]:m-0 [&>br]:hidden" dangerouslySetInnerHTML={{ __html: hotel.description }} />
                         <p className="text-sm font-semibold text-foreground">od {hotel.price}€ / noc</p>
                       </div>
                     </button>
@@ -172,7 +172,7 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
                           <h3 className="font-bold text-foreground text-sm">{hotel.name}</h3>
                           <span className="text-xs font-bold">{renderStars(hotel.stars)}</span>
                         </div>
-                        <p className="text-xs text-muted-foreground mb-2">{hotel.description}</p>
+                        <div className="text-xs text-muted-foreground mb-2 line-clamp-2 [&>p]:m-0 [&>br]:hidden" dangerouslySetInnerHTML={{ __html: hotel.description }} />
                         <p className="text-sm font-semibold text-foreground">od {hotel.pricePerNight}€ / noc</p>
                       </div>
                     </button>
