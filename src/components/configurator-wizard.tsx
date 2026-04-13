@@ -55,7 +55,8 @@ export default function ConfiguratorWizard({
     TR: "Turecko", GR: "Grécko", EG: "Egypt", PT: "Portugalsko", ID: "Bali",
     ES: "Španielsko", IT: "Taliansko", FR: "Francúzsko", MA: "Maroko",
     TH: "Thajsko", VN: "Vietnam", MX: "Mexiko", CR: "Kostarika",
-    AU: "Austrália", JP: "Japonsko",
+    AU: "Austrália", JP: "Japonsko", US: "USA", CY: "Cyprus",
+    MV: "Maldivy", MU: "Maurícius", TZ: "Tanzánia", CZ: "Česko",
   };
 
   const countryCodeToImage: Record<string, string> = {
@@ -64,6 +65,9 @@ export default function ConfiguratorWizard({
     IT: "/destinations/italy.jpg", FR: "/destinations/france.jpg", MA: "/destinations/morocco.jpg",
     TH: "/destinations/thailand.jpg", VN: "/destinations/vietnam.jpg", MX: "/destinations/mexico.jpg",
     CR: "/destinations/costarica.jpg", AU: "/destinations/australia.jpg", JP: "/destinations/japan.jpg",
+    US: "/luxury-resort-beach-view.jpg", CY: "/luxury-white-and-blue-hotel-in-santorini-greece-su.jpg",
+    MV: "/luxury-resort-pool-area-aerial.jpg", MU: "/luxury-beach-resort-sunset-aerial-view.jpg",
+    TZ: "/luxury-resort-beach-view.jpg", CZ: "/Paris-luxury-boutique-hotel-France.jpg",
   };
 
   const nameToImage: Record<string, string> = {
@@ -74,7 +78,10 @@ export default function ConfiguratorWizard({
     "Maroko": "/destinations/morocco.jpg", "Thajsko": "/destinations/thailand.jpg",
     "Vietnam": "/destinations/vietnam.jpg", "Mexiko": "/destinations/mexico.jpg",
     "Kostarika": "/destinations/costarica.jpg", "Austrália": "/destinations/australia.jpg",
-    "Japonsko": "/destinations/japan.jpg",
+    "Japonsko": "/destinations/japan.jpg", "USA": "/luxury-resort-beach-view.jpg",
+    "Cyprus": "/luxury-white-and-blue-hotel-in-santorini-greece-su.jpg", "Maldivy": "/luxury-resort-pool-area-aerial.jpg",
+    "Maurícius": "/luxury-beach-resort-sunset-aerial-view.jpg", "Tanzánia": "/luxury-resort-beach-view.jpg",
+    "Česko": "/Paris-luxury-boutique-hotel-France.jpg",
   };
 
   useEffect(() => {
