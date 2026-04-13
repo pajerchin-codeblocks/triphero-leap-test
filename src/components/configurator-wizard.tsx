@@ -101,12 +101,12 @@ export default function ConfiguratorWizard({
         const mapped = items.map((item: any) => {
           if (typeof item === "string") {
             // Webhook returns plain string names like "Turecko", "Bali"
-            return { id: item, label: item, image: nameToImage[item] || `/destinations/${item.toLowerCase()}.jpg` };
+            return { id: item, label: item, image: nameToImage[item] || "/placeholder.svg" };
           }
           // Support {id, name, image}, {code, name}, {countryCode, label}, etc.
           const code = item.code || item.countryCode || item.id || "";
           const name = item.name || item.label || item.destinationName || countryCodeToName[code] || code;
-          const image = item.image || countryCodeToImage[code] || nameToImage[name] || `/destinations/${name.toLowerCase()}.jpg`;
+          const image = item.image || countryCodeToImage[code] || nameToImage[name] || "/placeholder.svg";
           const id = countryCodeToName[code] || name;
           return { id, label: id, image };
         });
