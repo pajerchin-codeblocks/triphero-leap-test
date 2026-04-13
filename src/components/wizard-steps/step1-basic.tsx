@@ -136,7 +136,7 @@ export default function Step1Basic({
                           : "border-border hover:border-primary/50"
                       }`}
                     >
-                      <img src={dest.image} alt={dest.label} className="w-full h-full object-cover" />
+                      <img src={dest.image} alt={dest.label} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }} />
                       <div className="absolute inset-0 bg-black/30 hover:bg-black/20 transition" />
                       <div className="absolute inset-0 flex items-end p-2">
                         <span className="text-white text-xs font-semibold text-balance">{dest.label}</span>
@@ -182,7 +182,7 @@ export default function Step1Basic({
                                   : "border-border hover:border-primary/50"
                               }`}
                             >
-                              <img src={dest.image} alt={dest.label} className="w-full h-full object-cover" />
+                              <img src={dest.image} alt={dest.label} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }} />
                               <div className="absolute inset-0 bg-black/30 hover:bg-black/20 transition" />
                               <div className="absolute inset-0 flex items-end p-2">
                                 <span className="text-white text-xs font-semibold text-balance">{dest.label}</span>
