@@ -21,7 +21,8 @@ export interface WebhookHotel {
   transferPrice?: { amountMicros: number; currencyCode: string }
 }
 
-export function parseRatingStars(rating: string): number {
+export function parseRatingStars(rating: string | null | undefined): number {
+  if (!rating) return 4
   const match = rating.match(/(\d+)/)
   return match ? parseInt(match[1]) : 4
 }
