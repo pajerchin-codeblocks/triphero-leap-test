@@ -1,63 +1,70 @@
 
 
-## Úprava zobrazenia ceny letenky pri null hodnote
+## Úprava zobrazenia ceny meal planu pri hoteli s cenou z meal planu
+
+Keď cena hotela je odvodená z meal planu (`hotel.price === 0`, `baseMeal` je nastavený), chceme na dlaždiciach meal planov zobrazovať zrozumiteľnejšiu informáciu namiesto "+0€/deň" pri base meal.
 
 ### Súbor
 `src/components/wizard-steps/step2-accommodation.tsx`
 
 ### Zmeny
 
-**1. Upraviť renderovanie ceny letenky (riadky 218-250):**
+V sekcii **Strava** (dlaždice meal plans) upraviť zobrazenie sublabelu:
 
-Keď `flight.minPrice` je `null`, `undefined` alebo `0`, zobraziť informačný text namiesto ceny.
+Nová logika pre zobrazenie textu pod názvom stravy (platí iba ak `selectedHotelPricing.baseMeal` existuje, t.j. cena hotela je odvodená z meal planu):
+
+1. **Ak meal dlaždica = base meal** → zobraz `"v cene ubytovania"`
+2. **Ak meal dlaždica ≠ base meal a používateľ má vybraný iný typ** → vypočítaj rozdiel oproti aktuálne vybranému typu stravy a zobraz znamienko `+`/`−`:
+   - Ak je aktuálne vybraný base meal: zobraz `+{price}€/deň` (štandard)
+   - Ak je vybraný iný (non-base) meal: zobraz rozdiel `{selectedSurcharge - thisSurcharge}€/deň` so znamienkom (pre base meal to bude negatívne, t.j. lacnejšie)
+
+Pre prípad keď `baseMeal` nie je nastavený (hotel má vlastnú cenu), ponechať existujúce správanie (`od {price}€/deň`).
+
+### Pseudokód logiky sublabelu
 
 ```tsx
-{/* Flight prices from webhook */}
-{flightPricesByMonth && flightPricesByMonth.length > 0 && (
-  <div className="space-y-3">
-    <div>
-      <p className="text-sm font-semibold text-foreground mb-1">Odhadované ceny leteniek</p>
-      <p className="text-xs text-muted-foreground">vyber si preferovaný mesiac pre tvoju letenku</p>
-    </div>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-      {flightPricesByMonth.map((flight) => {
-        const isSelected = configuration.selectedFlight?.month === flight.month
-        const hasPrice = flight.minPrice != null && flight.minPrice > 0
-        return (
-          <button
-            key={flight.month}
-            onClick={() => handleChange("selectedFlight", isSelected ? null : { month: flight.month, price: flight.minPrice })}
-            disabled={!hasPrice}
-            className={`p-4 rounded-lg border-2 text-left transition ${
-              isSelected ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:border-primary/50"
-            } ${!hasPrice ? "opacity-75 cursor-not-allowed" : ""}`}
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className={`text-sm font-medium ${isSelected ? "text-primary-foreground" : "text-foreground"}`}>
-                  {flight.month !== "default" ? new Date(flight.month + "-01").toLocaleDateString("sk-SK", { year: "numeric", month: "long" }) : "Letenka"}
-                </p>
-                <p className={`text-xs mt-1 ${isSelected ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-                  {hasPrice ? "minimálna cena" : "cenu dodatočne preveríme"}
-                </p>
-              </div>
-              <p className={`text-2xl font-bold ${isSelected ? "text-primary-foreground" : "text-foreground"}`}>
-                {hasPrice ? `${flight.minPrice} €` : "—"}
-              </p>
-            </div>
-          </button>
-        )
-      })}
-    </div>
-  </div>
-)}
+const currentlySelectedKey = mealLabelsMap[configuration.meals] // reverse lookup label → key
+const selectedSurcharge = currentlySelectedKey 
+  ? (selectedHotelPricing?.mealPrices[currentlySelectedKey] ?? 0) 
+  : 0
+
+// per tile
+let sublabel: string
+if (selectedHotelPricing?.baseMeal) {
+  const thisMealKey = reverse lookup (label → key)
+  const thisIsBase = thisMealKey === selectedHotelPricing.baseMeal
+  const thisSurcharge = selectedHotelPricing.mealPrices[thisMealKey] ?? 0
+  
+  if (configuration.meals === label) {
+    // this tile is currently selected
+    sublabel = thisIsBase ? "v cene ubytovania" : `+${thisSurcharge}€/deň`
+  } else {
+    // showing delta vs currently selected
+    const delta = thisSurcharge - selectedSurcharge
+    if (delta === 0) sublabel = "v cene"
+    else if (delta > 0) sublabel = `+${delta}€/deň`
+    else sublabel = `${delta}€/deň` // already has minus sign
+  }
+} else {
+  sublabel = `od ${price}€/deň`
+}
 ```
 
-### Zhrnutie zmien
+### Detail
 
-1. **Pridaná kontrola ceny**: `const hasPrice = flight.minPrice != null && flight.minPrice > 0`
-2. **Disabled stav**: Tlačidlo je disabled keď nie je cena dostupná
-3. **Zmena textu pod nadpisom**: "minimálna cena" → "cenu dodatočne preveríme" keď nie je cena
-4. **Zmena zobrazenia ceny**: `flight.minPrice €` → `—` (pomlčka) keď nie je cena
-5. **Opacity**: Pridaná `opacity-75` pre vizuálne odlíšenie neaktívnych leteniek
+- Pridá sa lokálna mapa label → MealKey (inverzia `mealLabels`) aby sme z `configuration.meals` (label) dostali kľúč na lookup do `mealPrices`.
+- Zmena je iba vizuálna, neovplyvňuje výpočet ceny v `configurator-wizard.tsx`.
+
+### Očakávaný výsledok (príklad: hotel s cenou 0, baseMeal = AI, mealPrices: bb=30, hb=50, fb=70, ai=90)
+
+- Default výber = AI:
+  - Raňajky: `−60€/deň`
+  - Polpenzia: `−40€/deň`
+  - Plná penzia: `−20€/deň`
+  - All inclusive (vybraté): `v cene ubytovania`
+- Používateľ prepne na Polpenzia:
+  - Raňajky: `−20€/deň`
+  - Polpenzia (vybraté): `+50€/deň` (doplatok voči base meal)
+  - Plná penzia: `+20€/deň`
+  - All inclusive: `+40€/deň`
 
