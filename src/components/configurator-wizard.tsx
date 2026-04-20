@@ -333,6 +333,13 @@ export default function ConfiguratorWizard({
       }
     }
 
+    if (configuration.selectedFlight?.price) {
+      flightPrice = configuration.selectedFlight.price;
+    } else if (configuration.flight && configuration.destination) {
+      const destination = configuration.destination as keyof typeof flightsPricing;
+      flightPrice = flightsPricing[destination]?.[configuration.flight] || 0;
+    }
+
     if (configuration.transfer) {
       const wh = webhookHotels.find((h) => h.id === configuration.hotel);
       transferCost = wh?.transferPrice ? micros(wh.transferPrice) : transferPrice;
