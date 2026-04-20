@@ -36,19 +36,28 @@ export default function Navbar() {
 
           {/* Desktop nav - centered links */}
           <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className={`text-sm font-medium transition-all duration-300 ${
-                  link.isPill
-                    ? "bg-primary/10 text-primary font-bold px-3 py-1 rounded-full"
-                    : "text-foreground hover:text-primary"
-                }`}
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const pillClasses =
+                link.pillVariant === "primary"
+                  ? "bg-primary/10 text-primary font-bold px-3 py-1 rounded-full"
+                  : link.pillVariant === "secondary"
+                    ? "bg-secondary/20 text-secondary font-bold px-3 py-1 rounded-full"
+                    : null
+
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target={link.external ? "_blank" : undefined}
+                  rel={link.external ? "noopener noreferrer" : undefined}
+                  className={`text-sm font-medium transition-all duration-300 ${
+                    pillClasses ?? "text-foreground hover:text-primary"
+                  }`}
+                >
+                  {link.label}
+                </a>
+              )
+            })}
           </div>
 
           {/* Desktop CTA */}
