@@ -29,7 +29,7 @@ export default function Navbar() {
       >
         <div className="container px-4 md:px-6 lg:px-8 h-full flex items-center justify-between">
           {/* Logo */}
-          <a href="https://new.triphero.sk" className="hover:opacity-80 transition-opacity flex-shrink-0 flex items-center">
+          <a href="https://www.triphero.sk/" className="hover:opacity-80 transition-opacity flex-shrink-0 flex items-center">
             <img src={logoColor} alt="TripHERO" className="h-8 md:h-10 w-auto transition-all duration-300" />
           </a>
 
