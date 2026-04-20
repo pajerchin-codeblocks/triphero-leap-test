@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { hotelsByDestination, mealsPricing, extraServicesPricing, transferPrice as staticTransferPrice } from "@/lib/hotels-database"
-import { WebhookHotel, parseRatingStars, micros, MealKey, mealLabels, mealPriceKeys } from "@/lib/webhook-types"
+import { WebhookHotel, parseRatingStars, micros, MealKey, mealLabels, mealPriceKeys, getHotelPricing } from "@/lib/webhook-types"
 
 interface Step2AccommodationProps {
   configuration: any
