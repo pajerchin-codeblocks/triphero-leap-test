@@ -39,15 +39,19 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
         ? mealKeys.filter((k) => wh[k]).map((k) => mealLabels[k]).join(", ")
         : ""
 
+      const pricing = wh ? getHotelPricing(wh) : null
+      const effectivePrice = pricing ? pricing.basePrice : (staticHotel?.pricePerNight || 0)
+      const autoMeal = pricing?.baseMeal ? mealLabels[pricing.baseMeal] : undefined
+
       onConfigurationChange({
         [key]: value,
-        meals: undefined,
+        meals: autoMeal,
         hotelImage: wh?.image || staticHotel?.image || "",
         hotelTitle: wh?.title || staticHotel?.name || "",
         hotelLocation: wh?.location || "",
         hotelStars: wh ? parseRatingStars(wh.rating) : (staticHotel?.stars || 0),
         hotelDescription: wh?.description || staticHotel?.description || "",
-        hotelPrice: wh?.price || staticHotel?.pricePerNight || 0,
+        hotelPrice: effectivePrice,
         hotelRating: wh?.rating || "",
         hotelTransfer: wh ? wh.transfer : false,
         hotelTransferPrice: wh?.transferPrice ? micros(wh.transferPrice) : 0,
