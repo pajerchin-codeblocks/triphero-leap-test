@@ -39,9 +39,9 @@ export default function Navbar() {
             {navLinks.map((link) => {
               const pillClasses =
                 link.pillVariant === "primary"
-                  ? "bg-primary/10 text-primary font-bold px-3 py-1 rounded-full"
+                  ? "bg-[hsla(234,85%,63%,0.1)] text-[hsl(234,85%,63%)] font-bold px-3 py-1 rounded-full"
                   : link.pillVariant === "secondary"
-                    ? "bg-secondary/20 text-secondary font-bold px-3 py-1 rounded-full"
+                    ? "bg-[hsla(156,83%,64%,0.2)] text-[hsl(156,83%,64%)] font-bold px-3 py-1 rounded-full"
                     : null
 
               return (
