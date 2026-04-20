@@ -1,55 +1,51 @@
-## Problém
+## Úprava Navbar podľa nových inštrukcií
 
-Niektoré hotely z webhooku majú `price = 0` (napr. The Ravenala). V takom prípade:
+### Súbor
 
-- najdrahsia dostupná `cena` mealu (napr. `hbCena = 185€`) = **denná cena hotela vrátane tej stravy**
-- ostatné meal ceny (napr. `aiCena = 80€`) = **denný príplatok** k tej najdrahsej
+`src/components/navbar.tsx`
 
-Logika "cena × počet dní" zostáva nezmenená — meníme len ako sa určí `hotelPrice` (per noc) a ceny stravy keď je `hotel.price = 0`.
+### Zmeny
 
-## Riešenie
+**1. Aktualizácia `navLinks`:**
 
-### 1. Helper v `src/lib/webhook-types.ts`
+```ts
+const navLinks = [
+  { label: "Naše tripy", href: "https://www.triphero.sk/nase-tripy", isPill: true },
+  { label: "Lídri", href: "https://www.triphero.sk/lidri" },
+  { label: "O TripHero", href: "https://www.triphero.sk/o-triphero" },
+  { label: "Kontakt", href: "https://www.triphero.sk/kontakt" },
+]
+```
 
-Pridať `getHotelPricing(hotel: WebhookHotel)` ktorý vráti:
+**2. Logo link** → `https://www.triphero.sk/` (zachovať existujúci `h-8 md:h-10` + výška navbaru `h-16 md:h-20` ostáva).
 
-- `basePrice` (per noc):
-  - ak `hotel.price > 0` → `hotel.price` (pôvodné správanie)
-  - inak → **najvyssia** cena spomedzi dostupných meal plánov (= najdrahsi balík hotel+strava za noc)
-- `baseMeal: MealKey | null` — kľúč mealu zahrnutého v `basePrice` (len keď `hotel.price = 0`)
-- `mealPrices: Partial<Record<MealKey, number>>` — denný príplatok pre každý dostupný meal:
-  - ak `baseMeal` existuje → `baseMeal` má **0**, ostatné meals = `cena_mealu - basePrice`...
+**3. Desktop CTA tlačidlo:**
 
-> Korekcia po príklade používateľa: Ravenala má `hb=185` (najdrahsia, = base), `ai=80` ktoré je už **priamo príplatok** (nie absolútna cena). Takže `aiCena` netreba odpočítavať — berie sa tak ako je. Pravidlo:
->
-> - `baseMeal` = meal s **najdrahsou**`cena` (to je full denná cena balíka)
-> - ostatné meals → ich `cena` sa berie ako **denný príplatok** priamo
-> - `baseMeal` sám má príplatok 0
+- Label: `Začať plánovať trip`
+- Href: `https://ai.triphero.sk/`
+- Zachovať `variant="hero" size="sm"`
 
-- ak `baseMeal` neexistuje (`hotel.price > 0`) → `mealPrices[k] = micros(hotel[kCena])` (pôvodné správanie nezmenené)
+**4. Mobile menu — vylepšenia podľa inštrukcií:**
 
-### 2. Úprava `src/components/wizard-steps/step2-accommodation.tsx`
+- Overlay: zmeniť `bg-background` → `bg-background/98 backdrop-blur-lg`
+- Pill štýl pre "Naše tripy": `bg-primary/10 text-primary px-4 py-1 rounded-full` (self-start aby pill nezaberal celú šírku)
+- Aktívne odkazy: `text-foreground` (default) — možnosť `text-primary` ak treba aktívny stav (momentálne nie je tracking aktívneho linku, takže ostáva default)
+- Pridať CTA tlačidlo na konci mobile menu: `variant="hero" size="lg"` + `w-full`, label `Začať plánovať trip`, smeruje na `https://ai.triphero.sk/`
+- Animácia stagger 0.1s ostáva (`delay: i * 0.1`), pridať CTA ako posledný stagger item
 
-**a) Karta hotela** — `od {basePrice}€ / noc` (z helpera).
+**5. Desktop nav links** — zachovať existujúce štýly:
 
-**b) `handleChange("hotel", value)**`:
+- Default: `text-foreground hover:text-primary`
+- Pill ("Naše tripy"): `bg-primary/10 text-primary font-bold px-3 py-1 rounded-full`
 
-- `hotelPrice = basePrice`
-- ak `baseMeal` existuje → automaticky predvybrať `meals: mealLabels[baseMeal]`
+**6. Hamburger ikona** — `text-foreground` (už je správne).
 
-**c) `getAvailableMeals()**` — denné príplatky čítať z `mealPrices` helpera.
+### Header background
 
-**d) Label dlaždice mealu** — keď je hotel s `baseMeal`, zobraziť `+{price}€/deň` (pre baseMeal `+0€/deň`). Inak ponechať pôvodný formát `od {price}€/deň`.
+Už zodpovedá špecifikácii (`bg-background/95 backdrop-blur-md shadow-soft border-b border-border/50`) — bez zmeny.
 
-### 3. Cenová kalkulácia ostáva zachovaná
+### Bez zmeny
 
-Existujúci výpočet `hotelPrice * nights + mealPrice * nights` funguje korektne:
-
-- Ravenala + HB: `185×nights + 0×nights` = 185×nights ✓
-- Ravenala + AI: `185×nights + 80×nights` = 265×nights ✓
-- Klasický hotel s `price > 0`: úplne bez zmeny ✓
-
-## Súbory
-
-1. `src/lib/webhook-types.ts` — pridať `getHotelPricing()`
-2. `src/components/wizard-steps/step2-accommodation.tsx` — použiť helper v kartách hotelov, `handleChange`, `getAvailableMeals`; auto-select baseMeal
+- Framer-motion animácia navbaru (initial y: -100)
+- Body overflow lock pri otvorenom mobile menu
+- Výška navbaru a layout padding v `Index.tsx` (`pt-16 md:pt-20`)
