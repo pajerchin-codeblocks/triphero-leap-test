@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button"
 import logoColor from "@/assets/logo-color.png"
 
 const navLinks = [
-  { label: "Tripy", href: "https://new.triphero.sk/trips", isPill: true },
-  { label: "Lídri", href: "https://new.triphero.sk/leaders" },
-  { label: "O nás", href: "https://new.triphero.sk/o-nas" },
-  { label: "Kontakt", href: "https://new.triphero.sk/kontakt" },
+  { label: "Naše tripy", href: "https://www.triphero.sk/nase-tripy", isPill: true },
+  { label: "Lídri", href: "https://www.triphero.sk/lidri" },
+  { label: "O TripHero", href: "https://www.triphero.sk/o-triphero" },
+  { label: "Kontakt", href: "https://www.triphero.sk/kontakt" },
 ]
 
 export default function Navbar() {
