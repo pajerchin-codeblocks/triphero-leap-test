@@ -91,14 +91,14 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
   // Build available meals from selected webhook hotel
   const selectedHotelPricing = selectedWebhookHotel ? getHotelPricing(selectedWebhookHotel) : null
 
-  const getAvailableMeals = (): Array<{ key: string; label: string; price: number }> => {
+  const getAvailableMeals = (): Array<{ key: string; label: string; price: number; mealKey?: MealKey }> => {
     if (selectedWebhookHotel && selectedHotelPricing) {
-      const meals: Array<{ key: string; label: string; price: number }> = []
+      const meals: Array<{ key: string; label: string; price: number; mealKey?: MealKey }> = []
       const keys: MealKey[] = ["bb", "hb", "fb", "ai"]
       for (const k of keys) {
         if (selectedWebhookHotel[k]) {
           const price = selectedHotelPricing.mealPrices[k] ?? 0
-          meals.push({ key: mealLabels[k], label: mealLabels[k], price })
+          meals.push({ key: mealLabels[k], label: mealLabels[k], price, mealKey: k })
         }
       }
       return meals
@@ -108,6 +108,35 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
   }
 
   const availableMeals = getAvailableMeals()
+
+  // Reverse lookup: label → MealKey, used to compute meal sublabel deltas
+  const labelToMealKey: Record<string, MealKey> = {
+    [mealLabels.bb]: "bb",
+    [mealLabels.hb]: "hb",
+    [mealLabels.fb]: "fb",
+    [mealLabels.ai]: "ai",
+  }
+  const currentlySelectedMealKey: MealKey | undefined = configuration.meals
+    ? labelToMealKey[configuration.meals]
+    : undefined
+  const selectedSurcharge = currentlySelectedMealKey
+    ? (selectedHotelPricing?.mealPrices[currentlySelectedMealKey] ?? 0)
+    : 0
+
+  const getMealSublabel = (mealKey: MealKey | undefined, label: string, price: number): string => {
+    if (selectedHotelPricing?.baseMeal && mealKey) {
+      const isBase = mealKey === selectedHotelPricing.baseMeal
+      const isSelected = configuration.meals === label
+      if (isSelected) {
+        return isBase ? "v cene ubytovania" : `+${price}€/deň`
+      }
+      const delta = price - selectedSurcharge
+      if (delta === 0) return "v cene"
+      if (delta > 0) return `+${delta}€/deň`
+      return `${delta}€/deň`
+    }
+    return `od ${price}€/deň`
+  }
 
   // Transfer info from webhook hotel
   const transferAvailable = selectedWebhookHotel ? selectedWebhookHotel.transfer : true
