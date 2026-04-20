@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button"
 import logoColor from "@/assets/logo-color.png"
 
 const navLinks = [
-  { label: "Naše tripy", href: "https://www.triphero.sk/nase-tripy", isPill: true },
+  { label: "Naše tripy", href: "https://www.triphero.sk/nase-tripy", isPill: true, pillVariant: "primary" as const },
+  { label: "Teambuilding", href: "https://teambuildings.triphero.sk/", isPill: true, pillVariant: "secondary" as const, external: true },
   { label: "Lídri", href: "https://www.triphero.sk/lidri" },
   { label: "O TripHero", href: "https://www.triphero.sk/o-triphero" },
   { label: "Kontakt", href: "https://www.triphero.sk/kontakt" },
@@ -35,19 +36,28 @@ export default function Navbar() {
 
           {/* Desktop nav - centered links */}
           <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className={`text-sm font-medium transition-all duration-300 ${
-                  link.isPill
-                    ? "bg-primary/10 text-primary font-bold px-3 py-1 rounded-full"
-                    : "text-foreground hover:text-primary"
-                }`}
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const pillClasses =
+                link.pillVariant === "primary"
+                  ? "bg-primary/10 text-primary font-bold px-3 py-1 rounded-full"
+                  : link.pillVariant === "secondary"
+                    ? "bg-secondary/20 text-secondary font-bold px-3 py-1 rounded-full"
+                    : null
+
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target={link.external ? "_blank" : undefined}
+                  rel={link.external ? "noopener noreferrer" : undefined}
+                  className={`text-sm font-medium transition-all duration-300 ${
+                    pillClasses ?? "text-foreground hover:text-primary"
+                  }`}
+                >
+                  {link.label}
+                </a>
+              )
+            })}
           </div>
 
           {/* Desktop CTA */}
@@ -79,23 +89,32 @@ export default function Navbar() {
             className="fixed inset-0 z-40 bg-background/98 backdrop-blur-lg pt-24 px-6 md:hidden"
           >
             <div className="flex flex-col gap-6">
-              {navLinks.map((link, i) => (
-                <motion.a
-                  key={link.href}
-                  href={link.href}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  onClick={() => setMobileOpen(false)}
-                  className={`text-2xl font-semibold transition-colors ${
-                    link.isPill
-                      ? "bg-primary/10 text-primary px-4 py-1 rounded-full self-start"
-                      : "text-foreground"
-                  }`}
-                >
-                  {link.label}
-                </motion.a>
-              ))}
+              {navLinks.map((link, i) => {
+                const pillClasses =
+                  link.pillVariant === "primary"
+                    ? "bg-primary/10 text-primary px-4 py-1 rounded-full self-start"
+                    : link.pillVariant === "secondary"
+                      ? "bg-secondary/20 text-secondary px-4 py-1 rounded-full self-start"
+                      : null
+
+                return (
+                  <motion.a
+                    key={link.href}
+                    href={link.href}
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noopener noreferrer" : undefined}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    onClick={() => setMobileOpen(false)}
+                    className={`text-2xl font-semibold transition-colors ${
+                      pillClasses ?? "text-foreground"
+                    }`}
+                  >
+                    {link.label}
+                  </motion.a>
+                )
+              })}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
