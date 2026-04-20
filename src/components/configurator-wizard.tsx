@@ -14,7 +14,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 import { destinationToCountryCode, convertMonthsToWebhookFormat } from "@/lib/destination-mapping";
 import { supabase } from "@/integrations/supabase/client";
-import { WebhookHotel, micros, MealKey, mealPriceKeys } from "@/lib/webhook-types";
+import { WebhookHotel, micros, MealKey, mealPriceKeys, getHotelPricing } from "@/lib/webhook-types";
 
 interface ConfiguratorWizardProps {
   configuration: any;
