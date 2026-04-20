@@ -92,9 +92,9 @@ export default function Navbar() {
               {navLinks.map((link, i) => {
                 const pillClasses =
                   link.pillVariant === "primary"
-                    ? "bg-primary/10 text-primary px-4 py-1 rounded-full self-start"
+                    ? "bg-[hsla(234,85%,63%,0.1)] text-[hsl(234,85%,63%)] px-4 py-1 rounded-full self-start"
                     : link.pillVariant === "secondary"
-                      ? "bg-secondary/20 text-secondary px-4 py-1 rounded-full self-start"
+                      ? "bg-[hsla(156,83%,64%,0.2)] text-[hsl(156,83%,64%)] px-4 py-1 rounded-full self-start"
                       : null
 
                 return (
