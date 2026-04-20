@@ -46,3 +46,51 @@ export const mealPriceKeys: Record<MealKey, "bbCena" | "hbCena" | "fbCena" | "ai
   fb: "fbCena",
   ai: "aiCena",
 }
+
+export interface HotelPricing {
+  basePrice: number
+  baseMeal: MealKey | null
+  mealPrices: Partial<Record<MealKey, number>>
+}
+
+/**
+ * Compute effective hotel pricing.
+ * - If hotel.price > 0: basePrice = hotel.price, all meals priced absolutely (micros).
+ * - If hotel.price = 0: basePrice = highest available meal price (full daily package),
+ *   that meal becomes baseMeal with surcharge 0; other available meals keep their
+ *   raw cena value as a daily surcharge.
+ */
+export function getHotelPricing(hotel: WebhookHotel): HotelPricing {
+  const keys: MealKey[] = ["bb", "hb", "fb", "ai"]
+  const available = keys.filter((k) => hotel[k])
+  const rawPrices: Partial<Record<MealKey, number>> = {}
+  for (const k of available) {
+    rawPrices[k] = micros(hotel[mealPriceKeys[k]])
+  }
+
+  if (hotel.price && hotel.price > 0) {
+    return { basePrice: hotel.price, baseMeal: null, mealPrices: rawPrices }
+  }
+
+  // hotel.price is 0/empty → derive from meals
+  if (available.length === 0) {
+    return { basePrice: 0, baseMeal: null, mealPrices: {} }
+  }
+
+  let baseMeal: MealKey = available[0]
+  let basePrice = rawPrices[baseMeal] ?? 0
+  for (const k of available) {
+    const p = rawPrices[k] ?? 0
+    if (p > basePrice) {
+      basePrice = p
+      baseMeal = k
+    }
+  }
+
+  const mealPrices: Partial<Record<MealKey, number>> = {}
+  for (const k of available) {
+    mealPrices[k] = k === baseMeal ? 0 : (rawPrices[k] ?? 0)
+  }
+
+  return { basePrice, baseMeal, mealPrices }
+}
