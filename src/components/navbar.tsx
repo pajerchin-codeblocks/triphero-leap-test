@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button"
 import logoColor from "@/assets/logo-color.png"
 
 const navLinks = [
-  { label: "Naše tripy", href: "https://www.triphero.sk/nase-tripy", isPill: true },
+  { label: "Naše tripy", href: "https://www.triphero.sk/nase-tripy", isPill: true, pillVariant: "primary" as const },
+  { label: "Teambuilding", href: "https://teambuildings.triphero.sk/", isPill: true, pillVariant: "secondary" as const, external: true },
   { label: "Lídri", href: "https://www.triphero.sk/lidri" },
   { label: "O TripHero", href: "https://www.triphero.sk/o-triphero" },
   { label: "Kontakt", href: "https://www.triphero.sk/kontakt" },
