@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { hotelsByDestination, mealsPricing, extraServicesPricing, transferPrice as staticTransferPrice } from "@/lib/hotels-database"
-import { WebhookHotel, parseRatingStars, micros, MealKey, mealLabels, mealPriceKeys } from "@/lib/webhook-types"
+import { WebhookHotel, parseRatingStars, micros, MealKey, mealLabels, mealPriceKeys, getHotelPricing } from "@/lib/webhook-types"
 
 interface Step2AccommodationProps {
   configuration: any
@@ -39,15 +39,19 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
         ? mealKeys.filter((k) => wh[k]).map((k) => mealLabels[k]).join(", ")
         : ""
 
+      const pricing = wh ? getHotelPricing(wh) : null
+      const effectivePrice = pricing ? pricing.basePrice : (staticHotel?.pricePerNight || 0)
+      const autoMeal = pricing?.baseMeal ? mealLabels[pricing.baseMeal] : undefined
+
       onConfigurationChange({
         [key]: value,
-        meals: undefined,
+        meals: autoMeal,
         hotelImage: wh?.image || staticHotel?.image || "",
         hotelTitle: wh?.title || staticHotel?.name || "",
         hotelLocation: wh?.location || "",
         hotelStars: wh ? parseRatingStars(wh.rating) : (staticHotel?.stars || 0),
         hotelDescription: wh?.description || staticHotel?.description || "",
-        hotelPrice: wh?.price || staticHotel?.pricePerNight || 0,
+        hotelPrice: effectivePrice,
         hotelRating: wh?.rating || "",
         hotelTransfer: wh ? wh.transfer : false,
         hotelTransferPrice: wh?.transferPrice ? micros(wh.transferPrice) : 0,
@@ -85,14 +89,15 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
     : undefined
 
   // Build available meals from selected webhook hotel
+  const selectedHotelPricing = selectedWebhookHotel ? getHotelPricing(selectedWebhookHotel) : null
+
   const getAvailableMeals = (): Array<{ key: string; label: string; price: number }> => {
-    if (selectedWebhookHotel) {
+    if (selectedWebhookHotel && selectedHotelPricing) {
       const meals: Array<{ key: string; label: string; price: number }> = []
       const keys: MealKey[] = ["bb", "hb", "fb", "ai"]
       for (const k of keys) {
         if (selectedWebhookHotel[k]) {
-          const priceKey = mealPriceKeys[k]
-          const price = micros(selectedWebhookHotel[priceKey])
+          const price = selectedHotelPricing.mealPrices[k] ?? 0
           meals.push({ key: mealLabels[k], label: mealLabels[k], price })
         }
       }
@@ -128,7 +133,9 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
             {useWebhook ? (
               <>
                 <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${validationErrors.hotel ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}>
-                  {webhookHotels.map((hotel) => (
+                  {webhookHotels.map((hotel) => {
+                    const pricing = getHotelPricing(hotel)
+                    return (
                     <button
                       key={hotel.id}
                       onClick={() => handleChange("hotel", hotel.id)}
@@ -146,10 +153,11 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
                         </div>
                         <p className="text-xs text-muted-foreground mb-1">{hotel.location}</p>
                         <div className="text-xs text-muted-foreground mb-2 line-clamp-2 [&>p]:m-0 [&>br]:hidden" dangerouslySetInnerHTML={{ __html: hotel.description }} />
-                        <p className="text-sm font-semibold text-foreground">od {hotel.price}€ / noc</p>
+                        <p className="text-sm font-semibold text-foreground">od {pricing.basePrice}€ / noc</p>
                       </div>
                     </button>
-                  ))}
+                    )
+                  })}
                 </div>
                 {validationErrors.hotel && <p className="text-destructive text-xs mt-2">Toto je povinné pole</p>}
               </>
@@ -199,7 +207,7 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
                     }`}
                   >
                     <div>{label}</div>
-                    <div className={`text-xs mt-1 ${configuration.meals === key ? "text-primary-foreground/70" : "text-muted-foreground"}`}>od {price}€/deň</div>
+                    <div className={`text-xs mt-1 ${configuration.meals === key ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{selectedHotelPricing?.baseMeal ? `+${price}€/deň` : `od ${price}€/deň`}</div>
                   </button>
                 ))}
               </div>
