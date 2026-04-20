@@ -76,7 +76,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 bg-background pt-24 px-6 md:hidden"
+            className="fixed inset-0 z-40 bg-background/98 backdrop-blur-lg pt-24 px-6 md:hidden"
           >
             <div className="flex flex-col gap-6">
               {navLinks.map((link, i) => (
@@ -87,11 +87,27 @@ export default function Navbar() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.1 }}
                   onClick={() => setMobileOpen(false)}
-                  className="text-2xl font-semibold transition-colors text-foreground"
+                  className={`text-2xl font-semibold transition-colors ${
+                    link.isPill
+                      ? "bg-primary/10 text-primary px-4 py-1 rounded-full self-start"
+                      : "text-foreground"
+                  }`}
                 >
                   {link.label}
                 </motion.a>
               ))}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: navLinks.length * 0.1 }}
+                className="pt-2"
+              >
+                <Button variant="hero" size="lg" asChild className="w-full">
+                  <a href="https://ai.triphero.sk/" onClick={() => setMobileOpen(false)}>
+                    Začať plánovať trip
+                  </a>
+                </Button>
+              </motion.div>
             </div>
           </motion.div>
         )}
