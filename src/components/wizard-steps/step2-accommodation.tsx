@@ -133,7 +133,9 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
             {useWebhook ? (
               <>
                 <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${validationErrors.hotel ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}>
-                  {webhookHotels.map((hotel) => (
+                  {webhookHotels.map((hotel) => {
+                    const pricing = getHotelPricing(hotel)
+                    return (
                     <button
                       key={hotel.id}
                       onClick={() => handleChange("hotel", hotel.id)}
@@ -151,10 +153,11 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
                         </div>
                         <p className="text-xs text-muted-foreground mb-1">{hotel.location}</p>
                         <div className="text-xs text-muted-foreground mb-2 line-clamp-2 [&>p]:m-0 [&>br]:hidden" dangerouslySetInnerHTML={{ __html: hotel.description }} />
-                        <p className="text-sm font-semibold text-foreground">od {hotel.price}€ / noc</p>
+                        <p className="text-sm font-semibold text-foreground">od {pricing.basePrice}€ / noc</p>
                       </div>
                     </button>
-                  ))}
+                    )
+                  })}
                 </div>
                 {validationErrors.hotel && <p className="text-destructive text-xs mt-2">Toto je povinné pole</p>}
               </>
