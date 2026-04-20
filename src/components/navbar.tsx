@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button"
 import logoColor from "@/assets/logo-color.png"
 
 const navLinks = [
-  { label: "Tripy", href: "https://new.triphero.sk/trips", isPill: true },
-  { label: "Lídri", href: "https://new.triphero.sk/leaders" },
-  { label: "O nás", href: "https://new.triphero.sk/o-nas" },
-  { label: "Kontakt", href: "https://new.triphero.sk/kontakt" },
+  { label: "Naše tripy", href: "https://www.triphero.sk/nase-tripy", isPill: true },
+  { label: "Lídri", href: "https://www.triphero.sk/lidri" },
+  { label: "O TripHero", href: "https://www.triphero.sk/o-triphero" },
+  { label: "Kontakt", href: "https://www.triphero.sk/kontakt" },
 ]
 
 export default function Navbar() {
@@ -29,7 +29,7 @@ export default function Navbar() {
       >
         <div className="container px-4 md:px-6 lg:px-8 h-full flex items-center justify-between">
           {/* Logo */}
-          <a href="https://new.triphero.sk" className="hover:opacity-80 transition-opacity flex-shrink-0 flex items-center">
+          <a href="https://www.triphero.sk/" className="hover:opacity-80 transition-opacity flex-shrink-0 flex items-center">
             <img src={logoColor} alt="TripHERO" className="h-8 md:h-10 w-auto transition-all duration-300" />
           </a>
 
@@ -53,7 +53,7 @@ export default function Navbar() {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
             <Button variant="hero" size="sm" asChild>
-              <a href="https://new.triphero.sk/trips">Vytvoriť trip</a>
+              <a href="https://ai.triphero.sk/">Začať plánovať trip</a>
             </Button>
           </div>
 
@@ -76,7 +76,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 bg-background pt-24 px-6 md:hidden"
+            className="fixed inset-0 z-40 bg-background/98 backdrop-blur-lg pt-24 px-6 md:hidden"
           >
             <div className="flex flex-col gap-6">
               {navLinks.map((link, i) => (
@@ -87,11 +87,27 @@ export default function Navbar() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.1 }}
                   onClick={() => setMobileOpen(false)}
-                  className="text-2xl font-semibold transition-colors text-foreground"
+                  className={`text-2xl font-semibold transition-colors ${
+                    link.isPill
+                      ? "bg-primary/10 text-primary px-4 py-1 rounded-full self-start"
+                      : "text-foreground"
+                  }`}
                 >
                   {link.label}
                 </motion.a>
               ))}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: navLinks.length * 0.1 }}
+                className="pt-2"
+              >
+                <Button variant="hero" size="lg" asChild className="w-full">
+                  <a href="https://ai.triphero.sk/" onClick={() => setMobileOpen(false)}>
+                    Začať plánovať trip
+                  </a>
+                </Button>
+              </motion.div>
             </div>
           </motion.div>
         )}
