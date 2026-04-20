@@ -89,23 +89,32 @@ export default function Navbar() {
             className="fixed inset-0 z-40 bg-background/98 backdrop-blur-lg pt-24 px-6 md:hidden"
           >
             <div className="flex flex-col gap-6">
-              {navLinks.map((link, i) => (
-                <motion.a
-                  key={link.href}
-                  href={link.href}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  onClick={() => setMobileOpen(false)}
-                  className={`text-2xl font-semibold transition-colors ${
-                    link.isPill
-                      ? "bg-primary/10 text-primary px-4 py-1 rounded-full self-start"
-                      : "text-foreground"
-                  }`}
-                >
-                  {link.label}
-                </motion.a>
-              ))}
+              {navLinks.map((link, i) => {
+                const pillClasses =
+                  link.pillVariant === "primary"
+                    ? "bg-primary/10 text-primary px-4 py-1 rounded-full self-start"
+                    : link.pillVariant === "secondary"
+                      ? "bg-secondary/20 text-secondary px-4 py-1 rounded-full self-start"
+                      : null
+
+                return (
+                  <motion.a
+                    key={link.href}
+                    href={link.href}
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noopener noreferrer" : undefined}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    onClick={() => setMobileOpen(false)}
+                    className={`text-2xl font-semibold transition-colors ${
+                      pillClasses ?? "text-foreground"
+                    }`}
+                  >
+                    {link.label}
+                  </motion.a>
+                )
+              })}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
