@@ -207,7 +207,7 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
                     }`}
                   >
                     <div>{label}</div>
-                    <div className={`text-xs mt-1 ${configuration.meals === key ? "text-primary-foreground/70" : "text-muted-foreground"}`}>od {price}€/deň</div>
+                    <div className={`text-xs mt-1 ${configuration.meals === key ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{selectedHotelPricing?.baseMeal ? `+${price}€/deň` : `od ${price}€/deň`}</div>
                   </button>
                 ))}
               </div>
