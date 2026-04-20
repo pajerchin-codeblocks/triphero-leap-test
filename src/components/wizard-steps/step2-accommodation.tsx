@@ -89,14 +89,15 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
     : undefined
 
   // Build available meals from selected webhook hotel
+  const selectedHotelPricing = selectedWebhookHotel ? getHotelPricing(selectedWebhookHotel) : null
+
   const getAvailableMeals = (): Array<{ key: string; label: string; price: number }> => {
-    if (selectedWebhookHotel) {
+    if (selectedWebhookHotel && selectedHotelPricing) {
       const meals: Array<{ key: string; label: string; price: number }> = []
       const keys: MealKey[] = ["bb", "hb", "fb", "ai"]
       for (const k of keys) {
         if (selectedWebhookHotel[k]) {
-          const priceKey = mealPriceKeys[k]
-          const price = micros(selectedWebhookHotel[priceKey])
+          const price = selectedHotelPricing.mealPrices[k] ?? 0
           meals.push({ key: mealLabels[k], label: mealLabels[k], price })
         }
       }
