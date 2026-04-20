@@ -14,7 +14,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 import { destinationToCountryCode, convertMonthsToWebhookFormat } from "@/lib/destination-mapping";
 import { supabase } from "@/integrations/supabase/client";
-import { WebhookHotel, micros, MealKey, mealPriceKeys } from "@/lib/webhook-types";
+import { WebhookHotel, micros, MealKey, mealPriceKeys, getHotelPricing } from "@/lib/webhook-types";
 
 interface ConfiguratorWizardProps {
   configuration: any;
@@ -306,40 +306,30 @@ export default function ConfiguratorWizard({
     const participants = getMinParticipants(configuration.participants);
     const duration = Number.parseInt(configuration.duration) || 7;
 
+    const mealLabelsMap: Record<string, MealKey> = { "Raňajky": "bb", "Polpenzia": "hb", "Plná penzia": "fb", "All inclusive": "ai" };
+
     if (configuration.hotel) {
       // Try webhook hotels first
       const wh = webhookHotels.find((h) => h.id === configuration.hotel);
       if (wh) {
-        hotelPerNight = wh.price * duration;
+        const pricing = getHotelPricing(wh);
+        hotelPerNight = pricing.basePrice * duration;
+        if (configuration.meals) {
+          const mk = mealLabelsMap[configuration.meals];
+          if (mk) {
+            const surcharge = pricing.mealPrices[mk] ?? 0;
+            mealsPrice = surcharge * duration;
+          }
+        }
       } else if (configuration.destination) {
         const destination = configuration.destination as keyof typeof hotelsByDestination;
         const hotels = hotelsByDestination[destination] || [];
         const selectedHotel = hotels.find((h) => h.id === configuration.hotel);
         if (selectedHotel) hotelPerNight = selectedHotel.pricePerNight * duration;
-      }
-    }
-
-    if (configuration.selectedFlight?.price) {
-      flightPrice = configuration.selectedFlight.price;
-    } else if (configuration.flight && configuration.destination) {
-      const destination = configuration.destination as keyof typeof flightsPricing;
-      flightPrice = flightsPricing[destination]?.[configuration.flight] || 0;
-    }
-
-    if (configuration.meals && configuration.hotel) {
-      const wh = webhookHotels.find((h) => h.id === configuration.hotel);
-      if (wh) {
-        // Find meal price from webhook hotel
-        const mealKeys: MealKey[] = ["bb", "hb", "fb", "ai"];
-        const mealLabelsMap: Record<string, MealKey> = { "Raňajky": "bb", "Polpenzia": "hb", "Plná penzia": "fb", "All inclusive": "ai" };
-        const mk = mealLabelsMap[configuration.meals];
-        if (mk) {
-          const pricePerDay = micros(wh[mealPriceKeys[mk]]);
+        if (configuration.meals) {
+          const pricePerDay = mealsPricing[configuration.meals] || 0;
           mealsPrice = pricePerDay * duration;
         }
-      } else {
-        const pricePerDay = mealsPricing[configuration.meals] || 0;
-        mealsPrice = pricePerDay * duration;
       }
     }
 
