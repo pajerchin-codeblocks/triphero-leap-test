@@ -225,22 +225,28 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {flightPricesByMonth.map((flight) => {
                   const isSelected = configuration.selectedFlight?.month === flight.month
+                  const hasPrice = flight.minPrice != null && flight.minPrice > 0
                   return (
                     <button
                       key={flight.month}
                       onClick={() => handleChange("selectedFlight", isSelected ? null : { month: flight.month, price: flight.minPrice })}
+                      disabled={!hasPrice}
                       className={`p-4 rounded-lg border-2 text-left transition ${
                         isSelected ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:border-primary/50"
-                      }`}
+                      } ${!hasPrice ? "opacity-75 cursor-not-allowed" : ""}`}
                     >
                       <div className="flex items-center justify-between">
                         <div>
                           <p className={`text-sm font-medium ${isSelected ? "text-primary-foreground" : "text-foreground"}`}>
                             {flight.month !== "default" ? new Date(flight.month + "-01").toLocaleDateString("sk-SK", { year: "numeric", month: "long" }) : "Letenka"}
                           </p>
-                          <p className={`text-xs mt-1 ${isSelected ? "text-primary-foreground/70" : "text-muted-foreground"}`}>minimálna cena</p>
+                          <p className={`text-xs mt-1 ${isSelected ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                            {hasPrice ? "minimálna cena" : "cenu dodatočne preveríme"}
+                          </p>
                         </div>
-                        <p className={`text-2xl font-bold ${isSelected ? "text-primary-foreground" : "text-foreground"}`}>{flight.minPrice} €</p>
+                        <p className={`text-2xl font-bold ${isSelected ? "text-primary-foreground" : "text-foreground"}`}>
+                          {hasPrice ? `${flight.minPrice} €` : "—"}
+                        </p>
                       </div>
                     </button>
                   )
