@@ -76,6 +76,13 @@ serve(async (req) => {
       program: "Ranný tréning, hlavný tréningový blok, popoludňajšie aktivity a večerná regenerácia",
     };
 
+    const flightSelected = !!configuration.selectedFlight?.price;
+    const flightPrice = configuration.selectedFlight?.price;
+    const flightMonth = configuration.selectedFlight?.month;
+    const flightInfo = flightSelected
+      ? `Spiatočná letenka${flightMonth && flightMonth !== "default" ? ` (${flightMonth})` : ""}${flightPrice ? ` — približne ${flightPrice}€` : ""} — ZAHRNUTÁ V CENE`
+      : "Letenka NIE JE zahrnutá v cene (účastník si rieši sám)";
+
     const trainerExpProvided = !!configuration.trainerExperience;
     const trainerSpecProvided = !!configuration.trainerSpecialization;
     const trainerCertProvided = !!configuration.trainerCertificates;
@@ -99,6 +106,7 @@ DÔLEŽITÉ PRAVIDLÁ:
 - Certifikáty: ak nie sú zadané, vráť PRÁZDNE pole []. Nikdy nevymýšľaj certifikáty.
 - Pre dayTimeline: ak tréner zadal sloty, použi PRESNE rovnaký počet a časy. Nepridávaj ďalšie sloty. Ale VYLEPŠI popisy aktivít — prepíš ich marketingovo príťažlivejšie, emotívnejšie a profesionálnejšie. Zachovaj pôvodný význam, len to podaj krajšie.
 - Pre credentials: ak tréner zadal 1 certifikát, vráť pole s 1 položkou. Nepridávaj ďalšie.
+- Letenka: ak je ZAHRNUTÁ V CENE, MUSÍ byť uvedená vo "whatYouGet" a NESMIE sa objaviť v "notIncluded". Ak NIE JE zahrnutá, MUSÍ byť uvedená v "notIncluded" a NESMIE sa objaviť vo "whatYouGet". Toto pravidlo je absolútne.
 
 Destinácia: ${configuration.destination || "neuvedená"}
 Termín: ${configuration.months?.join(", ") || configuration.month || "neuvedený"}
@@ -107,6 +115,7 @@ Počet účastníkov: ${configuration.participants || "neuvedený"}
 Typ tripu: ${configuration.campType || "neuvedený"}
 Strava: ${configuration.meals || "neuvedená"}
 Transfer: ${configuration.transfer ? "Áno" : "Nie"}
+Letenka: ${flightInfo}
 Extra služby: ${(configuration.extras || []).join(", ") || "žiadne"}
 Špeciálne aktivity: ${Array.isArray(configuration.specialActivities) ? configuration.specialActivities.join(", ") : configuration.specialActivities || "žiadne"}
 Budget na osobu: ${pricePerPerson}€
@@ -239,6 +248,20 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // Safety net: enforce flight in correct list regardless of AI output
+    const ib = previewData?.investmentBreakdown;
+    if (ib) {
+      const flightRegex = /letenk|flight/i;
+      ib.whatYouGet = (ib.whatYouGet || []).filter((x: string) => flightSelected || !flightRegex.test(x));
+      ib.notIncluded = (ib.notIncluded || []).filter((x: string) => !flightSelected || !flightRegex.test(x));
+      if (flightSelected && !ib.whatYouGet.some((x: string) => flightRegex.test(x))) {
+        ib.whatYouGet.unshift(`Spiatočná letenka${flightMonth && flightMonth !== "default" ? ` (${flightMonth})` : ""}`);
+      }
+      if (!flightSelected && !ib.notIncluded.some((x: string) => flightRegex.test(x))) {
+        ib.notIncluded.unshift("Spiatočná letenka");
+      }
     }
 
     // Add metadata + hotel images from webhook
