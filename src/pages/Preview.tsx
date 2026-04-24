@@ -129,6 +129,32 @@ export default function Preview() {
     return () => { document.head.removeChild(meta) }
   }, [])
 
+  // Public previews – auto-verify, no password prompt
+  const PUBLIC_PREVIEWS: Record<string, string> = {
+    "mallorca-lucia-kovacova-1v2s": "Lucia Kováčová",
+    "kreta-marek-horvath-pjic": "Marek Horváth",
+  }
+
+  useEffect(() => {
+    if (!slug || campData) return
+    const trainerName = PUBLIC_PREVIEWS[slug]
+    if (!trainerName) return
+    ;(async () => {
+      try {
+        const { data } = await supabase.functions.invoke("preview-access", {
+          body: { action: "verify", slug, accessCode: trainerName },
+        })
+        if (data?.previewData) {
+          const pd = data.previewData
+          setCampData(Array.isArray(pd) ? pd[0] : pd)
+        }
+      } catch (e) {
+        console.error("[Preview] auto-verify failed", e)
+      }
+    })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug])
+
   const handleAccessSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!accessInput.trim() || !slug) return
