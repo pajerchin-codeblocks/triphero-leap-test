@@ -558,6 +558,16 @@ export default function ConfiguratorWizard({
                             <span className="text-sm font-medium">{configuration.meals}</span>
                           </div>
                         )}
+                        {configuration.selectedFlight?.price && (
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-xs text-muted-foreground">Letenka</span>
+                            <span className="text-sm font-medium text-right max-w-[60%]">
+                              {configuration.selectedFlight.month && configuration.selectedFlight.month !== "default"
+                                ? `${new Date(configuration.selectedFlight.month + "-01").toLocaleDateString("sk-SK", { year: "numeric", month: "long" })} — ${configuration.selectedFlight.price} €`
+                                : `${configuration.selectedFlight.price} €`}
+                            </span>
+                          </div>
+                        )}
                         {currentStep >= 2 && (
                           <div className="pt-2 border-t border-border space-y-1">
                             <div className="flex justify-between items-baseline">
@@ -676,6 +686,16 @@ export default function ConfiguratorWizard({
                   <div className="flex justify-between items-baseline">
                     <span className="text-xs text-muted-foreground">Strava</span>
                     <span className="text-sm font-medium">{configuration.meals}</span>
+                  </div>
+                )}
+                {configuration.selectedFlight?.price && (
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-xs text-muted-foreground">Letenka</span>
+                    <span className="text-sm font-medium text-right max-w-[60%]">
+                      {configuration.selectedFlight.month && configuration.selectedFlight.month !== "default"
+                        ? `${new Date(configuration.selectedFlight.month + "-01").toLocaleDateString("sk-SK", { year: "numeric", month: "long" })} — ${configuration.selectedFlight.price} €`
+                        : `${configuration.selectedFlight.price} €`}
+                    </span>
                   </div>
                 )}
                 {currentStep >= 2 && (
