@@ -578,7 +578,9 @@ export default function ConfiguratorWizard({
                       {configuration.hotel && currentStep > 0 && (
                         <div className="px-4 py-3 border-t border-border bg-muted/30">
                           <div className="flex justify-between items-baseline">
-                            <span className="text-xs text-muted-foreground">Cena za osobu</span>
+                            <span className="text-xs text-muted-foreground">
+                              {configuration.selectedFlight?.price ? "Cena za osobu" : "Cena za ubytovanie (bez letenky)"}
+                            </span>
                             <span className="text-xl font-bold text-accent">~ {estimatedPricePerPerson} €</span>
                           </div>
                           <p className="text-[10px] text-muted-foreground mt-1">* Konečná cena sa môže líšiť</p>
@@ -614,7 +616,9 @@ export default function ConfiguratorWizard({
             {configuration.hotel && currentStep > 0 ? (
               <div className="text-right">
                 <span className="text-lg font-bold text-accent">~ {estimatedPricePerPerson} €</span>
-                <p className="text-[9px] text-muted-foreground">* Cena sa môže líšiť</p>
+                <p className="text-[9px] text-muted-foreground">
+                  {configuration.selectedFlight?.price ? "* Cena sa môže líšiť" : "bez letenky"}
+                </p>
               </div>
             ) : (
               <span className="text-xs text-muted-foreground">Krok {currentStep + 1} z {steps.length}</span>
