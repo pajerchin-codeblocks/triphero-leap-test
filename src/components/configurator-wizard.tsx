@@ -616,7 +616,9 @@ export default function ConfiguratorWizard({
             {configuration.hotel && currentStep > 0 ? (
               <div className="text-right">
                 <span className="text-lg font-bold text-accent">~ {estimatedPricePerPerson} €</span>
-                <p className="text-[9px] text-muted-foreground">* Cena sa môže líšiť</p>
+                <p className="text-[9px] text-muted-foreground">
+                  {configuration.selectedFlight?.price ? "* Cena sa môže líšiť" : "bez letenky"}
+                </p>
               </div>
             ) : (
               <span className="text-xs text-muted-foreground">Krok {currentStep + 1} z {steps.length}</span>
