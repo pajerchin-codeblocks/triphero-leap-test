@@ -250,6 +250,20 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
       });
     }
 
+    // Safety net: enforce flight in correct list regardless of AI output
+    const ib = previewData?.investmentBreakdown;
+    if (ib) {
+      const flightRegex = /letenk|flight/i;
+      ib.whatYouGet = (ib.whatYouGet || []).filter((x: string) => flightSelected || !flightRegex.test(x));
+      ib.notIncluded = (ib.notIncluded || []).filter((x: string) => !flightSelected || !flightRegex.test(x));
+      if (flightSelected && !ib.whatYouGet.some((x: string) => flightRegex.test(x))) {
+        ib.whatYouGet.unshift(`Spiatočná letenka${flightMonth && flightMonth !== "default" ? ` (${flightMonth})` : ""}`);
+      }
+      if (!flightSelected && !ib.notIncluded.some((x: string) => flightRegex.test(x))) {
+        ib.notIncluded.unshift("Spiatočná letenka");
+      }
+    }
+
     // Add metadata + hotel images from webhook
     const fullPreviewData = {
       success: true,
