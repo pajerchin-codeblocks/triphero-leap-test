@@ -1,70 +1,60 @@
 
 
-## Úprava zobrazenia ceny meal planu pri hoteli s cenou z meal planu
+## Oprava: AI preview ignoruje vybranú letenku v sekcii "Nie je zahrnuté"
 
-Keď cena hotela je odvodená z meal planu (`hotel.price === 0`, `baseMeal` je nastavený), chceme na dlaždiciach meal planov zobrazovať zrozumiteľnejšiu informáciu namiesto "+0€/deň" pri base meal.
+### Problém
+V `supabase/functions/generate-camp-preview/index.ts` prompt pre Gemini nedostáva informáciu o tom, či používateľ vybral letenku (`configuration.selectedFlight`). AI preto defaultne pridáva "spiatočná letenka" do poľa `notIncluded`, hoci letenka môže byť v cene.
+
+Tiež chýba pravidlo pre `whatYouGet` / `notIncluded`, aby sa letenka konzistentne zaradila podľa toho, či bola vybraná.
 
 ### Súbor
-`src/components/wizard-steps/step2-accommodation.tsx`
+`supabase/functions/generate-camp-preview/index.ts`
 
 ### Zmeny
 
-V sekcii **Strava** (dlaždice meal plans) upraviť zobrazenie sublabelu:
+**1. Vypočítať flight info pred promptom (pred riadkom 94):**
 
-Nová logika pre zobrazenie textu pod názvom stravy (platí iba ak `selectedHotelPricing.baseMeal` existuje, t.j. cena hotela je odvodená z meal planu):
+```ts
+const flightSelected = !!configuration.selectedFlight?.price;
+const flightPrice = configuration.selectedFlight?.price;
+const flightMonth = configuration.selectedFlight?.month;
+const flightInfo = flightSelected
+  ? `Spiatočná letenka${flightMonth && flightMonth !== "default" ? ` (${flightMonth})` : ""}${flightPrice ? ` — približne ${flightPrice}€` : ""} — ZAHRNUTÁ V CENE`
+  : "Letenka NIE JE zahrnutá v cene (účastník si rieši sám)";
+```
 
-1. **Ak meal dlaždica = base meal** → zobraz `"v cene ubytovania"`
-2. **Ak meal dlaždica ≠ base meal a používateľ má vybraný iný typ** → vypočítaj rozdiel oproti aktuálne vybranému typu stravy a zobraz znamienko `+`/`−`:
-   - Ak je aktuálne vybraný base meal: zobraz `+{price}€/deň` (štandard)
-   - Ak je vybraný iný (non-base) meal: zobraz rozdiel `{selectedSurcharge - thisSurcharge}€/deň` so znamienkom (pre base meal to bude negatívne, t.j. lacnejšie)
+**2. Pridať do promptu (sekcia s parametrami, okolo riadku 109-118)** nový riadok:
+```
+Letenka: ${flightInfo}
+```
 
-Pre prípad keď `baseMeal` nie je nastavený (hotel má vlastnú cenu), ponechať existujúce správanie (`od {price}€/deň`).
+**3. Doplniť do `DÔLEŽITÉ PRAVIDLÁ` (riadky 96-101)** nové pravidlo:
+```
+- Letenka: ak je ZAHRNUTÁ V CENE, MUSÍ byť uvedená vo "whatYouGet" a NESMIE sa objaviť v "notIncluded". Ak NIE JE zahrnutá, MUSÍ byť uvedená v "notIncluded" a NESMIE sa objaviť vo "whatYouGet". Toto pravidlo je absolútne.
+```
 
-### Pseudokód logiky sublabelu
+**4. (Voliteľné, ale odporúčané) Post-processing safety net** — po parsovaní AI odpovede odfiltrovať/pridať položku letenky aby sme garantovali správanie aj keby AI zlyhalo:
 
-```tsx
-const currentlySelectedKey = mealLabelsMap[configuration.meals] // reverse lookup label → key
-const selectedSurcharge = currentlySelectedKey 
-  ? (selectedHotelPricing?.mealPrices[currentlySelectedKey] ?? 0) 
-  : 0
-
-// per tile
-let sublabel: string
-if (selectedHotelPricing?.baseMeal) {
-  const thisMealKey = reverse lookup (label → key)
-  const thisIsBase = thisMealKey === selectedHotelPricing.baseMeal
-  const thisSurcharge = selectedHotelPricing.mealPrices[thisMealKey] ?? 0
-  
-  if (configuration.meals === label) {
-    // this tile is currently selected
-    sublabel = thisIsBase ? "v cene ubytovania" : `+${thisSurcharge}€/deň`
-  } else {
-    // showing delta vs currently selected
-    const delta = thisSurcharge - selectedSurcharge
-    if (delta === 0) sublabel = "v cene"
-    else if (delta > 0) sublabel = `+${delta}€/deň`
-    else sublabel = `${delta}€/deň` // already has minus sign
+```ts
+// po `const parsed = JSON.parse(...)` 
+const ib = parsed.investmentBreakdown;
+if (ib) {
+  const flightRegex = /letenk|flight/i;
+  ib.whatYouGet = (ib.whatYouGet || []).filter((x: string) => flightSelected || !flightRegex.test(x));
+  ib.notIncluded = (ib.notIncluded || []).filter((x: string) => !flightSelected || !flightRegex.test(x));
+  if (flightSelected && !ib.whatYouGet.some((x: string) => flightRegex.test(x))) {
+    ib.whatYouGet.unshift(`Spiatočná letenka${flightMonth && flightMonth !== "default" ? ` (${flightMonth})` : ""}`);
   }
-} else {
-  sublabel = `od ${price}€/deň`
+  if (!flightSelected && !ib.notIncluded.some((x: string) => flightRegex.test(x))) {
+    ib.notIncluded.unshift("Spiatočná letenka");
+  }
 }
 ```
 
-### Detail
+### Očakávaný výsledok
+- Ak používateľ vyberie letenku v kroku 2 → v preview pod "Čo dostaneš" sa objaví "Spiatočná letenka (mesiac)" a v "Nie je zahrnuté" letenka chýba.
+- Ak nevyberie → letenka zostáva v "Nie je zahrnuté".
 
-- Pridá sa lokálna mapa label → MealKey (inverzia `mealLabels`) aby sme z `configuration.meals` (label) dostali kľúč na lookup do `mealPrices`.
-- Zmena je iba vizuálna, neovplyvňuje výpočet ceny v `configurator-wizard.tsx`.
-
-### Očakávaný výsledok (príklad: hotel s cenou 0, baseMeal = AI, mealPrices: bb=30, hb=50, fb=70, ai=90)
-
-- Default výber = AI:
-  - Raňajky: `−60€/deň`
-  - Polpenzia: `−40€/deň`
-  - Plná penzia: `−20€/deň`
-  - All inclusive (vybraté): `v cene ubytovania`
-- Používateľ prepne na Polpenzia:
-  - Raňajky: `−20€/deň`
-  - Polpenzia (vybraté): `+50€/deň` (doplatok voči base meal)
-  - Plná penzia: `+20€/deň`
-  - All inclusive: `+40€/deň`
+### Mimo scope
+Cena letenky sa do `pricePerPerson` už počíta v `configurator-wizard.tsx` (overené v predchádzajúcich krokoch), tak tam zmeny nie sú potrebné.
 
