@@ -76,6 +76,13 @@ serve(async (req) => {
       program: "Ranný tréning, hlavný tréningový blok, popoludňajšie aktivity a večerná regenerácia",
     };
 
+    const flightSelected = !!configuration.selectedFlight?.price;
+    const flightPrice = configuration.selectedFlight?.price;
+    const flightMonth = configuration.selectedFlight?.month;
+    const flightInfo = flightSelected
+      ? `Spiatočná letenka${flightMonth && flightMonth !== "default" ? ` (${flightMonth})` : ""}${flightPrice ? ` — približne ${flightPrice}€` : ""} — ZAHRNUTÁ V CENE`
+      : "Letenka NIE JE zahrnutá v cene (účastník si rieši sám)";
+
     const trainerExpProvided = !!configuration.trainerExperience;
     const trainerSpecProvided = !!configuration.trainerSpecialization;
     const trainerCertProvided = !!configuration.trainerCertificates;
