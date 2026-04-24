@@ -115,6 +115,7 @@ Počet účastníkov: ${configuration.participants || "neuvedený"}
 Typ tripu: ${configuration.campType || "neuvedený"}
 Strava: ${configuration.meals || "neuvedená"}
 Transfer: ${configuration.transfer ? "Áno" : "Nie"}
+Letenka: ${flightInfo}
 Extra služby: ${(configuration.extras || []).join(", ") || "žiadne"}
 Špeciálne aktivity: ${Array.isArray(configuration.specialActivities) ? configuration.specialActivities.join(", ") : configuration.specialActivities || "žiadne"}
 Budget na osobu: ${pricePerPerson}€
