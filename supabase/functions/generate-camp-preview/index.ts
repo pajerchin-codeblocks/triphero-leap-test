@@ -106,6 +106,7 @@ DÔLEŽITÉ PRAVIDLÁ:
 - Certifikáty: ak nie sú zadané, vráť PRÁZDNE pole []. Nikdy nevymýšľaj certifikáty.
 - Pre dayTimeline: ak tréner zadal sloty, použi PRESNE rovnaký počet a časy. Nepridávaj ďalšie sloty. Ale VYLEPŠI popisy aktivít — prepíš ich marketingovo príťažlivejšie, emotívnejšie a profesionálnejšie. Zachovaj pôvodný význam, len to podaj krajšie.
 - Pre credentials: ak tréner zadal 1 certifikát, vráť pole s 1 položkou. Nepridávaj ďalšie.
+- Letenka: ak je ZAHRNUTÁ V CENE, MUSÍ byť uvedená vo "whatYouGet" a NESMIE sa objaviť v "notIncluded". Ak NIE JE zahrnutá, MUSÍ byť uvedená v "notIncluded" a NESMIE sa objaviť vo "whatYouGet". Toto pravidlo je absolútne.
 
 Destinácia: ${configuration.destination || "neuvedená"}
 Termín: ${configuration.months?.join(", ") || configuration.month || "neuvedený"}
