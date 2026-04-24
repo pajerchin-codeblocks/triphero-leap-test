@@ -563,8 +563,8 @@ export default function ConfiguratorWizard({
                             <span className="text-xs text-muted-foreground">Letenka</span>
                             <span className="text-sm font-medium text-right max-w-[60%]">
                               {configuration.selectedFlight.month && configuration.selectedFlight.month !== "default"
-                                ? `${new Date(configuration.selectedFlight.month + "-01").toLocaleDateString("sk-SK", { year: "numeric", month: "long" })} — ${configuration.selectedFlight.price} €`
-                                : `${configuration.selectedFlight.price} €`}
+                                ? new Date(configuration.selectedFlight.month + "-01").toLocaleDateString("sk-SK", { year: "numeric", month: "long" })
+                                : "Áno"}
                             </span>
                           </div>
                         )}
@@ -693,8 +693,8 @@ export default function ConfiguratorWizard({
                     <span className="text-xs text-muted-foreground">Letenka</span>
                     <span className="text-sm font-medium text-right max-w-[60%]">
                       {configuration.selectedFlight.month && configuration.selectedFlight.month !== "default"
-                        ? `${new Date(configuration.selectedFlight.month + "-01").toLocaleDateString("sk-SK", { year: "numeric", month: "long" })} — ${configuration.selectedFlight.price} €`
-                        : `${configuration.selectedFlight.price} €`}
+                        ? new Date(configuration.selectedFlight.month + "-01").toLocaleDateString("sk-SK", { year: "numeric", month: "long" })
+                        : "Áno"}
                     </span>
                   </div>
                 )}
