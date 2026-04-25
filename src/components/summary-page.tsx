@@ -21,8 +21,19 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
   const [generating, setGenerating] = useState(false)
   const [previewLink, setPreviewLink] = useState<string | null>(null)
   const [trainerNameForAccess, setTrainerNameForAccess] = useState<string | null>(null)
-  const [email, setEmail] = useState("")
+  const [email, setEmail] = useState(() => {
+    if (typeof window === "undefined") return ""
+    return sessionStorage.getItem("triphero_email") || ""
+  })
   const [consent, setConsent] = useState(false)
+
+  // Persist email medzi návratmi na summary page (v rámci tej istej session).
+  const handleEmailChange = (value: string) => {
+    setEmail(value)
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("triphero_email", value)
+    }
+  }
   const { toast } = useToast()
 
   const formatList = (arr: string[]) => arr && arr.length > 0 ? arr.join(", ") : "—"
