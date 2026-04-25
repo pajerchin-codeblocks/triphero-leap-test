@@ -26,10 +26,13 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
     return sessionStorage.getItem("triphero_email") || ""
   })
   const [consent, setConsent] = useState(false)
+  const [emailError, setEmailError] = useState<string | null>(null)
+  const [consentError, setConsentError] = useState<string | null>(null)
 
   // Persist email medzi návratmi na summary page (v rámci tej istej session).
   const handleEmailChange = (value: string) => {
     setEmail(value)
+    if (emailError) setEmailError(null)
     if (typeof window !== "undefined") {
       sessionStorage.setItem("triphero_email", value)
     }
