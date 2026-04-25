@@ -131,8 +131,8 @@ export default function Preview() {
 
   // Public previews – auto-verify, no password prompt
   const PUBLIC_PREVIEWS: Record<string, string> = {
-    "mallorca-lucia-kovacova-1v2s": "Lucia Kováčová",
-    "kreta-marek-horvath-pjic": "Marek Horváth",
+    "mallorca-lucia-kovacova-1vop": "Lucia Kováčová",
+    "kreta-marek-horvath-pscy": "Marek Horváth",
   }
 
   useEffect(() => {
@@ -588,7 +588,7 @@ export default function Preview() {
       {/* ═══════════════════════════════════════════
           LUXURY EXPERIENCE — Amenities grid
       ═══════════════════════════════════════════ */}
-      {campData.luxuryExperience && (
+      {campData.luxuryExperience && (campData.luxuryExperience.description || (campData.luxuryExperience.amenities && campData.luxuryExperience.amenities.length > 0) || campData.hotelImages?.hero) && (
         <section className="py-20 md:py-28 px-4">
           <div className="max-w-6xl mx-auto">
             <motion.div
@@ -812,43 +812,47 @@ export default function Preview() {
                   <p className="text-muted-foreground">{campData.practicalInfo.fitnessLevel}</p>
                 </div>
               </motion.div>
-              <motion.div variants={fadeUp}>
-                <h3 className="text-lg font-bold text-foreground mb-4">Čo si vziať so sebou</h3>
-                <ul className="space-y-2">
-                  {campData.practicalInfo.whatToBring.map((item, idx) => (
-                    <li key={idx} className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-accent flex-shrink-0" />
-                      <span className="text-muted-foreground text-sm">{stripEmojis(item)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
+              {campData.practicalInfo.whatToBring && campData.practicalInfo.whatToBring.length > 0 && (
+                <motion.div variants={fadeUp}>
+                  <h3 className="text-lg font-bold text-foreground mb-4">Čo si vziať so sebou</h3>
+                  <ul className="space-y-2">
+                    {campData.practicalInfo.whatToBring.map((item, idx) => (
+                      <li key={idx} className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-accent flex-shrink-0" />
+                        <span className="text-muted-foreground text-sm">{stripEmojis(item)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              )}
             </div>
 
-            <motion.div variants={fadeUp}>
-              <h3 className="text-2xl font-bold text-center text-foreground mb-8">Často kladené otázky</h3>
-              <div className="space-y-3 max-w-3xl mx-auto">
-                {campData.practicalInfo.faq.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-card border border-border rounded-xl overflow-hidden transition-all duration-300"
-                  >
-                    <button
-                      onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                      className="w-full flex items-center justify-between p-5 text-left hover:bg-muted/30 transition-colors"
+            {campData.practicalInfo.faq && campData.practicalInfo.faq.length > 0 && (
+              <motion.div variants={fadeUp}>
+                <h3 className="text-2xl font-bold text-center text-foreground mb-8">Často kladené otázky</h3>
+                <div className="space-y-3 max-w-3xl mx-auto">
+                  {campData.practicalInfo.faq.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-card border border-border rounded-xl overflow-hidden transition-all duration-300"
                     >
-                      <span className="text-foreground font-medium pr-4">{item.q}</span>
-                      <ChevronDown className={`w-5 h-5 text-muted-foreground flex-shrink-0 transition-transform duration-300 ${openFaq === idx ? "rotate-180" : ""}`} />
-                    </button>
-                    {openFaq === idx && (
-                      <div className="px-5 pb-5">
-                        <p className="text-muted-foreground leading-relaxed">{item.a}</p>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </motion.div>
+                      <button
+                        onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                        className="w-full flex items-center justify-between p-5 text-left hover:bg-muted/30 transition-colors"
+                      >
+                        <span className="text-foreground font-medium pr-4">{item.q}</span>
+                        <ChevronDown className={`w-5 h-5 text-muted-foreground flex-shrink-0 transition-transform duration-300 ${openFaq === idx ? "rotate-180" : ""}`} />
+                      </button>
+                      {openFaq === idx && (
+                        <div className="px-5 pb-5">
+                          <p className="text-muted-foreground leading-relaxed">{item.a}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
           </motion.div>
         </div>
       </section>

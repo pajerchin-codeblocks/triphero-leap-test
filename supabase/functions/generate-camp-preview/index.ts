@@ -83,59 +83,74 @@ serve(async (req) => {
       ? `Spiatočná letenka${flightMonth && flightMonth !== "default" ? ` (${flightMonth})` : ""}${flightPrice ? ` — približne ${flightPrice}€` : ""} — ZAHRNUTÁ V CENE`
       : "Letenka NIE JE zahrnutá v cene (účastník si rieši sám)";
 
+    const transferSelected = !!configuration.transfer;
+    const mealsSelected = !!configuration.meals;
+    const extrasList: string[] = Array.isArray(configuration.extras) ? configuration.extras : [];
+    const specialActivitiesRaw = Array.isArray(configuration.specialActivities)
+      ? configuration.specialActivities.join(", ")
+      : (configuration.specialActivities || "");
+
     const trainerExpProvided = !!configuration.trainerExperience;
     const trainerSpecProvided = !!configuration.trainerSpecialization;
     const trainerCertProvided = !!configuration.trainerCertificates;
     const trainerBioProvided = !!configuration.trainerBio;
     const programProvided = !!configuration.dailyProgram;
+    const hotelDescProvided = !!configuration.hotelDescription;
+    const specialActivitiesProvided = !!specialActivitiesRaw;
 
-    const trainerExperience = configuration.trainerExperience || "5+ rokov";
+    const trainerExperience = configuration.trainerExperience || "";
     const trainerSpecialization = configuration.trainerSpecialization || defaults.specialization;
     const trainerCertificates = configuration.trainerCertificates || "";
-    const trainerBio =
-      configuration.trainerBio ||
-      `${configuration.trainerName} je skúsený tréner so zameraním na ${trainerSpecialization.toLowerCase()}. Pomáha klientom dosahovať ich fitness ciele v inšpiratívnom prostredí.`;
-    const dailyProgram = configuration.dailyProgram || defaults.program;
+    const trainerBio = configuration.trainerBio || "";
+    const dailyProgram = configuration.dailyProgram || "";
     const pricePerPerson = configuration.estimatedPrice || 599;
 
-    const prompt = `Si expertný copywriter pre fitness a wellness retreat tripy. Vytvor kompletný konverzný landing page obsah v slovenčine na základe týchto údajov:
+    const prompt = `Si expertný copywriter pre fitness, wellness a retreat tripy. Tvoja JEDINÁ úloha je preformulovať a marketingovo vylepšiť údaje, ktoré tréner zadal — do gramaticky správnej, emotívnej a marketingovo zaujímavej slovenčiny.
 
-DÔLEŽITÉ PRAVIDLÁ:
-- Polia označené (ZADANÉ TRÉNEROM) použi PRESNE tak ako sú. Nepridávaj, neupravuj, nedopĺňaj ďalšie položky.
-- Polia označené (NEZADANÉ) môžeš voľne vymyslieť — OKREM certifikátov.
-- Certifikáty: ak nie sú zadané, vráť PRÁZDNE pole []. Nikdy nevymýšľaj certifikáty.
-- Pre dayTimeline: ak tréner zadal sloty, použi PRESNE rovnaký počet a časy. Nepridávaj ďalšie sloty. Ale VYLEPŠI popisy aktivít — prepíš ich marketingovo príťažlivejšie, emotívnejšie a profesionálnejšie. Zachovaj pôvodný význam, len to podaj krajšie.
-- Pre credentials: ak tréner zadal 1 certifikát, vráť pole s 1 položkou. Nepridávaj ďalšie.
-- Letenka: ak je ZAHRNUTÁ V CENE, MUSÍ byť uvedená vo "whatYouGet" a NESMIE sa objaviť v "notIncluded". Ak NIE JE zahrnutá, MUSÍ byť uvedená v "notIncluded" a NESMIE sa objaviť vo "whatYouGet". Toto pravidlo je absolútne.
+ABSOLÚTNE PRAVIDLÁ (STRICT NO-HALLUCINATION MODE):
+1. NIKDY nevymýšľaj konkrétne fakty, ktoré nie sú vo vstupných dátach. Zakázané vymýšľať: certifikáty, hotelové vybavenie (bazén, spa, fitness, pláž, reštaurácia...), programové sloty, špecifické aktivity, mená klientov, počty úspechov, miesta pôsobenia, konkrétne čísla a metriky.
+2. Polia označené (ZADANÉ) — preformuluj marketingovo, ale ZACHOVAJ význam, počet položiek, časy, mená a fakty. Nepridávaj nič navyše.
+3. Polia označené (NEZADANÉ):
+   - Pre štruktúrované polia (dayTimeline, credentials, amenities, uniquePoints, whatToBring) → vráť PRÁZDNE pole [].
+   - Pre textové polia (philosophy, description, exclusivity) → vráť PRÁZDNY string "".
+   - Pre bio, targetAudience, fitnessLevel, groupDynamics → môžeš napísať VŠEOBECNÝ neutrálny marketingový text iba na základe destinácie, typu tripu a počtu účastníkov. ŽIADNE konkrétne fakty.
+4. hero, storyHook, transformation, closingStory → môžeš písať voľne emotívny copywriting, ALE BEZ konkrétnych vymyslených faktov (žiadne mená, čísla, miesta, certifikáty, špecifické aktivity).
+5. Letenka: ak je ZAHRNUTÁ V CENE, MUSÍ byť vo "whatYouGet" a NESMIE byť v "notIncluded". Ak NIE JE zahrnutá, MUSÍ byť v "notIncluded" a NESMIE byť vo "whatYouGet".
+6. dayTimeline: ak je program ZADANÝ, parsuj sloty z textu, použi PRESNE rovnaký počet a časy. Marketingovo prepíš len popis aktivity (formuláciu) — nie samotnú aktivitu.
+7. amenities: použi VÝHRADNE to, čo je v popise hotela. Ak v popise nie sú konkrétne amenity, vráť [].
+8. whatYouGet a notIncluded: drž sa LEN toho, čo tréner zaškrtol/zadal. Nepridávaj "welcome drink", "darček", "uvítací kokteil", "wellness procedury" atď. ak to nie je vo vstupe.
+9. faq: max 3 otázky, len o veciach ktoré sú v dátach (cena, termín, strava, letenka, hotel, počet účastníkov). Žiadne vymyslené otázky.
+
+VSTUPNÉ DÁTA:
 
 Destinácia: ${configuration.destination || "neuvedená"}
 Termín: ${configuration.months?.join(", ") || configuration.month || "neuvedený"}
 Trvanie: ${configuration.duration || "neuvedené"}
 Počet účastníkov: ${configuration.participants || "neuvedený"}
 Typ tripu: ${configuration.campType || "neuvedený"}
-Strava: ${configuration.meals || "neuvedená"}
-Transfer: ${configuration.transfer ? "Áno" : "Nie"}
+Strava: ${mealsSelected ? configuration.meals : "NEZADANÁ"}
+Transfer: ${transferSelected ? "Áno (zahrnutý)" : "Nie (nezahrnutý)"}
 Letenka: ${flightInfo}
-Extra služby: ${(configuration.extras || []).join(", ") || "žiadne"}
-Špeciálne aktivity: ${Array.isArray(configuration.specialActivities) ? configuration.specialActivities.join(", ") : configuration.specialActivities || "žiadne"}
+Extra služby: ${extrasList.length > 0 ? extrasList.join(", ") : "žiadne"}
+Špeciálne aktivity: ${specialActivitiesProvided ? specialActivitiesRaw + " (ZADANÉ — preformuluj, nepridávaj ďalšie)" : "NEZADANÉ — nevymýšľaj žiadne"}
 Budget na osobu: ${pricePerPerson}€
-Hotel: ${configuration.hotelTitle || "neuvedený"}
-Popis hotela: ${configuration.hotelDescription || "neuvedený"}
-Lokalita hotela: ${configuration.hotelLocation || "neuvedená"}
-Trieda hotela: ${configuration.hotelStars || "neuvedená"} hviezdičiek
-Cena hotela za noc: ${configuration.hotelPrice || "neuvedená"}€
-Dostupná strava: ${configuration.hotelMealOptions || "neuvedená"}
+
+Hotel:
+- Názov: ${configuration.hotelTitle || "neuvedený"}
+- Popis: ${hotelDescProvided ? configuration.hotelDescription + " (ZADANÉ — z popisu vyber konkrétne amenity)" : "NEZADANÝ — amenities nechaj prázdne []"}
+- Lokalita: ${configuration.hotelLocation || "neuvedená"}
+- Trieda: ${configuration.hotelStars || "neuvedená"} hviezdičiek
 
 Tréner:
 - Meno: ${configuration.trainerName}
-- Skúsenosti: ${trainerExperience} ${trainerExpProvided ? "(ZADANÉ TRÉNEROM - použi presne)" : "(NEZADANÉ - vymysli)"}
-- Špecializácia: ${trainerSpecialization} ${trainerSpecProvided ? "(ZADANÉ TRÉNEROM - použi presne)" : "(NEZADANÉ - vymysli)"}
-- Certifikáty: ${trainerCertificates} ${trainerCertProvided ? "(ZADANÉ TRÉNEROM - použi PRESNE tieto, nepridávaj ďalšie)" : "(NEZADANÉ - vráť prázdne pole [], NEVYMÝŠĽAJ)"}
-- Bio/Príbeh: ${trainerBio} ${trainerBioProvided ? "(ZADANÉ TRÉNEROM - použi presne)" : "(NEZADANÉ - vymysli)"}
+- Skúsenosti: ${trainerExperience || "NEZADANÉ"} ${trainerExpProvided ? "(ZADANÉ — použi presne)" : "(NEZADANÉ — nevymýšľaj počet rokov)"}
+- Špecializácia: ${trainerSpecialization} ${trainerSpecProvided ? "(ZADANÉ — použi presne)" : "(NEZADANÉ — odvodené od typu tripu)"}
+- Certifikáty: ${trainerCertificates || "NEZADANÉ"} ${trainerCertProvided ? "(ZADANÉ — použi PRESNE tie, nepridávaj)" : "(NEZADANÉ — credentials = [], NEVYMÝŠĽAJ)"}
+- Bio/Príbeh: ${trainerBio || "NEZADANÉ"} ${trainerBioProvided ? "(ZADANÉ — preformuluj marketingovo, ale zachovaj fakty)" : "(NEZADANÉ — napíš všeobecný neutrálny bio bez vymyslených úspechov a klientov; philosophy nechaj \"\")"}
 
-Program tripu: ${dailyProgram} ${programProvided ? "(ZADANÉ TRÉNEROM - použi PRESNE tieto sloty a časy, nepridávaj ďalšie. Ale VYLEPŠI popisy aktivít - prepíš ich marketingovo príťažlivejšie a emotívnejšie, zachovaj pôvodný význam)" : "(NEZADANÉ - vymysli kompletný denný program 6-8 slotov)"}
+Program tripu: ${dailyProgram || "NEZADANÝ"} ${programProvided ? "(ZADANÝ — použi PRESNE tie sloty a časy. Marketingovo prepíš len popisy aktivít, zachovaj význam.)" : "(NEZADANÝ — dayTimeline = [], NEVYMÝŠĽAJ sloty)"}
 
-Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto presnou štruktúrou:
+Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto presnou štruktúrou (rešpektuj pravidlá pre prázdne polia):
 {
   "hero": {
     "headline": "emotívny headline max 10 slov",
@@ -144,58 +159,58 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
     "cta": "text CTA tlačidla"
   },
   "storyHook": {
-    "opening": "úvodná veta príbehu, 2-3 vety",
+    "opening": "úvodná veta príbehu, 2-3 vety (bez vymyslených faktov)",
     "problem": "problém ktorý trip rieši, 2-3 vety",
     "solution": "riešenie ktoré trip ponúka, 2-3 vety"
   },
   "trainerProfile": {
     "name": "${configuration.trainerName}",
-    "bio": "profesionálny bio 3-4 vety",
-    "credentials": "pole certifikátov — ak ZADANÉ, použi PRESNE tie. Ak NEZADANÉ, vráť prázdne pole [].",
+    "bio": "ak ZADANÉ — preformuluj. Ak NEZADANÉ — všeobecný neutrálny bio bez vymyslených úspechov.",
+    "credentials": "pole — ak ZADANÉ použi presne, ak NEZADANÉ vráť []",
     "headline": "krátky headline trénera",
-    "specialization": "špecializácia",
-    "experience": "roky skúseností",
-    "philosophy": "filozofia tréningu 1-2 vety"
+    "specialization": "presne to, čo bolo zadané (alebo odvodené od typu tripu)",
+    "experience": "presne to, čo bolo zadané, alebo prázdny string",
+    "philosophy": "ak trainerBio NEZADANÉ → \"\". Inak krátka filozofia 1-2 vety odvodená z bio."
   },
-  "dayTimeline": "pole objektov {time, activity} — ak program ZADANÝ TRÉNEROM, použi PRESNE tie sloty (rovnaký počet). Ak NEZADANÝ, vytvor 6-8 slotov.",
+  "dayTimeline": "pole {time, activity} — ak program ZADANÝ použi PRESNE tie sloty, ak NEZADANÝ vráť []",
   "transformation": {
     "headline": "transformačný headline",
-    "emotionalImpact": "emocionálny dopad 2-3 vety",
-    "physicalBenefits": ["benefit1", "benefit2", "benefit3", "benefit4"],
-    "mentalBenefits": ["benefit1", "benefit2", "benefit3", "benefit4"]
+    "emotionalImpact": "emocionálny dopad 2-3 vety (bez konkrétnych čísel)",
+    "physicalBenefits": ["všeobecné benefity podľa typu tripu, max 4"],
+    "mentalBenefits": ["všeobecné benefity podľa typu tripu, max 4"]
   },
   "luxuryExperience": {
-    "headline": "headline pre luxury sekciu",
-    "description": "popis luxury zážitku 2-3 vety",
-    "amenities": ["amenita1", "amenita2", "amenita3", "amenita4", "amenita5", "amenita6"],
-    "hotelName": "názov hotela ak je známy"
+    "headline": "headline pre sekciu o ubytovaní",
+    "description": "ak hotelDescription ZADANÉ — preformuluj. Ak NEZADANÉ → \"\"",
+    "amenities": "pole — len konkrétne amenity z popisu hotela. Ak nič → []",
+    "hotelName": "${configuration.hotelTitle || ""}"
   },
-   "whatMakesItSpecial": {
-     "headline": "čo robí tento trip výnimočným",
-     "uniquePoints": ["bod1", "bod2", "bod3"],
-    "groupDynamics": "popis skupinovej dynamiky",
-    "exclusivity": "popis exkluzivity"
+  "whatMakesItSpecial": {
+    "headline": "čo robí tento trip výnimočným",
+    "uniquePoints": "pole — len body odvodené z reálne zadaných údajov (typ tripu, špeciálne aktivity, extras). Ak nič → []",
+    "groupDynamics": "krátky text odvodený od počtu účastníkov",
+    "exclusivity": "ak nie je dôvod (prémiový hotel/malá skupina) → \"\""
   },
   "investmentBreakdown": {
     "headline": "investícia do seba",
     "pricePerPerson": "od ${pricePerPerson}€",
     "priceFrame": "cena za osobu / ${configuration.duration || "7 dní"}",
-    "whatYouGet": ["položka1", "položka2", "položka3", "položka4", "položka5"],
-    "notIncluded": ["položka1", "položka2"],
-    "paymentOptions": "možnosti platby"
+    "whatYouGet": "pole — len položky odvodené zo zaškrtnutých vstupov (ubytovanie, strava, transfer, letenka, extras, špeciálne aktivity, tréning). Marketingovo preformuluj.",
+    "notIncluded": "pole — len položky, ktoré tréner NEZAŠKRTOL (napr. letenka/transfer/strava ak nie sú zahrnuté). Bez vymyslených položiek.",
+    "paymentOptions": "stručná veta o možnostiach platby"
   },
   "practicalInfo": {
-    "targetAudience": "pre koho je trip určený",
-    "fitnessLevel": "požadovaná fitness úroveň",
-    "whatToBring": ["vec1", "vec2", "vec3", "vec4"],
+    "targetAudience": "krátko, odvodené od typu tripu a počtu účastníkov",
+    "fitnessLevel": "krátko, odvodené od typu tripu (bez konkrétnych metrík)",
+    "whatToBring": "pole — všeobecný neutrálny zoznam podľa typu tripu (max 5 položiek). Ak typ tripu nie je jasný → []",
     "faq": [
-      {"q": "otázka1", "a": "odpoveď1"},
-      {"q": "otázka2", "a": "odpoveď2"},
-      {"q": "otázka3", "a": "odpoveď3"}
+      {"q": "otázka len o reálnych údajoch", "a": "odpoveď"},
+      {"q": "otázka len o reálnych údajoch", "a": "odpoveď"},
+      {"q": "otázka len o reálnych údajoch", "a": "odpoveď"}
     ]
   },
   "closingStory": {
-    "narrative": "záverečný príbeh 2-3 vety",
+    "narrative": "záverečný príbeh 2-3 vety (bez vymyslených faktov)",
     "finalCta": "finálna výzva k akcii"
   }
 }`;
@@ -250,19 +265,73 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
       });
     }
 
-    // Safety net: enforce flight in correct list regardless of AI output
+    // ── SAFETY NET: enforce no-hallucination rules regardless of AI output ──
+
+    // 1. Trainer credentials — if not provided, force empty
+    if (previewData?.trainerProfile) {
+      if (!trainerCertProvided) {
+        previewData.trainerProfile.credentials = [];
+      }
+      if (!trainerBioProvided) {
+        previewData.trainerProfile.philosophy = "";
+      }
+      if (!trainerExpProvided) {
+        previewData.trainerProfile.experience = "";
+      }
+    }
+
+    // 2. Day timeline — if program not provided, force empty
+    if (!programProvided) {
+      previewData.dayTimeline = [];
+    }
+
+    // 3. Hotel amenities — if hotel description not provided, force empty
+    if (previewData?.luxuryExperience) {
+      if (!hotelDescProvided) {
+        previewData.luxuryExperience.amenities = [];
+        previewData.luxuryExperience.description = "";
+      }
+    }
+
+    // 4. Investment breakdown — enforce based on actual selections
     const ib = previewData?.investmentBreakdown;
     if (ib) {
       const flightRegex = /letenk|flight/i;
-      ib.whatYouGet = (ib.whatYouGet || []).filter((x: string) => flightSelected || !flightRegex.test(x));
-      ib.notIncluded = (ib.notIncluded || []).filter((x: string) => !flightSelected || !flightRegex.test(x));
+      const transferRegex = /transfer|prevoz/i;
+      const mealsRegex = /strav|raňajk|polpenz|plná penz|all inclusive|jedl/i;
+
+      ib.whatYouGet = ib.whatYouGet || [];
+      ib.notIncluded = ib.notIncluded || [];
+
+      // Flight
+      ib.whatYouGet = ib.whatYouGet.filter((x: string) => flightSelected || !flightRegex.test(x));
+      ib.notIncluded = ib.notIncluded.filter((x: string) => !flightSelected || !flightRegex.test(x));
       if (flightSelected && !ib.whatYouGet.some((x: string) => flightRegex.test(x))) {
         ib.whatYouGet.unshift(`Spiatočná letenka${flightMonth && flightMonth !== "default" ? ` (${flightMonth})` : ""}`);
       }
       if (!flightSelected && !ib.notIncluded.some((x: string) => flightRegex.test(x))) {
         ib.notIncluded.unshift("Spiatočná letenka");
       }
+
+      // Transfer
+      ib.whatYouGet = ib.whatYouGet.filter((x: string) => transferSelected || !transferRegex.test(x));
+      ib.notIncluded = ib.notIncluded.filter((x: string) => !transferSelected || !transferRegex.test(x));
+      if (transferSelected && !ib.whatYouGet.some((x: string) => transferRegex.test(x))) {
+        ib.whatYouGet.push("Transfer z letiska a späť");
+      }
+      if (!transferSelected && !ib.notIncluded.some((x: string) => transferRegex.test(x))) {
+        ib.notIncluded.push("Transfer z letiska");
+      }
+
+      // Meals
+      if (!mealsSelected) {
+        ib.whatYouGet = ib.whatYouGet.filter((x: string) => !mealsRegex.test(x));
+        if (!ib.notIncluded.some((x: string) => mealsRegex.test(x))) {
+          ib.notIncluded.push("Strava");
+        }
+      }
     }
+
 
     // Add metadata + hotel images from webhook
     const fullPreviewData = {
