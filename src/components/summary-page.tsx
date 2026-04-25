@@ -21,6 +21,8 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
   const [generating, setGenerating] = useState(false)
   const [previewLink, setPreviewLink] = useState<string | null>(null)
   const [trainerNameForAccess, setTrainerNameForAccess] = useState<string | null>(null)
+  const [email, setEmail] = useState("")
+  const [consent, setConsent] = useState(false)
   const { toast } = useToast()
 
   const formatList = (arr: string[]) => arr && arr.length > 0 ? arr.join(", ") : "—"
