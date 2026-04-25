@@ -246,7 +246,7 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
                   autoComplete="email"
                   placeholder="meno@email.sk"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => handleEmailChange(e.target.value)}
                   required
                   maxLength={255}
                 />
