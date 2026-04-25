@@ -284,7 +284,7 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
           <Button onClick={onEdit} variant="outline">← Upraviť</Button>
           <Button
             onClick={handleGeneratePreview}
-            disabled={generating || (!previewLink && (!consent || email.trim().length === 0))}
+            disabled={generating}
             className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground"
           >
             {generating ? (
