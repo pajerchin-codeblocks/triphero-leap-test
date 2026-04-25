@@ -317,6 +317,7 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
           </Button>
         </div>
       </div>
+      {generating && <PreviewLoadingOverlay />}
     </div>
   )
 }
