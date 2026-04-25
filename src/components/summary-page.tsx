@@ -264,7 +264,7 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
                   htmlFor="consent"
                   className="text-sm text-muted-foreground font-normal leading-relaxed cursor-pointer"
                 >
-                  Súhlasím so spracovaním osobných údajov a s ich použitím na marketingové účely. <span className="text-destructive">*</span>
+                  Súhlasím so spracovaním <a href="https://www.triphero.sk/ochrana-osobnych-udajov" target="_blank" rel="noopener noreferrer" className="underline text-foreground hover:text-primary">osobných údajov</a> a s ich použitím na marketingové účely. <span className="text-destructive">*</span>
                 </Label>
               </div>
             </CardContent>
