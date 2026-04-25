@@ -121,7 +121,7 @@ export default function Step1Basic({
             ) : (
               <>
                 <div
-                  className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 ${validationErrors.destination ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}
+                  className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 ${validationErrors.destination ? "ring-1 ring-destructive rounded-lg" : ""}`}
                 >
                   {availableDestinations.slice(0, 5).map((dest) => (
                     <button
@@ -214,7 +214,7 @@ export default function Step1Basic({
               </span>
             </label>
             <div
-              className={`grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 ${validationErrors.months ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}
+              className={`grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 ${validationErrors.months ? "ring-1 ring-destructive rounded-lg" : ""}`}
             >
               {allMonths.map((monthObj) => (
                 <button
@@ -238,7 +238,7 @@ export default function Step1Basic({
               Dĺžka pobytu <span className="text-destructive">*</span>
             </label>
             <div
-              className={`grid grid-cols-2 sm:grid-cols-4 gap-3 ${validationErrors.duration ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}
+              className={`grid grid-cols-2 sm:grid-cols-4 gap-3 ${validationErrors.duration ? "ring-1 ring-destructive rounded-lg" : ""}`}
             >
               {["4 dni", "5 dní", "6 dní"].map((duration) => (
                 <button
@@ -322,7 +322,7 @@ export default function Step1Basic({
                 onChange={(e) => handleCampTypeChange(e.target.value)}
                 onFocus={() => setShowCampTypeSuggestions(true)}
                 onBlur={() => setTimeout(() => setShowCampTypeSuggestions(false), 200)}
-                className={`w-full px-4 py-3 border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring outline-none transition ${validationErrors.campType ? "border-destructive ring-2 ring-destructive" : "border-border"}`}
+                className={`w-full px-4 py-3 border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring outline-none transition ${validationErrors.campType ? "border-destructive" : "border-border"}`}
               />
               {showCampTypeSuggestions && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-background border border-border rounded-lg shadow-lg z-10">
