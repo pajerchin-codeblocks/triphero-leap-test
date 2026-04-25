@@ -827,30 +827,32 @@ export default function Preview() {
               )}
             </div>
 
-            <motion.div variants={fadeUp}>
-              <h3 className="text-2xl font-bold text-center text-foreground mb-8">Často kladené otázky</h3>
-              <div className="space-y-3 max-w-3xl mx-auto">
-                {campData.practicalInfo.faq.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-card border border-border rounded-xl overflow-hidden transition-all duration-300"
-                  >
-                    <button
-                      onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                      className="w-full flex items-center justify-between p-5 text-left hover:bg-muted/30 transition-colors"
+            {campData.practicalInfo.faq && campData.practicalInfo.faq.length > 0 && (
+              <motion.div variants={fadeUp}>
+                <h3 className="text-2xl font-bold text-center text-foreground mb-8">Často kladené otázky</h3>
+                <div className="space-y-3 max-w-3xl mx-auto">
+                  {campData.practicalInfo.faq.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-card border border-border rounded-xl overflow-hidden transition-all duration-300"
                     >
-                      <span className="text-foreground font-medium pr-4">{item.q}</span>
-                      <ChevronDown className={`w-5 h-5 text-muted-foreground flex-shrink-0 transition-transform duration-300 ${openFaq === idx ? "rotate-180" : ""}`} />
-                    </button>
-                    {openFaq === idx && (
-                      <div className="px-5 pb-5">
-                        <p className="text-muted-foreground leading-relaxed">{item.a}</p>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </motion.div>
+                      <button
+                        onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                        className="w-full flex items-center justify-between p-5 text-left hover:bg-muted/30 transition-colors"
+                      >
+                        <span className="text-foreground font-medium pr-4">{item.q}</span>
+                        <ChevronDown className={`w-5 h-5 text-muted-foreground flex-shrink-0 transition-transform duration-300 ${openFaq === idx ? "rotate-180" : ""}`} />
+                      </button>
+                      {openFaq === idx && (
+                        <div className="px-5 pb-5">
+                          <p className="text-muted-foreground leading-relaxed">{item.a}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
           </motion.div>
         </div>
       </section>
