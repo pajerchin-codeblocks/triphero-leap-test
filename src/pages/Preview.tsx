@@ -131,8 +131,8 @@ export default function Preview() {
 
   // Public previews – auto-verify, no password prompt
   const PUBLIC_PREVIEWS: Record<string, string> = {
-    "mallorca-lucia-kovacova-1v2s": "Lucia Kováčová",
-    "kreta-marek-horvath-pjic": "Marek Horváth",
+    "mallorca-lucia-kovacova-1vop": "Lucia Kováčová",
+    "kreta-marek-horvath-pscy": "Marek Horváth",
   }
 
   useEffect(() => {

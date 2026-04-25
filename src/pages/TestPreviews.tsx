@@ -1,12 +1,12 @@
 const testPreviews = [
   {
     label: "👩 Lucia Kováčová – Joga, Mallorca (s letenkou)",
-    url: "/preview/mallorca-lucia-kovacova-1v2s",
+    url: "/preview/mallorca-lucia-kovacova-1vop",
     note: "Verejný odkaz – bez hesla",
   },
   {
     label: "👨 Marek Horváth – Fitcamp, Kréta (bez letenky)",
-    url: "/preview/kreta-marek-horvath-pjic",
+    url: "/preview/kreta-marek-horvath-pscy",
     note: "Verejný odkaz – bez hesla",
   },
 ];
