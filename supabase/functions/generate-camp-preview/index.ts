@@ -83,19 +83,26 @@ serve(async (req) => {
       ? `Spiatočná letenka${flightMonth && flightMonth !== "default" ? ` (${flightMonth})` : ""}${flightPrice ? ` — približne ${flightPrice}€` : ""} — ZAHRNUTÁ V CENE`
       : "Letenka NIE JE zahrnutá v cene (účastník si rieši sám)";
 
+    const transferSelected = !!configuration.transfer;
+    const mealsSelected = !!configuration.meals;
+    const extrasList: string[] = Array.isArray(configuration.extras) ? configuration.extras : [];
+    const specialActivitiesRaw = Array.isArray(configuration.specialActivities)
+      ? configuration.specialActivities.join(", ")
+      : (configuration.specialActivities || "");
+
     const trainerExpProvided = !!configuration.trainerExperience;
     const trainerSpecProvided = !!configuration.trainerSpecialization;
     const trainerCertProvided = !!configuration.trainerCertificates;
     const trainerBioProvided = !!configuration.trainerBio;
     const programProvided = !!configuration.dailyProgram;
+    const hotelDescProvided = !!configuration.hotelDescription;
+    const specialActivitiesProvided = !!specialActivitiesRaw;
 
-    const trainerExperience = configuration.trainerExperience || "5+ rokov";
+    const trainerExperience = configuration.trainerExperience || "";
     const trainerSpecialization = configuration.trainerSpecialization || defaults.specialization;
     const trainerCertificates = configuration.trainerCertificates || "";
-    const trainerBio =
-      configuration.trainerBio ||
-      `${configuration.trainerName} je skúsený tréner so zameraním na ${trainerSpecialization.toLowerCase()}. Pomáha klientom dosahovať ich fitness ciele v inšpiratívnom prostredí.`;
-    const dailyProgram = configuration.dailyProgram || defaults.program;
+    const trainerBio = configuration.trainerBio || "";
+    const dailyProgram = configuration.dailyProgram || "";
     const pricePerPerson = configuration.estimatedPrice || 599;
 
     const prompt = `Si expertný copywriter pre fitness a wellness retreat tripy. Vytvor kompletný konverzný landing page obsah v slovenčine na základe týchto údajov:
