@@ -146,6 +146,37 @@ export default function ConfiguratorWizard({
 
   const CurrentStep = steps[currentStep].component as React.ComponentType<{ configuration: any; onConfigurationChange: (updates: any) => void; validationErrors?: Record<string, boolean> }>;
 
+  // Wrapper that clears validation errors for fields being updated
+  const handleConfigurationChangeWithClear = (updates: any) => {
+    const keys = Object.keys(updates || {});
+    const hasError = keys.some((k) => {
+      // months field uses array; consider non-empty as cleared
+      if (k === "months") return Array.isArray(updates[k]) ? updates[k].length > 0 : !!updates[k];
+      const v = updates[k];
+      return typeof v === "string" ? v.trim() !== "" : v !== undefined && v !== null && v !== false;
+    });
+    if (hasError) {
+      setValidationErrors((prev) => {
+        let changed = false;
+        const next = { ...prev };
+        for (const k of keys) {
+          if (next[k]) {
+            const v = updates[k];
+            const isCleared = k === "months"
+              ? Array.isArray(v) && v.length > 0
+              : typeof v === "string" ? v.trim() !== "" : v !== undefined && v !== null && v !== false;
+            if (isCleared) {
+              delete next[k];
+              changed = true;
+            }
+          }
+        }
+        return changed ? next : prev;
+      });
+    }
+    onConfigurationChange(updates);
+  };
+
   const validateStep = (step: number): string[] => {
     const errors: string[] = [];
     if (step === 0) {
@@ -459,7 +490,7 @@ export default function ConfiguratorWizard({
               ) : currentStep === 0 ? (
                 <Step1Basic
                   configuration={configuration}
-                  onConfigurationChange={onConfigurationChange}
+                  onConfigurationChange={handleConfigurationChangeWithClear}
                   validationErrors={validationErrors}
                   availableDestinations={availableDestinations}
                   destinationsLoading={destinationsLoading}
@@ -467,7 +498,7 @@ export default function ConfiguratorWizard({
               ) : currentStep === 1 ? (
                 <Step2Accommodation
                   configuration={configuration}
-                  onConfigurationChange={onConfigurationChange}
+                  onConfigurationChange={handleConfigurationChangeWithClear}
                   validationErrors={validationErrors}
                   flightPricesByMonth={flightPricesByMonth}
                   webhookHotels={webhookHotels}
@@ -475,7 +506,7 @@ export default function ConfiguratorWizard({
               ) : (
                 <CurrentStep
                   configuration={configuration}
-                  onConfigurationChange={onConfigurationChange}
+                  onConfigurationChange={handleConfigurationChangeWithClear}
                   validationErrors={validationErrors}
                 />
               )}
