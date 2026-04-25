@@ -259,23 +259,37 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
                   onChange={(e) => handleEmailChange(e.target.value)}
                   required
                   maxLength={255}
+                  aria-invalid={!!emailError}
+                  className={emailError ? "border-destructive bg-background focus-visible:ring-destructive" : ""}
                 />
+                {emailError && (
+                  <p className="text-xs text-destructive mt-1">{emailError}</p>
+                )}
               </div>
 
-              <div className="flex items-start gap-3">
-                <Checkbox
-                  id="consent"
-                  checked={consent}
-                  onCheckedChange={(v) => setConsent(v === true)}
-                  className="mt-1"
-                  required
-                />
-                <Label
-                  htmlFor="consent"
-                  className="text-sm text-muted-foreground font-normal leading-relaxed cursor-pointer"
-                >
-                  Súhlasím so spracovaním <a href="https://www.triphero.sk/ochrana-osobnych-udajov" target="_blank" rel="noopener noreferrer" className="underline text-foreground hover:text-primary">osobných údajov</a> a s ich použitím na marketingové účely. <span className="text-destructive">*</span>
-                </Label>
+              <div>
+                <div className={`flex items-start gap-3 rounded-md ${consentError ? "border border-destructive bg-background p-3" : ""}`}>
+                  <Checkbox
+                    id="consent"
+                    checked={consent}
+                    onCheckedChange={(v) => {
+                      setConsent(v === true)
+                      if (v === true && consentError) setConsentError(null)
+                    }}
+                    className="mt-1"
+                    required
+                    aria-invalid={!!consentError}
+                  />
+                  <Label
+                    htmlFor="consent"
+                    className="text-sm text-muted-foreground font-normal leading-relaxed cursor-pointer"
+                  >
+                    Súhlasím so spracovaním <a href="https://www.triphero.sk/ochrana-osobnych-udajov" target="_blank" rel="noopener noreferrer" className="underline text-foreground hover:text-primary">osobných údajov</a> a s ich použitím na marketingové účely. <span className="text-destructive">*</span>
+                  </Label>
+                </div>
+                {consentError && (
+                  <p className="text-xs text-destructive mt-1">{consentError}</p>
+                )}
               </div>
             </CardContent>
           </Card>
