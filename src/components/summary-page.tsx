@@ -64,6 +64,54 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
       return
     }
 
+    // Pri prvom generovaní vyžadujeme email + súhlas. Pri „Vygenerovať znova" v rámci tej istej session už nie.
+    if (!previewLink) {
+      if (!consent) {
+        toast({
+          title: "Súhlas je povinný",
+          description: "Pre pokračovanie musíte súhlasiť so spracovaním údajov a marketingovými účelmi.",
+          variant: "destructive",
+        })
+        return
+      }
+
+      const emailResult = emailSchema.safeParse(email)
+      if (!emailResult.success) {
+        toast({
+          title: "Neplatný email",
+          description: emailResult.error.issues[0]?.message || "Zadajte platný email.",
+          variant: "destructive",
+        })
+        return
+      }
+
+      const validEmail = emailResult.data
+
+      // Bloomreach (Exponea) – tracking nesmie zablokovať generovanie preview.
+      try {
+        if (typeof window !== "undefined" && window.exponea) {
+          window.exponea.identify(
+            { registered: validEmail },
+            { email: validEmail, registered: validEmail },
+          )
+          window.exponea.update({ email: validEmail })
+          window.exponea.track("registered", {
+            email: validEmail,
+            consent: true,
+          })
+          window.exponea.track("consent", {
+            action: "accept",
+            category: "all",
+            identification: validEmail,
+            source: "triphero_builder",
+            valid_until: "unlimited",
+          })
+        }
+      } catch (trackErr) {
+        console.error("Bloomreach tracking error:", trackErr)
+      }
+    }
+
     setGenerating(true)
     try {
       const { data, error } = await supabase.functions.invoke('generate-camp-preview', {
