@@ -221,11 +221,50 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
           </Card>
         )}
 
+        {!previewLink && (
+          <Card className="mb-6">
+            <CardContent className="px-6 py-6 space-y-5">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-semibold text-foreground">
+                  Tvoj email <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  placeholder="meno@email.sk"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  maxLength={255}
+                />
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id="consent"
+                  checked={consent}
+                  onCheckedChange={(v) => setConsent(v === true)}
+                  className="mt-1"
+                  required
+                />
+                <Label
+                  htmlFor="consent"
+                  className="text-sm text-muted-foreground font-normal leading-relaxed cursor-pointer"
+                >
+                  Súhlasím so spracovaním osobných údajov a s ich použitím na marketingové účely. <span className="text-destructive">*</span>
+                </Label>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <div className="flex gap-4 justify-center">
           <Button onClick={onEdit} variant="outline">← Upraviť</Button>
           <Button
             onClick={handleGeneratePreview}
-            disabled={generating}
+            disabled={generating || (!previewLink && (!consent || email.trim().length === 0))}
             className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground"
           >
             {generating ? (
