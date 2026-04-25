@@ -1,10 +1,16 @@
 import { useState } from "react"
+import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
 import { hotelsByDestination } from "@/lib/hotels-database"
 import { supabase } from "@/integrations/supabase/client"
 import { Sparkles, Copy, ExternalLink, Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+
+const emailSchema = z.string().trim().email({ message: "Zadajte platný email" }).max(255)
 
 interface SummaryPageProps {
   configuration: any
@@ -15,6 +21,8 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
   const [generating, setGenerating] = useState(false)
   const [previewLink, setPreviewLink] = useState<string | null>(null)
   const [trainerNameForAccess, setTrainerNameForAccess] = useState<string | null>(null)
+  const [email, setEmail] = useState("")
+  const [consent, setConsent] = useState(false)
   const { toast } = useToast()
 
   const formatList = (arr: string[]) => arr && arr.length > 0 ? arr.join(", ") : "—"
@@ -54,6 +62,54 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
         variant: "destructive",
       })
       return
+    }
+
+    // Pri prvom generovaní vyžadujeme email + súhlas. Pri „Vygenerovať znova" v rámci tej istej session už nie.
+    if (!previewLink) {
+      if (!consent) {
+        toast({
+          title: "Súhlas je povinný",
+          description: "Pre pokračovanie musíte súhlasiť so spracovaním údajov a marketingovými účelmi.",
+          variant: "destructive",
+        })
+        return
+      }
+
+      const emailResult = emailSchema.safeParse(email)
+      if (!emailResult.success) {
+        toast({
+          title: "Neplatný email",
+          description: emailResult.error.issues[0]?.message || "Zadajte platný email.",
+          variant: "destructive",
+        })
+        return
+      }
+
+      const validEmail = emailResult.data
+
+      // Bloomreach (Exponea) – tracking nesmie zablokovať generovanie preview.
+      try {
+        if (typeof window !== "undefined" && window.exponea) {
+          window.exponea.identify(
+            { registered: validEmail },
+            { email: validEmail, registered: validEmail },
+          )
+          window.exponea.update({ email: validEmail })
+          window.exponea.track("registered", {
+            email: validEmail,
+            consent: true,
+          })
+          window.exponea.track("consent", {
+            action: "accept",
+            category: "all",
+            identification: validEmail,
+            source: "triphero_builder",
+            valid_until: "unlimited",
+          })
+        }
+      } catch (trackErr) {
+        console.error("Bloomreach tracking error:", trackErr)
+      }
     }
 
     setGenerating(true)
@@ -165,11 +221,50 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
           </Card>
         )}
 
+        {!previewLink && (
+          <Card className="mb-6">
+            <CardContent className="px-6 py-6 space-y-5">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-semibold text-foreground">
+                  Tvoj email <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  placeholder="meno@email.sk"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  maxLength={255}
+                />
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id="consent"
+                  checked={consent}
+                  onCheckedChange={(v) => setConsent(v === true)}
+                  className="mt-1"
+                  required
+                />
+                <Label
+                  htmlFor="consent"
+                  className="text-sm text-muted-foreground font-normal leading-relaxed cursor-pointer"
+                >
+                  Súhlasím so spracovaním osobných údajov a s ich použitím na marketingové účely. <span className="text-destructive">*</span>
+                </Label>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <div className="flex gap-4 justify-center">
           <Button onClick={onEdit} variant="outline">← Upraviť</Button>
           <Button
             onClick={handleGeneratePreview}
-            disabled={generating}
+            disabled={generating || (!previewLink && (!consent || email.trim().length === 0))}
             className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground"
           >
             {generating ? (

@@ -1,95 +1,69 @@
-## Cieľ
+## Bloomreach (Exponea) tracking + email/consent gate
 
-V AI preview sa nesmú objavovať vymyslené fakty, ktoré tréner nezadal. AI má slúžiť len ako "marketingový copywriter" — preformulovať to, čo tréner vyplnil, do krajšieho, pravopisne správneho a marketingovo zaujímavého jazyka. Žiadne nové aktivity, vlastnosti hotela, certifikáty, programové sloty, benefity ani fakty navyše.
+### 1. Vloženie Exponea snippetu (`index.html`)
+Do `<head>` v `index.html` pridáme presne dodaný `<script>` blok s konfiguráciou:
+- target: `https://api-analytics.pelikan.sk`
+- token: `fea0907c-443c-11ef-816c-6aee3afd3a28`
+- `experimental.non_personalized_weblayers: true`
+- volanie `exponea.start()`
 
-## Súbor
+Snippet sa nemodifikuje. `customer` ostane zakomentovaný (anonymný user až do identify).
 
-`supabase/functions/generate-camp-preview/index.ts`
+Pre TypeScript pridáme do `src/vite-env.d.ts` deklaráciu:
+```ts
+declare global {
+  interface Window {
+    exponea?: any;
+  }
+}
+```
 
-## Princíp ("strict mode")
+### 2. Úprava súhrnnej stránky (`src/components/summary-page.tsx`)
+Nad existujúcou dvojicou tlačidiel (Upraviť / Vygenerovať preview) pridáme formulár s:
+- **Email input** (typ `email`, povinný, validovaný cez `zod`)
+- **Povinný checkbox** s textom súhlasu so spracovaním údajov a marketingovými účelmi
+- Tlačidlo **„Vygenerovať preview"** ostáva primárne (premiestnené pod formulár), tlačidlo **„Upraviť"** ostáva sekundárne vedľa neho
 
-Pre každé pole vstupu rozlišujeme dva stavy:
+Tlačidlo „Vygenerovať preview" je `disabled` kým:
+- email je prázdny / nevalidný, alebo
+- checkbox nie je zaškrtnutý, alebo
+- prebieha generovanie
 
-- **ZADANÉ trénerom** → AI len **preformuluje** (gramatika, štýl, marketing tón), zachová význam, počet položiek, časy, fakty.
-- **NEZADANÉ** → AI **NESMIE vymýšľať konkrétne fakty**. Buď pole vynechá (vráti prázdne pole / `null`), alebo použije len **všeobecnú, neutrálnu marketingovú formuláciu** založenú výhradne na typu tripu a destinácii (bez konkrétnych čísel, mien, miest, certifikátov, vybavenia, aktivít).
+Po skrytí formulára (keď už `previewLink` existuje) zostane viditeľný len výsledok + tlačidlo „Vygenerovať znova" (bez opätovného vyžadovania consentu v rámci tej istej session).
 
-Frontend (`Preview.tsx`) už polia bezpečne renderuje cez optional chaining, takže prázdne polia nespôsobia chybu — len sa daná podsekcia nevykreslí (overím pri implementácii a v prípade potreby skryjem prázdne sekcie).
+### 3. Validácia v `handleGeneratePreview`
+Pred súčasným volaním `supabase.functions.invoke(...)`:
+1. Validovať email cez `zod` schému (`z.string().trim().email().max(255)`).
+2. Ak checkbox nie je `true` → toast „Súhlas je povinný" a return.
+3. Ak email nevalidný → toast s konkrétnou chybou a return.
 
-## Konkrétne pravidlá podľa sekcie
+### 4. Bloomreach volania (po validácii, pred `invoke`)
+```ts
+if (window.exponea) {
+  window.exponea.identify(
+    { registered: email },                 // hard ID
+    { email, registered: email }           // soft attributes
+  );
+  window.exponea.update({ email });
+  window.exponea.track('registered', { email, consent: true });
+  window.exponea.track('consent', {
+    action: 'accept',
+    category: 'all',
+    identification: email,
+    source: 'triphero_builder',
+    valid_until: 'unlimited',
+  });
+}
+```
+Volania obalíme do `try/catch` aby zlyhanie trackeru nikdy nezablokovalo generovanie preview.
 
-1. **trainerProfile**
-   - `bio`: ak je `trainerBio` zadané → preformuluj. Ak nie → vygeneruj len neutrálny marketingový text založený výhradne na mene, špecializácii a rokoch skúseností (bez vymyslených úspechov, klientov, miest pôsobenia).
-   - `credentials`: zostáva ako dnes — ak nie sú zadané, prázdne pole `[]`. Žiadne vymýšľanie.
-   - `philosophy`: ak `trainerBio` nie je zadané, vráť prázdny string `""` (nevymýšľaj filozofiu).
-   - `specialization`, `experience`: použi presne to, čo tréner zadal.
+### 5. Technické detaily
+- Žiadne nové závislosti (zod už je v projekte cez shadcn form).
+- Žiadne secrets (token je publishable a patrí priamo do `index.html`).
+- Žiadne zmeny v edge functions, DB ani v Preview stránke.
+- Email a consent sa zatiaľ neukladajú do našej DB — len posielajú do Bloomreach (ak budeš chcieť perzistenciu, doplníme samostatne).
 
-2. **dayTimeline**
-   - Ak `dailyProgram` zadaný → parsuj sloty z textu, použi PRESNE rovnaký počet, časy aj typ aktivity. Marketingovo vylepši len **popis aktivity** (formulácia), nie samotnú aktivitu.
-   - Ak `dailyProgram` NEZADANÝ → vráť **prázdne pole** `[]`. Nevymýšľaj sloty.
-
-3. **luxuryExperience.amenities** (vybavenie hotela)
-   - Použi výhradne to, čo prišlo z webhooku v `hotelDescription` / `hotelMealOptions`. Ak hotel popis obsahuje konkrétne amenity, AI ich len marketingovo preformuluje.
-   - Ak nie sú konkrétne info → vráť prázdne pole `[]`. Nevymýšľaj bazén, spa, pláž, fitness atď.
-   - `description`: stručná preformulácia `hotelDescription`. Ak chýba → prázdny string.
-
-4. **whatMakesItSpecial**
-   - `uniquePoints`: odvodené iba z reálne zaškrtnutých vecí (typ tripu, špeciálne aktivity, extras). Ak nič nie je → prázdne pole.
-   - `groupDynamics`: odvodené iba z `participants`. Bez vymýšľania.
-   - `exclusivity`: ak nie je dôvod (napr. malý počet účastníkov, prémiový hotel podľa `hotelStars`) → prázdny string.
-
-5. **investmentBreakdown**
-   - `whatYouGet`: deterministicky generované zo zaškrtnutých polí — ubytovanie (z hotela), strava (`meals`), transfer (ak true), letenka (existujúci safety net), extras, špeciálne aktivity, tréning podľa `campType`. AI ich len marketingovo preformuluje. Žiadne pridávanie ("welcome drink", "darček na privítanie" atď.) ak to tréner nezadal.
-   - `notIncluded`: rovnako deterministické (letenka, ak nie je vybraná; transfer, ak nie je vybraný; strava, ak nie je vybraná). Bez vymýšľania ďalších položiek typu "cestovné poistenie", "víza", "osobné výdavky" — iba ak vyplývajú z toho, čo tréner NEvybral.
-
-6. **practicalInfo**
-   - `targetAudience`: odvodené iba z `campType` a `participants`.
-   - `fitnessLevel`: odvodené iba z `campType`. Žiadne konkrétne čísla (napr. "musíte zabehnúť 5 km").
-   - `whatToBring`: všeobecný neutrálny zoznam viazaný na `campType` (napr. pre Joga: "podložka, pohodlné oblečenie, fľaša na vodu") — bez konkrétnych značiek a vymyslených špecifík.
-   - `faq`: max 3 otázky odvodené iba z reálnych údajov (cena, termín, strava, letenka). Žiadne vymyslené otázky o veciach, ktoré nikto nezadal.
-
-7. **storyHook, transformation, hero, closingStory**
-   - Sú to čisto marketingové sekcie — AI tu môže písať voľne, ale **nesmie uvádzať konkrétne fakty**, ktoré nepochádzajú zo vstupu (žiadne mená, čísla, miesta, certifikáty, konkrétne aktivity, ktoré tréner nezadal). Iba emocionálny, všeobecný copywriting nadviazaný na destináciu, typ tripu a meno trénera.
-
-## Zmeny v prompte
-
-Prepíšem celú sekciu **DÔLEŽITÉ PRAVIDLÁ** v `prompt` premennej tak, aby presne pomenovala "strict no-hallucination mode" a vymenovala pre každú sekciu, čo sa smie a čo nie. Hlavné pravidlá:
-
-- "Tvoja jediná úloha je preformulovať a marketingovo vylepšiť to, čo poskytol tréner. NEPRIDÁVAJ žiadne fakty, ktoré nie sú vo vstupe."
-- "Pre každé pole, ktoré je označené ako NEZADANÉ, vráť prázdny string `\"\"` alebo prázdne pole `[]` — okrem hero/storyHook/transformation/closingStory, kde môžeš písať všeobecný emocionálny copywriting bez konkrétnych faktov."
-- "Zakázané vymýšľať: certifikáty, konkrétne hotelové vybavenie, programové sloty, špecifické aktivity, mená, čísla, miesta, klientov, úspechy."
-- "Povolené: gramatické opravy, marketingový tón, synonymá, emotívne formulácie, štruktúrovanie."
-
-Pridám aj vstup pre wizard polia, ktoré v prompte momentálne chýbajú (`participants`, `extras`), s explicitnými značkami `(ZADANÉ)` / `(NEZADANÉ)` rovnako ako pri trénerských poliach.
-
-## Deterministická post-processing vrstva (safety net)
-
-Po `JSON.parse(...)` (rozšírim existujúci safety-net blok pre letenku) urobím:
-
-1. **credentials** — ak `trainerCertificates` nezadané, vynúť `previewData.trainerProfile.credentials = []`.
-2. **dayTimeline** — ak `dailyProgram` nezadaný, vynúť `previewData.dayTimeline = []`.
-3. **luxuryExperience.amenities** — ak `hotelDescription` prázdne, vynúť `[]`.
-4. **investmentBreakdown.whatYouGet / notIncluded** — rozšírim súčasný flight safety net o:
-   - transfer (zaradí podľa `configuration.transfer`),
-   - strava (zaradí podľa `configuration.meals`),
-   - extras (zaradí podľa `configuration.extras`).
-   Logika: zo zoznamu odstráň položky, ktoré nezodpovedajú zaškrtnutej voľbe; ak chýba povinná položka, doplň ju neutrálnym textom.
-5. **trainerProfile.philosophy** — ak `trainerBio` nezadané, prepíš na `""`.
-
-## Frontend úprava (drobná)
-
-V `src/pages/Preview.tsx` prejdem renderovanie sekcií, ktoré teraz môžu vrátiť prázdne polia/strings a pridám podmienky `condition && (<section>…</section>)`, aby sa neukázali prázdne sekcie (napr. "Čo si vziať so sebou", "Filozofia trénera", "Vybavenie hotela", "Program dňa"). Toto bude minimálny rozsah — iba ošetriť prázdne stavy, žiadny redizajn.
-
-## Test po implementácii
-
-Vygenerujem dva nové preview pomocou existujúceho test toolingu:
-
-- **Lucia (Mallorca)** — s vyplnenými všetkými trénerskými poľami a programom → očakávame, že obsah bude verný vstupu, len krajšie napísaný.
-- **Marek (Kréta)** — s minimom údajov (žiadny dailyProgram, žiadne certifikáty, žiadne bio) → očakávame, že príslušné sekcie budú prázdne / skryté a nikde sa neobjavia vymyslené fakty.
-
-Aktualizujem slugy v `src/pages/TestPreviews.tsx` a vo whitelist v `src/pages/Preview.tsx`.
-
-## Mimo scope
-
-- Žiadny redizajn preview stránky.
-- Žiadne nové polia vo wizarde.
-- Cena a flight logika ostávajú ako sú.
+### Dotknuté súbory
+- `index.html` — Exponea snippet v `<head>`
+- `src/vite-env.d.ts` — typ pre `window.exponea`
+- `src/components/summary-page.tsx` — formulár (email + consent), validácia, Bloomreach volania
