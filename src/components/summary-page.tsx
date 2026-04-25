@@ -77,10 +77,10 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
 
     // Pri prvom generovaní vyžadujeme email + súhlas. Pri „Vygenerovať znova" v rámci tej istej session už nie.
     if (!previewLink) {
-      if (!consent) {
+      if (email.trim().length === 0) {
         toast({
-          title: "Súhlas je povinný",
-          description: "Pre pokračovanie musíte súhlasiť so spracovaním údajov a marketingovými účelmi.",
+          title: "Chýba email",
+          description: "Pre vygenerovanie preview vyplňte svoj email.",
           variant: "destructive",
         })
         return
@@ -91,6 +91,15 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
         toast({
           title: "Neplatný email",
           description: emailResult.error.issues[0]?.message || "Zadajte platný email.",
+          variant: "destructive",
+        })
+        return
+      }
+
+      if (!consent) {
+        toast({
+          title: "Chýba súhlas",
+          description: "Zaškrtnite súhlas so spracovaním osobných údajov.",
           variant: "destructive",
         })
         return
