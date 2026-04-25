@@ -265,19 +265,73 @@ Vráť VÝHRADNE platný JSON objekt (bez markdown, bez komentárov) s touto pre
       });
     }
 
-    // Safety net: enforce flight in correct list regardless of AI output
+    // ── SAFETY NET: enforce no-hallucination rules regardless of AI output ──
+
+    // 1. Trainer credentials — if not provided, force empty
+    if (previewData?.trainerProfile) {
+      if (!trainerCertProvided) {
+        previewData.trainerProfile.credentials = [];
+      }
+      if (!trainerBioProvided) {
+        previewData.trainerProfile.philosophy = "";
+      }
+      if (!trainerExpProvided) {
+        previewData.trainerProfile.experience = "";
+      }
+    }
+
+    // 2. Day timeline — if program not provided, force empty
+    if (!programProvided) {
+      previewData.dayTimeline = [];
+    }
+
+    // 3. Hotel amenities — if hotel description not provided, force empty
+    if (previewData?.luxuryExperience) {
+      if (!hotelDescProvided) {
+        previewData.luxuryExperience.amenities = [];
+        previewData.luxuryExperience.description = "";
+      }
+    }
+
+    // 4. Investment breakdown — enforce based on actual selections
     const ib = previewData?.investmentBreakdown;
     if (ib) {
       const flightRegex = /letenk|flight/i;
-      ib.whatYouGet = (ib.whatYouGet || []).filter((x: string) => flightSelected || !flightRegex.test(x));
-      ib.notIncluded = (ib.notIncluded || []).filter((x: string) => !flightSelected || !flightRegex.test(x));
+      const transferRegex = /transfer|prevoz/i;
+      const mealsRegex = /strav|raňajk|polpenz|plná penz|all inclusive|jedl/i;
+
+      ib.whatYouGet = ib.whatYouGet || [];
+      ib.notIncluded = ib.notIncluded || [];
+
+      // Flight
+      ib.whatYouGet = ib.whatYouGet.filter((x: string) => flightSelected || !flightRegex.test(x));
+      ib.notIncluded = ib.notIncluded.filter((x: string) => !flightSelected || !flightRegex.test(x));
       if (flightSelected && !ib.whatYouGet.some((x: string) => flightRegex.test(x))) {
         ib.whatYouGet.unshift(`Spiatočná letenka${flightMonth && flightMonth !== "default" ? ` (${flightMonth})` : ""}`);
       }
       if (!flightSelected && !ib.notIncluded.some((x: string) => flightRegex.test(x))) {
         ib.notIncluded.unshift("Spiatočná letenka");
       }
+
+      // Transfer
+      ib.whatYouGet = ib.whatYouGet.filter((x: string) => transferSelected || !transferRegex.test(x));
+      ib.notIncluded = ib.notIncluded.filter((x: string) => !transferSelected || !transferRegex.test(x));
+      if (transferSelected && !ib.whatYouGet.some((x: string) => transferRegex.test(x))) {
+        ib.whatYouGet.push("Transfer z letiska a späť");
+      }
+      if (!transferSelected && !ib.notIncluded.some((x: string) => transferRegex.test(x))) {
+        ib.notIncluded.push("Transfer z letiska");
+      }
+
+      // Meals
+      if (!mealsSelected) {
+        ib.whatYouGet = ib.whatYouGet.filter((x: string) => !mealsRegex.test(x));
+        if (!ib.notIncluded.some((x: string) => mealsRegex.test(x))) {
+          ib.notIncluded.push("Strava");
+        }
+      }
     }
+
 
     // Add metadata + hotel images from webhook
     const fullPreviewData = {
