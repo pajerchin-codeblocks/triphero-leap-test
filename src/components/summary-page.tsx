@@ -26,10 +26,13 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
     return sessionStorage.getItem("triphero_email") || ""
   })
   const [consent, setConsent] = useState(false)
+  const [emailError, setEmailError] = useState<string | null>(null)
+  const [consentError, setConsentError] = useState<string | null>(null)
 
   // Persist email medzi návratmi na summary page (v rámci tej istej session).
   const handleEmailChange = (value: string) => {
     setEmail(value)
+    if (emailError) setEmailError(null)
     if (typeof window !== "undefined") {
       sessionStorage.setItem("triphero_email", value)
     }
@@ -77,34 +80,32 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
 
     // Pri prvom generovaní vyžadujeme email + súhlas. Pri „Vygenerovať znova" v rámci tej istej session už nie.
     if (!previewLink) {
-      if (email.trim().length === 0) {
-        toast({
-          title: "Chýba email",
-          description: "Pre vygenerovanie preview vyplňte svoj email.",
-          variant: "destructive",
-        })
-        return
-      }
+      let hasError = false
 
-      const emailResult = emailSchema.safeParse(email)
-      if (!emailResult.success) {
-        toast({
-          title: "Neplatný email",
-          description: emailResult.error.issues[0]?.message || "Zadajte platný email.",
-          variant: "destructive",
-        })
-        return
+      if (email.trim().length === 0) {
+        setEmailError("Zadajte svoj email")
+        hasError = true
+      } else {
+        const emailResult = emailSchema.safeParse(email)
+        if (!emailResult.success) {
+          setEmailError(emailResult.error.issues[0]?.message || "Zadajte platný email")
+          hasError = true
+        } else {
+          setEmailError(null)
+        }
       }
 
       if (!consent) {
-        toast({
-          title: "Chýba súhlas",
-          description: "Zaškrtnite súhlas so spracovaním osobných údajov.",
-          variant: "destructive",
-        })
-        return
+        setConsentError("Zaškrtnite súhlas so spracovaním osobných údajov")
+        hasError = true
+      } else {
+        setConsentError(null)
       }
 
+      if (hasError) return
+
+      const emailResult = emailSchema.safeParse(email)
+      if (!emailResult.success) return
       const validEmail = emailResult.data
 
       // Bloomreach (Exponea) – tracking nesmie zablokovať generovanie preview.
@@ -258,23 +259,37 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
                   onChange={(e) => handleEmailChange(e.target.value)}
                   required
                   maxLength={255}
+                  aria-invalid={!!emailError}
+                  className={emailError ? "border-destructive bg-background focus-visible:ring-destructive" : ""}
                 />
+                {emailError && (
+                  <p className="text-xs text-destructive mt-1">{emailError}</p>
+                )}
               </div>
 
-              <div className="flex items-start gap-3">
-                <Checkbox
-                  id="consent"
-                  checked={consent}
-                  onCheckedChange={(v) => setConsent(v === true)}
-                  className="mt-1"
-                  required
-                />
-                <Label
-                  htmlFor="consent"
-                  className="text-sm text-muted-foreground font-normal leading-relaxed cursor-pointer"
-                >
-                  Súhlasím so spracovaním <a href="https://www.triphero.sk/ochrana-osobnych-udajov" target="_blank" rel="noopener noreferrer" className="underline text-foreground hover:text-primary">osobných údajov</a> a s ich použitím na marketingové účely. <span className="text-destructive">*</span>
-                </Label>
+              <div>
+                <div className={`flex items-start gap-3 rounded-md ${consentError ? "border border-destructive bg-background p-3" : ""}`}>
+                  <Checkbox
+                    id="consent"
+                    checked={consent}
+                    onCheckedChange={(v) => {
+                      setConsent(v === true)
+                      if (v === true && consentError) setConsentError(null)
+                    }}
+                    className="mt-1"
+                    required
+                    aria-invalid={!!consentError}
+                  />
+                  <Label
+                    htmlFor="consent"
+                    className="text-sm text-muted-foreground font-normal leading-relaxed cursor-pointer"
+                  >
+                    Súhlasím so spracovaním <a href="https://www.triphero.sk/ochrana-osobnych-udajov" target="_blank" rel="noopener noreferrer" className="underline text-foreground hover:text-primary">osobných údajov</a> a s ich použitím na marketingové účely. <span className="text-destructive">*</span>
+                  </Label>
+                </div>
+                {consentError && (
+                  <p className="text-xs text-destructive mt-1">{consentError}</p>
+                )}
               </div>
             </CardContent>
           </Card>

@@ -161,7 +161,7 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
 
             {useWebhook ? (
               <>
-                <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${validationErrors.hotel ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}>
+                <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${validationErrors.hotel ? "ring-1 ring-destructive rounded-lg" : ""}`}>
                   {webhookHotels.map((hotel) => {
                     const pricing = getHotelPricing(hotel)
                     return (
@@ -192,7 +192,7 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
               </>
             ) : fallbackHotels.length > 0 ? (
               <>
-                <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${validationErrors.hotel ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}>
+                <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${validationErrors.hotel ? "ring-1 ring-destructive rounded-lg" : ""}`}>
                   {fallbackHotels.map((hotel) => (
                     <button
                       key={hotel.id}
@@ -226,7 +226,7 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
           {configuration.hotel && availableMeals.length > 0 && (
             <div>
               <label className="block text-sm font-semibold text-foreground mb-3">Strava <span className="text-destructive">*</span></label>
-              <div className={`grid grid-cols-2 gap-3 ${validationErrors.meals ? "ring-2 ring-destructive rounded-lg p-2" : ""}`}>
+              <div className={`grid grid-cols-2 gap-3 ${validationErrors.meals ? "ring-1 ring-destructive rounded-lg" : ""}`}>
                 {availableMeals.map(({ key, label, price, mealKey }) => (
                   <button
                     key={key}
