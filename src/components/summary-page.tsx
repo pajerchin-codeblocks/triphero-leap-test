@@ -1,10 +1,16 @@
 import { useState } from "react"
+import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
 import { hotelsByDestination } from "@/lib/hotels-database"
 import { supabase } from "@/integrations/supabase/client"
 import { Sparkles, Copy, ExternalLink, Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+
+const emailSchema = z.string().trim().email({ message: "Zadajte platný email" }).max(255)
 
 interface SummaryPageProps {
   configuration: any
