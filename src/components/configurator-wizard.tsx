@@ -490,7 +490,7 @@ export default function ConfiguratorWizard({
               ) : currentStep === 0 ? (
                 <Step1Basic
                   configuration={configuration}
-                  onConfigurationChange={onConfigurationChange}
+                  onConfigurationChange={handleConfigurationChangeWithClear}
                   validationErrors={validationErrors}
                   availableDestinations={availableDestinations}
                   destinationsLoading={destinationsLoading}
@@ -498,7 +498,7 @@ export default function ConfiguratorWizard({
               ) : currentStep === 1 ? (
                 <Step2Accommodation
                   configuration={configuration}
-                  onConfigurationChange={onConfigurationChange}
+                  onConfigurationChange={handleConfigurationChangeWithClear}
                   validationErrors={validationErrors}
                   flightPricesByMonth={flightPricesByMonth}
                   webhookHotels={webhookHotels}
@@ -506,7 +506,7 @@ export default function ConfiguratorWizard({
               ) : (
                 <CurrentStep
                   configuration={configuration}
-                  onConfigurationChange={onConfigurationChange}
+                  onConfigurationChange={handleConfigurationChangeWithClear}
                   validationErrors={validationErrors}
                 />
               )}
