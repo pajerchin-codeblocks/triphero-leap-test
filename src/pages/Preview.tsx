@@ -588,7 +588,7 @@ export default function Preview() {
       {/* ═══════════════════════════════════════════
           LUXURY EXPERIENCE — Amenities grid
       ═══════════════════════════════════════════ */}
-      {campData.luxuryExperience && (
+      {campData.luxuryExperience && (campData.luxuryExperience.description || (campData.luxuryExperience.amenities && campData.luxuryExperience.amenities.length > 0) || campData.hotelImages?.hero) && (
         <section className="py-20 md:py-28 px-4">
           <div className="max-w-6xl mx-auto">
             <motion.div
@@ -812,17 +812,19 @@ export default function Preview() {
                   <p className="text-muted-foreground">{campData.practicalInfo.fitnessLevel}</p>
                 </div>
               </motion.div>
-              <motion.div variants={fadeUp}>
-                <h3 className="text-lg font-bold text-foreground mb-4">Čo si vziať so sebou</h3>
-                <ul className="space-y-2">
-                  {campData.practicalInfo.whatToBring.map((item, idx) => (
-                    <li key={idx} className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-accent flex-shrink-0" />
-                      <span className="text-muted-foreground text-sm">{stripEmojis(item)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
+              {campData.practicalInfo.whatToBring && campData.practicalInfo.whatToBring.length > 0 && (
+                <motion.div variants={fadeUp}>
+                  <h3 className="text-lg font-bold text-foreground mb-4">Čo si vziať so sebou</h3>
+                  <ul className="space-y-2">
+                    {campData.practicalInfo.whatToBring.map((item, idx) => (
+                      <li key={idx} className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-accent flex-shrink-0" />
+                        <span className="text-muted-foreground text-sm">{stripEmojis(item)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              )}
             </div>
 
             <motion.div variants={fadeUp}>
