@@ -140,7 +140,7 @@ export default function ConfiguratorWizard({
     { title: "Základné parametre", component: Step1Basic },
     { title: "Ubytovanie & služby", component: Step2Accommodation },
     { title: "Biznis nastavenia", component: Step3Business },
-    { title: "O trénerovi", component: Step4TrainerInfo },
+    { title: "O lídrovi", component: Step4TrainerInfo },
     { title: "Program dňa", component: Step5Program },
   ];
 

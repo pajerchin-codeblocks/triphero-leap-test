@@ -28,7 +28,7 @@ export default function Step5Program({ configuration, onConfigurationChange, val
             <Label htmlFor="dailyProgram" className="text-sm font-semibold text-foreground">Predstava programu dňa</Label>
             <Textarea
               id="dailyProgram"
-              placeholder={`Napríklad:\n\n7:00 - Ranná meditácia pri východe slnka\n8:00 - Zdravá raňajky\n9:30 - Intenzívny funkčný tréning na pláži\n12:00 - Obed a voľný čas\n16:00 - Joga a strečing\n18:00 - Večera\n20:00 - Spoločenské aktivity`}
+              placeholder={`Napríklad:\n\n8:00 — Raňajky a privítanie\n9:30 — Hlavná aktivita dňa (workshop, výlet, ochutnávka…)\n12:30 — Obed\n15:00 — Popoludňajší program (prechádzka, voľný čas, druhá session)\n18:00 — Večera\n20:00 — Spoločenský večer alebo voľný program`}
               value={configuration.dailyProgram || ""}
               onChange={(e) => handleChange("dailyProgram", e.target.value)}
               className={`min-h-[300px] resize-none`}
