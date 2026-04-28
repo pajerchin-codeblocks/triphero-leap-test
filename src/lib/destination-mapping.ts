@@ -21,6 +21,8 @@ export const destinationToCountryCode: Record<string, string> = {
   Maurícius: "MU",
   Tanzánia: "TZ",
   Česko: "CZ",
+  "Spojené arabské emiráty": "AE",
+  Slovensko: "SK",
 }
 
 export const countryCodeToDestination: Record<string, string> = Object.fromEntries(
