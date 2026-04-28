@@ -17,7 +17,7 @@ export default function Step4TrainerInfo({ configuration, onConfigurationChange,
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold text-foreground mb-2">O vás ako trénerovi</h2>
+        <h2 className="text-3xl font-bold text-foreground mb-2">O vás ako lídrovi tripu</h2>
         <p className="text-muted-foreground text-base">
           Pomôžte nám lepšie pochopiť vaše skúsenosti a špecializáciu, aby sme mohli vytvoriť presvedčivý popis vášho tripu.
         </p>
@@ -39,7 +39,20 @@ export default function Step4TrainerInfo({ configuration, onConfigurationChange,
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="trainerExperience" className="text-sm font-semibold text-foreground">Roky skúseností v trénerstve <span className="text-destructive">*</span></Label>
+            <Label htmlFor="trainerSpecialization" className="text-sm font-semibold text-foreground">Špecializácia / téma tripu <span className="text-destructive">*</span></Label>
+            <Input
+              id="trainerSpecialization"
+              type="text"
+              placeholder="napr. Cukrárstvo, fotografia, joga, wine tasting, funkčný tréning"
+              value={configuration.trainerSpecialization || ""}
+              onChange={(e) => handleChange("trainerSpecialization", e.target.value)}
+              className={validationErrors?.trainerSpecialization ? "border-destructive" : ""}
+            />
+            {validationErrors?.trainerSpecialization && <p className="text-xs text-destructive mt-1">Toto je povinné pole</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="trainerExperience" className="text-sm font-semibold text-foreground">Roky skúseností v danej špecializácii <span className="text-destructive">*</span></Label>
             <Input
               id="trainerExperience"
               type="text"
@@ -52,23 +65,10 @@ export default function Step4TrainerInfo({ configuration, onConfigurationChange,
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="trainerSpecialization" className="text-sm font-semibold text-foreground">Špecializácia <span className="text-destructive">*</span></Label>
-            <Input
-              id="trainerSpecialization"
-              type="text"
-              placeholder="napr. Funkčný tréning, Jogu, Pilates"
-              value={configuration.trainerSpecialization || ""}
-              onChange={(e) => handleChange("trainerSpecialization", e.target.value)}
-              className={validationErrors?.trainerSpecialization ? "border-destructive" : ""}
-            />
-            {validationErrors?.trainerSpecialization && <p className="text-xs text-destructive mt-1">Toto je povinné pole</p>}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="trainerCertificates" className="text-sm font-semibold text-foreground">Certifikáty a kvalifikácie</Label>
+            <Label htmlFor="trainerCertificates" className="text-sm font-semibold text-foreground">Certifikáty, kvalifikácie alebo ocenenia</Label>
             <Textarea
               id="trainerCertificates"
-              placeholder="Vypíšte vaše certifikáty, kvalifikácie a dosiahnuté úspechy..."
+              placeholder="Vypíšte certifikáty, kurzy, ocenenia alebo úspechy vo vašom odbore..."
               value={configuration.trainerCertificates || ""}
               onChange={(e) => handleChange("trainerCertificates", e.target.value)}
               className="min-h-[120px] resize-none"
@@ -78,10 +78,10 @@ export default function Step4TrainerInfo({ configuration, onConfigurationChange,
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="trainerBio" className="text-sm font-semibold text-foreground">Váš príbeh a prístup k trénovaniu</Label>
+            <Label htmlFor="trainerBio" className="text-sm font-semibold text-foreground">Váš príbeh</Label>
             <Textarea
               id="trainerBio"
-              placeholder="Popíšte svoju filozofiu tréningu, čo vás motivuje, a prečo by sa účastníci mali prihlásiť práve na váš trip..."
+              placeholder="Popíšte, čo vás k téme priviedlo, čo vás motivuje a prečo by sa účastníci mali prihlásiť práve na váš trip..."
               value={configuration.trainerBio || ""}
               onChange={(e) => handleChange("trainerBio", e.target.value)}
               className="min-h-[150px] resize-none"

@@ -1,69 +1,56 @@
-## Bloomreach (Exponea) tracking + email/consent gate
+# Zovšeobecnenie textov vo wizarde (líder, nielen tréner)
 
-### 1. Vloženie Exponea snippetu (`index.html`)
-Do `<head>` v `index.html` pridáme presne dodaný `<script>` blok s konfiguráciou:
-- target: `https://api-analytics.pelikan.sk`
-- token: `fea0907c-443c-11ef-816c-6aee3afd3a28`
-- `experimental.non_personalized_weblayers: true`
-- volanie `exponea.start()`
+Cieľ: formulár musí znieť univerzálne — pre akýkoľvek trip s lídrom (fitness tréner, cukrárka, fotograf, sommelier…). Žiadne dátové kľúče (`trainerName`, `trainerExperience`, …) sa **nemenia**, aby ostala plná spätná kompatibilita s edge funkciou aj DB. Menia sa iba **viditeľné texty, poradie polí a placeholder návrhy**.
 
-Snippet sa nemodifikuje. `customer` ostane zakomentovaný (anonymný user až do identify).
+## 1. `src/components/wizard-steps/step4-trainer-info.tsx`
 
-Pre TypeScript pridáme do `src/vite-env.d.ts` deklaráciu:
-```ts
-declare global {
-  interface Window {
-    exponea?: any;
-  }
-}
+**Nadpis a podnadpis**
+- „O vás ako trénerovi" → **„O vás ako lídrovi tripu"**
+- Podnadpis: „Pomôžte nám lepšie pochopiť vaše skúsenosti a špecializáciu, aby sme mohli vytvoriť presvedčivý popis vášho tripu." (zachovať, je už neutrálny)
+
+**Prehodenie poradia polí** (špecializácia ide pred skúsenosti):
+1. Vaše meno a priezvisko *(bez zmeny)*
+2. **Špecializácia / téma tripu** *  → naviazané na `trainerSpecialization`
+   - placeholder: `napr. Cukrárstvo, fotografia, joga, wine tasting, funkčný tréning`
+3. **Roky skúseností v danej špecializácii** *  → naviazané na `trainerExperience`
+   - placeholder: `napr. 5 rokov`
+4. **Certifikáty, kvalifikácie alebo ocenenia** *(nepovinné)* → `trainerCertificates`
+   - placeholder: `Vypíšte certifikáty, kurzy, ocenenia alebo úspechy vo vašom odbore...`
+   - hint pod poľom: „Nepovinné, ale pomôže to zvýšiť dôveryhodnosť" *(bez zmeny)*
+5. **Váš príbeh** → `trainerBio`
+   - placeholder: `Popíšte, čo vás k téme priviedlo, čo vás motivuje a prečo by sa účastníci mali prihlásiť práve na váš trip...`
+   - hint: „Tento text použijeme pre vytvorenie autentického a presvedčivého popisu" *(bez zmeny)*
+
+## 2. `src/components/configurator-wizard.tsx`
+
+- Názov kroku v steps poli: `{ title: "O trénerovi", … }` → **`{ title: "O lídrovi", … }`**
+
+## 3. `src/components/wizard-steps/step3-business.tsx`
+
+- „Model odmeny **trénera** — Garantovaná odmena na osobu" → **„Model odmeny lídra — Garantovaná odmena na osobu"**
+- Ostatné texty (Odmena za jedného účastníka, Spolu zarobíš…) ostávajú.
+
+## 4. `src/components/wizard-steps/step5-program.tsx`
+
+Placeholder programu zovšeobecniť, aby nesugeroval len fitness:
+```
+Napríklad:
+
+8:00 — Raňajky a privítanie
+9:30 — Hlavná aktivita dňa (workshop, výlet, ochutnávka…)
+12:30 — Obed
+15:00 — Popoludňajší program (prechádzka, voľný čas, druhá session)
+18:00 — Večera
+20:00 — Spoločenský večer alebo voľný program
 ```
 
-### 2. Úprava súhrnnej stránky (`src/components/summary-page.tsx`)
-Nad existujúcou dvojicou tlačidiel (Upraviť / Vygenerovať preview) pridáme formulár s:
-- **Email input** (typ `email`, povinný, validovaný cez `zod`)
-- **Povinný checkbox** s textom súhlasu so spracovaním údajov a marketingovými účelmi
-- Tlačidlo **„Vygenerovať preview"** ostáva primárne (premiestnené pod formulár), tlačidlo **„Upraviť"** ostáva sekundárne vedľa neho
+## 5. `src/components/summary-page.tsx`
 
-Tlačidlo „Vygenerovať preview" je `disabled` kým:
-- email je prázdny / nevalidný, alebo
-- checkbox nie je zaškrtnutý, alebo
-- prebieha generovanie
+- Toast pri chýbajúcom mene: „Chýba meno **trénera**" / „… vyplňte meno **trénera** v kroku 4." → **„Chýba meno lídra"** / **„… vyplňte meno lídra v kroku 4."**
+- Veta s prístupovým kódom: „Prístupový kód je meno **trénera**:" → **„Prístupový kód je meno lídra:"**
 
-Po skrytí formulára (keď už `previewLink` existuje) zostane viditeľný len výsledok + tlačidlo „Vygenerovať znova" (bez opätovného vyžadovania consentu v rámci tej istej session).
+## Čo sa NEMENÍ
 
-### 3. Validácia v `handleGeneratePreview`
-Pred súčasným volaním `supabase.functions.invoke(...)`:
-1. Validovať email cez `zod` schému (`z.string().trim().email().max(255)`).
-2. Ak checkbox nie je `true` → toast „Súhlas je povinný" a return.
-3. Ak email nevalidný → toast s konkrétnou chybou a return.
-
-### 4. Bloomreach volania (po validácii, pred `invoke`)
-```ts
-if (window.exponea) {
-  window.exponea.identify(
-    { registered: email },                 // hard ID
-    { email, registered: email }           // soft attributes
-  );
-  window.exponea.update({ email });
-  window.exponea.track('registered', { email, consent: true });
-  window.exponea.track('consent', {
-    action: 'accept',
-    category: 'all',
-    identification: email,
-    source: 'triphero_builder',
-    valid_until: 'unlimited',
-  });
-}
-```
-Volania obalíme do `try/catch` aby zlyhanie trackeru nikdy nezablokovalo generovanie preview.
-
-### 5. Technické detaily
-- Žiadne nové závislosti (zod už je v projekte cez shadcn form).
-- Žiadne secrets (token je publishable a patrí priamo do `index.html`).
-- Žiadne zmeny v edge functions, DB ani v Preview stránke.
-- Email a consent sa zatiaľ neukladajú do našej DB — len posielajú do Bloomreach (ak budeš chcieť perzistenciu, doplníme samostatne).
-
-### Dotknuté súbory
-- `index.html` — Exponea snippet v `<head>`
-- `src/vite-env.d.ts` — typ pre `window.exponea`
-- `src/components/summary-page.tsx` — formulár (email + consent), validácia, Bloomreach volania
+- Žiadne premenné, kľúče v `configuration`, validation keys (`trainerName`, `trainerExperience`, `trainerSpecialization`, `trainerReward`, `trainerBio`, `trainerCertificates`).
+- Edge funkcia `generate-camp-preview` ani DB stĺpec `trainer_name` — interná logika a AI prompt zostávajú; názvoslovie v prompte je pre AI a netreba meniť pre používateľa.
+- Štruktúra wizardu, dizajn, validácie, error UI.

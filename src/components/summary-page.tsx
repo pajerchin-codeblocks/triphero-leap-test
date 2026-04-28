@@ -72,8 +72,8 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
   const handleGeneratePreview = async () => {
     if (!configuration.trainerName) {
       toast({
-        title: "Chýba meno trénera",
-        description: "Vráťte sa späť a vyplňte meno trénera v kroku 4.",
+        title: "Chýba meno lídra",
+        description: "Vráťte sa späť a vyplňte meno lídra v kroku 4.",
         variant: "destructive",
       })
       return
@@ -226,7 +226,7 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
             <CardContent className="px-6 py-6">
               <h3 className="font-semibold text-foreground mb-2">✅ Preview stránka je pripravená!</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Prístupový kód je meno trénera: <span className="font-semibold text-foreground">{trainerNameForAccess}</span>
+                Prístupový kód je meno lídra: <span className="font-semibold text-foreground">{trainerNameForAccess}</span>
               </p>
               <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
                 <span className="text-sm text-foreground truncate flex-1">{previewLink}</span>
