@@ -35,7 +35,6 @@ export default function Step5Program({ configuration, onConfigurationChange, val
               rows={12}
             />
             <p className="text-xs text-muted-foreground">Nepovinné — čím detailnejšie popíšete program, tým lepšie vieme vytvoriť presný popis</p>
-            <p className="text-xs text-muted-foreground">Čím detailnejšie popíšete program, tým lepšie vieme vytvoriť presný popis</p>
           </div>
 
           <div className="space-y-2">
