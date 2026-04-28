@@ -17,6 +17,7 @@ import {
   Sparkles,
   ChevronDown,
   ArrowRight,
+  AlertTriangle,
 } from "lucide-react"
 import Navbar from "@/components/navbar"
 import { supabase } from "@/integrations/supabase/client"
@@ -249,10 +250,18 @@ export default function Preview() {
       {/* ═══════════════════════════════════════════
           DEMO BANNER — Top
       ═══════════════════════════════════════════ */}
-      <div className="bg-primary/90 border-b border-primary/30 py-2.5 px-4 text-center sticky top-0 z-50 backdrop-blur-md">
-        <p className="text-sm font-medium text-primary-foreground">
-          ✨ Toto je <span className="font-bold">ukážková ponuka</span> pre klienta — vygenerované cez TripHero
-        </p>
+      <div className="bg-amber-50 border-b-2 border-amber-400 py-4 px-4 sticky top-0 z-50 backdrop-blur-md">
+        <div className="max-w-5xl mx-auto flex items-start gap-3 text-left md:items-center md:text-center md:justify-center">
+          <AlertTriangle className="w-6 h-6 md:w-7 md:h-7 text-amber-600 flex-shrink-0 mt-0.5 md:mt-0" />
+          <div className="space-y-1">
+            <p className="text-base md:text-lg font-bold text-amber-900">
+              Pozor — toto je len ukážka, NIE finálna ponuka
+            </p>
+            <p className="text-sm text-amber-800 leading-relaxed">
+              Neposielaj tento odkaz klientovi. Pred odoslaním sa potrebujeme s tebou ešte spojiť a doladiť detaily, aby ponuka bola presná a pripravená na rezerváciu.
+            </p>
+          </div>
+        </div>
       </div>
       {/* ═══════════════════════════════════════════
           HERO SECTION — Full viewport immersive
@@ -336,20 +345,19 @@ export default function Preview() {
           viewport={{ once: true }}
           className="max-w-5xl mx-auto"
         >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto">
             {[
               { icon: Calendar, label: "Termín", value: campData.investmentBreakdown?.priceFrame?.match(/\d{1,2}\.\d{1,2}\.\d{4}/)?.[0] || "Podľa dohody" },
               { icon: MapPin, label: "Destinácia", value: campData.luxuryExperience?.hotelName || "Premium resort" },
-              
               { icon: Sparkles, label: "Cena od", value: campData.investmentBreakdown?.pricePerPerson || "Na vyžiadanie" },
             ].map((item, idx) => (
               <div
                 key={idx}
-                className="bg-card border border-border rounded-2xl p-5 text-center shadow-soft hover:shadow-glow transition-shadow duration-300"
+                className="bg-card border border-border rounded-2xl p-7 md:p-8 text-center shadow-soft hover:shadow-glow transition-shadow duration-300 flex flex-col items-center justify-center"
               >
-                <item.icon className="w-6 h-6 text-accent mx-auto mb-2" />
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{item.label}</p>
-                <p className="text-sm font-bold text-foreground leading-tight">{item.value}</p>
+                <item.icon className="w-9 h-9 md:w-10 md:h-10 text-accent mx-auto mb-3" />
+                <p className="text-xs md:text-sm text-muted-foreground uppercase tracking-wider mb-2">{item.label}</p>
+                <p className="text-lg md:text-xl font-bold text-foreground leading-tight">{item.value}</p>
               </div>
             ))}
           </div>
@@ -403,17 +411,20 @@ export default function Preview() {
                 className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center"
               >
                 {/* Photo */}
-                <div className="flex-shrink-0 relative">
-                  <div className="w-64 h-80 md:w-72 md:h-96 rounded-2xl overflow-hidden shadow-elevated ring-4 ring-accent/20">
+                <div className="flex-shrink-0 relative flex flex-col items-center">
+                  <div className="w-64 h-80 md:w-72 md:h-96 rounded-2xl overflow-hidden shadow-elevated ring-4 ring-accent/20 relative">
                     <img
                       src={trainerIsFemale ? avatarFemale : avatarMale}
                       alt={campData.trainerProfile.name}
                       className="w-full h-full object-cover"
                     />
+                    <div className="absolute -bottom-4 -right-4 bg-accent text-accent-foreground rounded-xl px-4 py-2 font-bold shadow-glow text-sm">
+                      {campData.trainerProfile.name}
+                    </div>
                   </div>
-                  <div className="absolute -bottom-4 -right-4 bg-accent text-accent-foreground rounded-xl px-4 py-2 font-bold shadow-glow text-sm">
-                    {campData.trainerProfile.name}
-                  </div>
+                  <p className="mt-6 text-xs md:text-sm text-muted-foreground italic text-center max-w-[18rem]">
+                    Tu môže byť tvoja fotka
+                  </p>
                 </div>
 
                 {/* Bio content */}
