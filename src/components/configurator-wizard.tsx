@@ -57,6 +57,7 @@ export default function ConfiguratorWizard({
     TH: "Thajsko", VN: "Vietnam", MX: "Mexiko", CR: "Kostarika",
     AU: "Austrália", JP: "Japonsko", US: "USA", CY: "Cyprus",
     MV: "Maldivy", MU: "Maurícius", TZ: "Tanzánia", CZ: "Česko",
+    AE: "Spojené arabské emiráty", SK: "Slovensko",
   };
 
   const countryCodeToImage: Record<string, string> = {
@@ -68,20 +69,31 @@ export default function ConfiguratorWizard({
     US: "/destinations/usa.jpg", CY: "/destinations/cyprus.jpg",
     MV: "/destinations/maldives.jpg", MU: "/destinations/mauritius.jpg",
     TZ: "/destinations/tanzania.jpg", CZ: "/destinations/czech.jpg",
+    AE: "/destinations/uae.jpg", SK: "/destinations/slovakia.jpg",
   };
 
   const nameToImage: Record<string, string> = {
-    "Turecko": "/destinations/turkey.jpg", "Grécko": "/destinations/greece.jpg",
-    "Egypt": "/destinations/egypt.jpg", "Portugalsko": "/destinations/portugal.jpg",
-    "Bali": "/destinations/bali.jpg", "Španielsko": "/destinations/spanish.jpg",
-    "Taliansko": "/destinations/italy.jpg", "Francúzsko": "/destinations/france.jpg",
-    "Maroko": "/destinations/morocco.jpg", "Thajsko": "/destinations/thailand.jpg",
-    "Vietnam": "/destinations/vietnam.jpg", "Mexiko": "/destinations/mexico.jpg",
-    "Kostarika": "/destinations/costarica.jpg", "Austrália": "/destinations/australia.jpg",
-    "Japonsko": "/destinations/japan.jpg", "USA": "/destinations/usa.jpg",
-    "Cyprus": "/destinations/cyprus.jpg", "Maldivy": "/destinations/maldives.jpg",
-    "Maurícius": "/destinations/mauritius.jpg", "Tanzánia": "/destinations/tanzania.jpg",
-    "Česko": "/destinations/czech.jpg",
+    "Turecko": "/destinations/turkey.jpg", "Grécko": "/destinations/greece.jpg", "Greece": "/destinations/greece.jpg",
+    "Egypt": "/destinations/egypt.jpg", "Portugalsko": "/destinations/portugal.jpg", "Portugal": "/destinations/portugal.jpg",
+    "Bali": "/destinations/bali.jpg", "Indonesia": "/destinations/bali.jpg",
+    "Španielsko": "/destinations/spanish.jpg", "Spain": "/destinations/spanish.jpg",
+    "Taliansko": "/destinations/italy.jpg", "Italy": "/destinations/italy.jpg",
+    "Francúzsko": "/destinations/france.jpg", "France": "/destinations/france.jpg",
+    "Maroko": "/destinations/morocco.jpg", "Morocco": "/destinations/morocco.jpg",
+    "Thajsko": "/destinations/thailand.jpg", "Thailand": "/destinations/thailand.jpg",
+    "Vietnam": "/destinations/vietnam.jpg",
+    "Mexiko": "/destinations/mexico.jpg", "Mexico": "/destinations/mexico.jpg",
+    "Kostarika": "/destinations/costarica.jpg", "Costa Rica": "/destinations/costarica.jpg",
+    "Austrália": "/destinations/australia.jpg", "Australia": "/destinations/australia.jpg",
+    "Japonsko": "/destinations/japan.jpg", "Japan": "/destinations/japan.jpg",
+    "USA": "/destinations/usa.jpg", "United States": "/destinations/usa.jpg",
+    "Cyprus": "/destinations/cyprus.jpg",
+    "Maldivy": "/destinations/maldives.jpg", "Maldives": "/destinations/maldives.jpg",
+    "Maurícius": "/destinations/mauritius.jpg", "Mauritius": "/destinations/mauritius.jpg",
+    "Tanzánia": "/destinations/tanzania.jpg", "Tanzania": "/destinations/tanzania.jpg",
+    "Česko": "/destinations/czech.jpg", "Czech Republic": "/destinations/czech.jpg", "Czechia": "/destinations/czech.jpg",
+    "Spojené arabské emiráty": "/destinations/uae.jpg", "United Arab Emirates": "/destinations/uae.jpg", "UAE": "/destinations/uae.jpg",
+    "Slovensko": "/destinations/slovakia.jpg", "Slovakia": "/destinations/slovakia.jpg",
   };
 
   useEffect(() => {
@@ -110,10 +122,11 @@ export default function ConfiguratorWizard({
             // Webhook returns plain string names like "Turecko", "Bali"
             return { id: item, label: item, image: nameToImage[item] || "/placeholder.svg" };
           }
-          // Support {id, name, image}, {code, name}, {countryCode, label}, etc.
+          // Support {id, name, image}, {code, name}, {countryCode, label}, {countryCode, country}, etc.
           const code = item.code || item.countryCode || item.id || "";
-          const name = item.name || item.label || item.destinationName || countryCodeToName[code] || code;
-          const image = item.image || countryCodeToImage[code] || nameToImage[name] || "/placeholder.svg";
+          const rawName = item.name || item.label || item.destinationName || item.country || "";
+          const name = rawName || countryCodeToName[code] || code;
+          const image = item.image || countryCodeToImage[code] || nameToImage[name] || nameToImage[rawName] || "/placeholder.svg";
           const id = countryCodeToName[code] || name;
           return { id, label: id, image };
         });
