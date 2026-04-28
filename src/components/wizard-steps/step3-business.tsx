@@ -32,8 +32,8 @@ export default function Step3Business({ configuration, onConfigurationChange }: 
       <Card className="shadow-soft rounded-2xl border-0">
         <CardContent className="space-y-6 px-6 py-6">
           <div>
-            <p className="text-sm font-semibold text-foreground mb-3">Model odmeny lídra - Garantovaná odmena na osobu</p>
-            <div>
+            <p className="text-sm font-semibold text-foreground mb-1">Model odmeny lídra - Garantovaná odmena na osobu</p>
+            <div className="mt-4">
               <label className="block text-sm font-semibold text-foreground mb-4">Odmena za jedného účastníka</label>
               <div className="space-y-4">
                 <input
