@@ -250,7 +250,7 @@ export default function Preview() {
       {/* ═══════════════════════════════════════════
           DEMO BANNER — Top
       ═══════════════════════════════════════════ */}
-      <div className="bg-amber-50 border-b-2 border-amber-400 py-4 px-4 sticky top-0 z-50 backdrop-blur-md">
+      <div className="bg-amber-50 border-b-2 border-amber-400 py-4 px-4 backdrop-blur-md">
         <div className="max-w-5xl mx-auto flex items-start gap-3 text-left md:items-center md:text-center md:justify-center">
           <AlertTriangle className="w-6 h-6 md:w-7 md:h-7 text-amber-600 flex-shrink-0 mt-0.5 md:mt-0" />
           <div className="space-y-1">
