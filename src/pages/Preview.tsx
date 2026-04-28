@@ -412,13 +412,15 @@ export default function Preview() {
               >
                 {/* Photo */}
                 <div className="flex-shrink-0 relative flex flex-col items-center">
-                  <div className="w-64 h-80 md:w-72 md:h-96 rounded-2xl overflow-hidden shadow-elevated ring-4 ring-accent/20 relative">
-                    <img
-                      src={trainerIsFemale ? avatarFemale : avatarMale}
-                      alt={campData.trainerProfile.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute -bottom-4 -right-4 bg-accent text-accent-foreground rounded-xl px-4 py-2 font-bold shadow-glow text-sm">
+                  <div className="relative">
+                    <div className="w-64 h-80 md:w-72 md:h-96 rounded-2xl overflow-hidden shadow-elevated ring-4 ring-accent/20">
+                      <img
+                        src={trainerIsFemale ? avatarFemale : avatarMale}
+                        alt={campData.trainerProfile.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="absolute -bottom-4 right-2 md:-right-4 bg-accent text-accent-foreground rounded-xl px-4 py-2 font-bold shadow-glow text-sm whitespace-nowrap max-w-[calc(100%+2rem)]">
                       {campData.trainerProfile.name}
                     </div>
                   </div>
