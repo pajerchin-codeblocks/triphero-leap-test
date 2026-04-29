@@ -201,65 +201,74 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
             </label>
 
             {useWebhook ? (
+              filteredWebhookHotels.length === 0 ? (
+                <p className="text-muted-foreground">Pre túto destináciu zatiaľ nemáme dostupné hotely.</p>
+              ) : (
+                <>
+                  <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${validationErrors.hotel ? "ring-1 ring-destructive rounded-lg" : ""}`}>
+                    {visibleWebhookHotels.map((hotel) => {
+                      const pricing = getHotelPricing(hotel)
+                      const images = getHotelImages(hotel)
+                      return (
+                        <HotelTile
+                          key={hotel.id}
+                          id={hotel.id}
+                          title={hotel.title}
+                          location={hotel.location}
+                          description={hotel.description}
+                          stars={parseRatingStars(hotel.rating)}
+                          basePrice={pricing.basePrice}
+                          images={images}
+                          selected={configuration.hotel === hotel.id}
+                          onSelect={() => handleChange("hotel", hotel.id)}
+                          onOpenGallery={(idx) => openGallery(hotel.id, images, idx)}
+                        />
+                      )
+                    })}
+                  </div>
+                  {validationErrors.hotel && <p className="text-destructive text-xs mt-2">Toto je povinné pole</p>}
+                </>
+              )
+            ) : fallbackHotels.length > 0 ? (
               <>
                 <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${validationErrors.hotel ? "ring-1 ring-destructive rounded-lg" : ""}`}>
-                  {webhookHotels.map((hotel) => {
-                    const pricing = getHotelPricing(hotel)
+                  {visibleFallbackHotels.map((hotel) => {
+                    const images = getHotelImages({ image: hotel.image })
                     return (
-                    <button
-                      key={hotel.id}
-                      onClick={() => handleChange("hotel", hotel.id)}
-                      className={`text-left rounded-2xl overflow-hidden border-2 transition transform hover:shadow-lg ${
-                        configuration.hotel === hotel.id ? "border-primary ring-2 ring-primary" : "border-border hover:border-primary/50"
-                      }`}
-                    >
-                      <div className="relative overflow-hidden bg-muted h-40">
-                        <img src={hotel.image} alt={hotel.title} className="w-full h-full object-cover hover:scale-105 transition" />
-                      </div>
-                      <div className="p-4 bg-card">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-bold text-foreground text-sm">{hotel.title}</h3>
-                          <span className="text-xs font-bold">{renderStars(parseRatingStars(hotel.rating))}</span>
-                        </div>
-                        <p className="text-xs text-muted-foreground mb-1">{hotel.location}</p>
-                        <div className="text-xs text-muted-foreground mb-2 line-clamp-2 [&>p]:m-0 [&>br]:hidden" dangerouslySetInnerHTML={{ __html: hotel.description }} />
-                        <p className="text-sm font-semibold text-foreground">od {pricing.basePrice}€ / noc</p>
-                      </div>
-                    </button>
+                      <HotelTile
+                        key={hotel.id}
+                        id={hotel.id}
+                        title={hotel.name}
+                        location=""
+                        description={hotel.description}
+                        stars={hotel.stars}
+                        basePrice={hotel.pricePerNight}
+                        images={images}
+                        selected={configuration.hotel === hotel.id}
+                        onSelect={() => handleChange("hotel", hotel.id)}
+                        onOpenGallery={(idx) => openGallery(hotel.id, images, idx)}
+                      />
                     )
                   })}
                 </div>
                 {validationErrors.hotel && <p className="text-destructive text-xs mt-2">Toto je povinné pole</p>}
               </>
-            ) : fallbackHotels.length > 0 ? (
-              <>
-                <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${validationErrors.hotel ? "ring-1 ring-destructive rounded-lg" : ""}`}>
-                  {fallbackHotels.map((hotel) => (
-                    <button
-                      key={hotel.id}
-                      onClick={() => handleChange("hotel", hotel.id)}
-                      className={`text-left rounded-2xl overflow-hidden border-2 transition transform hover:shadow-lg ${
-                        configuration.hotel === hotel.id ? "border-primary ring-2 ring-primary" : "border-border hover:border-primary/50"
-                      }`}
-                    >
-                      <div className="relative overflow-hidden bg-muted h-40">
-                        <img src={hotel.image} alt={hotel.name} className="w-full h-full object-cover hover:scale-105 transition" />
-                      </div>
-                      <div className="p-4 bg-card">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-bold text-foreground text-sm">{hotel.name}</h3>
-                          <span className="text-xs font-bold">{renderStars(hotel.stars)}</span>
-                        </div>
-                        <div className="text-xs text-muted-foreground mb-2 line-clamp-2 [&>p]:m-0 [&>br]:hidden" dangerouslySetInnerHTML={{ __html: hotel.description }} />
-                        <p className="text-sm font-semibold text-foreground">od {hotel.pricePerNight}€ / noc</p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-                {validationErrors.hotel && <p className="text-destructive text-xs mt-2">Toto je povinné pole</p>}
-              </>
             ) : (
               <p className="text-muted-foreground">Najprv vyber destináciu</p>
+            )}
+
+            {hasMore && (
+              <div className="flex justify-center mt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowAllHotels((v) => !v)}
+                  className="px-5 py-2 text-sm font-medium text-primary border border-primary/30 rounded-full hover:bg-primary/5 transition"
+                >
+                  {showAllHotels
+                    ? "Zobraziť menej"
+                    : `Zobraziť viac (+${totalVisibleSource.length - 4})`}
+                </button>
+              </div>
             )}
           </div>
 
