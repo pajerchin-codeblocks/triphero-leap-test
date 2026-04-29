@@ -390,6 +390,148 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
           </div>
         </CardContent>
       </Card>
+
+      {/* Full-page hotel image lightbox */}
+      <Dialog open={!!galleryHotelId} onOpenChange={(open) => !open && closeGallery()}>
+        <DialogContent
+          className="max-w-none w-screen h-screen p-0 bg-black/95 border-0 rounded-none flex items-center justify-center sm:rounded-none"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
+          {galleryImages.length > 0 && (
+            <>
+              <img
+                src={galleryImages[galleryIndex]}
+                alt={`Fotka ${galleryIndex + 1}`}
+                className="max-h-[90vh] max-w-[95vw] object-contain"
+              />
+              <button
+                type="button"
+                onClick={closeGallery}
+                className="absolute top-4 right-4 text-white bg-white/10 hover:bg-white/20 rounded-full p-2 transition"
+                aria-label="Zatvoriť"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              {galleryImages.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setGalleryIndex((i) => (i - 1 + galleryImages.length) % galleryImages.length)}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-white/10 hover:bg-white/20 rounded-full p-3 transition"
+                    aria-label="Predchádzajúca"
+                  >
+                    <ChevronLeft className="w-7 h-7" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setGalleryIndex((i) => (i + 1) % galleryImages.length)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white bg-white/10 hover:bg-white/20 rounded-full p-3 transition"
+                    aria-label="Ďalšia"
+                  >
+                    <ChevronRight className="w-7 h-7" />
+                  </button>
+                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-white/10 text-white text-sm">
+                    {galleryIndex + 1} / {galleryImages.length}
+                  </div>
+                </>
+              )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
+
+interface HotelTileProps {
+  id: string
+  title: string
+  location?: string
+  description: string
+  stars: number
+  basePrice: number
+  images: string[]
+  selected: boolean
+  onSelect: () => void
+  onOpenGallery: (startIdx: number) => void
+}
+
+function HotelTile({ title, location, description, stars, basePrice, images, selected, onSelect, onOpenGallery }: HotelTileProps) {
+  const [idx, setIdx] = useState(0)
+  const hasMultiple = images.length > 1
+  const current = images[idx] || images[0] || ""
+
+  const next = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setIdx((i) => (i + 1) % images.length)
+  }
+  const prev = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setIdx((i) => (i - 1 + images.length) % images.length)
+  }
+
+  return (
+    <div
+      className={`text-left rounded-2xl overflow-hidden border-2 transition transform hover:shadow-lg cursor-pointer ${
+        selected ? "border-primary ring-2 ring-primary" : "border-border hover:border-primary/50"
+      }`}
+      onClick={onSelect}
+    >
+      <div className="relative overflow-hidden bg-muted h-40 group">
+        <img
+          src={current}
+          alt={title}
+          className="w-full h-full object-cover hover:scale-105 transition cursor-zoom-in"
+          onClick={(e) => {
+            e.stopPropagation()
+            onSelect()
+            onOpenGallery(idx)
+          }}
+        />
+        {hasMultiple && (
+          <>
+            <button
+              type="button"
+              onClick={prev}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-1.5 transition opacity-80 group-hover:opacity-100"
+              aria-label="Predchádzajúca fotka"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={next}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-1.5 transition opacity-80 group-hover:opacity-100"
+              aria-label="Ďalšia fotka"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+              {images.map((_, i) => (
+                <span
+                  key={i}
+                  className={`w-1.5 h-1.5 rounded-full transition ${i === idx ? "bg-white" : "bg-white/50"}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+      <div className="p-4 bg-card">
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="font-bold text-foreground text-sm">{title}</h3>
+          <span className="text-xs font-bold inline-flex items-center gap-0.5">
+            {Array.from({ length: stars }).map((_, i) => (
+              <svg key={i} className="w-3.5 h-3.5 text-amber-400 fill-current" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+            ))}
+          </span>
+        </div>
+        {location && <p className="text-xs text-muted-foreground mb-1">{location}</p>}
+        <div className="text-xs text-muted-foreground mb-2 line-clamp-2 [&>p]:m-0 [&>br]:hidden" dangerouslySetInnerHTML={{ __html: description }} />
+        <p className="text-sm font-semibold text-foreground">od {basePrice}€ / noc</p>
+      </div>
     </div>
   )
 }
