@@ -1,7 +1,9 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { ChevronLeft, ChevronRight, X } from "lucide-react"
 import { hotelsByDestination, mealsPricing, extraServicesPricing, transferPrice as staticTransferPrice } from "@/lib/hotels-database"
-import { WebhookHotel, parseRatingStars, micros, MealKey, mealLabels, mealPriceKeys, getHotelPricing } from "@/lib/webhook-types"
+import { WebhookHotel, parseRatingStars, micros, MealKey, mealLabels, mealPriceKeys, getHotelPricing, getHotelImages } from "@/lib/webhook-types"
 
 interface Step2AccommodationProps {
   configuration: any
