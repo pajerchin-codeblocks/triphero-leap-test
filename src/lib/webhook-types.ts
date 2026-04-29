@@ -10,6 +10,7 @@ export interface WebhookHotel {
   location: string
   description: string
   images?: string[]
+  gallery?: string[]
   bb: boolean
   hb: boolean
   fb: boolean
@@ -98,10 +99,14 @@ export function getHotelPricing(hotel: WebhookHotel): HotelPricing {
 
 /**
  * Returns the list of available image URLs for a hotel.
- * Falls back to the single `image` field when `images` is empty/missing.
+ * Falls back to the single `image` field when `gallery`/`images` is empty/missing.
+ * The main `image` is always included first, then any extra gallery photos.
  */
-export function getHotelImages(hotel: { image?: string; images?: string[] }): string[] {
-  const list = (hotel.images && hotel.images.length > 0 ? hotel.images : [hotel.image || ""])
+export function getHotelImages(hotel: { image?: string; images?: string[]; gallery?: string[] }): string[] {
+  const extras = (hotel.gallery && hotel.gallery.length > 0)
+    ? hotel.gallery
+    : (hotel.images && hotel.images.length > 0 ? hotel.images : [])
+  const list = [hotel.image || "", ...extras]
     .filter((u): u is string => Boolean(u && u.trim()))
   // dedupe while preserving order
   return Array.from(new Set(list))
