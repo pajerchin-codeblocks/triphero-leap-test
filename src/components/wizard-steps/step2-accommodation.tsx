@@ -25,6 +25,36 @@ const renderStars = (count: number) => (
 
 export default function Step2Accommodation({ configuration, onConfigurationChange, validationErrors = {}, flightPricesByMonth = [], webhookHotels = [] }: Step2AccommodationProps) {
   const [customExtra, setCustomExtra] = useState("")
+  const [showAllHotels, setShowAllHotels] = useState(false)
+  const [galleryHotelId, setGalleryHotelId] = useState<string | null>(null)
+  const [galleryImages, setGalleryImages] = useState<string[]>([])
+  const [galleryIndex, setGalleryIndex] = useState(0)
+
+  // Reset paging when destination changes
+  useEffect(() => {
+    setShowAllHotels(false)
+  }, [configuration.destination])
+
+  const openGallery = (hotelId: string, images: string[], startIdx: number) => {
+    setGalleryHotelId(hotelId)
+    setGalleryImages(images)
+    setGalleryIndex(startIdx)
+  }
+
+  const closeGallery = () => setGalleryHotelId(null)
+
+  // Keyboard navigation in lightbox
+  useEffect(() => {
+    if (!galleryHotelId) return
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") setGalleryIndex((i) => (i - 1 + galleryImages.length) % galleryImages.length)
+      else if (e.key === "ArrowRight") setGalleryIndex((i) => (i + 1) % galleryImages.length)
+      else if (e.key === "Escape") closeGallery()
+    }
+    window.addEventListener("keydown", handler)
+    return () => window.removeEventListener("keydown", handler)
+  }, [galleryHotelId, galleryImages.length])
+
 
   const handleChange = (key: string, value: any) => {
     // Reset meals when hotel changes (meal availability may differ)
