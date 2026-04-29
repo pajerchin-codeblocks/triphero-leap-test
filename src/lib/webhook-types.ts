@@ -9,6 +9,7 @@ export interface WebhookHotel {
   image: string
   location: string
   description: string
+  images?: string[]
   bb: boolean
   hb: boolean
   fb: boolean

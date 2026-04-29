@@ -1,56 +1,54 @@
-# Zovšeobecnenie textov vo wizarde (líder, nielen tréner)
+## Hotel list improvements (Step 2 — Ubytovanie)
 
-Cieľ: formulár musí znieť univerzálne — pre akýkoľvek trip s lídrom (fitness tréner, cukrárka, fotograf, sommelier…). Žiadne dátové kľúče (`trainerName`, `trainerExperience`, …) sa **nemenia**, aby ostala plná spätná kompatibilita s edge funkciou aj DB. Menia sa iba **viditeľné texty, poradie polí a placeholder návrhy**.
+Three changes to the hotel grid in `src/components/wizard-steps/step2-accommodation.tsx`.
 
-## 1. `src/components/wizard-steps/step4-trainer-info.tsx`
+### 1. Hide hotels priced at 0 €
 
-**Nadpis a podnadpis**
-- „O vás ako trénerovi" → **„O vás ako lídrovi tripu"**
-- Podnadpis: „Pomôžte nám lepšie pochopiť vaše skúsenosti a špecializáciu, aby sme mohli vytvoriť presvedčivý popis vášho tripu." (zachovať, je už neutrálny)
+A hotel is hidden when its effective base price (after running `getHotelPricing(hotel)`) is `0` — covers both:
+- `hotel.price === 0` AND no available meal has a price > 0, or
+- only meals are present but all of their `cena` values are 0.
 
-**Prehodenie poradia polí** (špecializácia ide pred skúsenosti):
-1. Vaše meno a priezvisko *(bez zmeny)*
-2. **Špecializácia / téma tripu** *  → naviazané na `trainerSpecialization`
-   - placeholder: `napr. Cukrárstvo, fotografia, joga, wine tasting, funkčný tréning`
-3. **Roky skúseností v danej špecializácii** *  → naviazané na `trainerExperience`
-   - placeholder: `napr. 5 rokov`
-4. **Certifikáty, kvalifikácie alebo ocenenia** *(nepovinné)* → `trainerCertificates`
-   - placeholder: `Vypíšte certifikáty, kurzy, ocenenia alebo úspechy vo vašom odbore...`
-   - hint pod poľom: „Nepovinné, ale pomôže to zvýšiť dôveryhodnosť" *(bez zmeny)*
-5. **Váš príbeh** → `trainerBio`
-   - placeholder: `Popíšte, čo vás k téme priviedlo, čo vás motivuje a prečo by sa účastníci mali prihlásiť práve na váš trip...`
-   - hint: „Tento text použijeme pre vytvorenie autentického a presvedčivého popisu" *(bez zmeny)*
+Apply the same filter to the static `hotelsByDestination` fallback (filter out `pricePerNight <= 0`).
 
-## 2. `src/components/configurator-wizard.tsx`
+### 2. Show first 4 hotels, then "Zobraziť viac"
 
-- Názov kroku v steps poli: `{ title: "O trénerovi", … }` → **`{ title: "O lídrovi", … }`**
+- Add local state `const [showAll, setShowAll] = useState(false)`.
+- Slice the filtered list to 4 by default; render full list when `showAll` is true.
+- Show a centered ghost button below the grid only when more than 4 hotels exist:
+  - "Zobraziť viac (+N)" → expands
+  - "Zobraziť menej" → collapses
+- Reset `showAll` automatically when destination changes (same hook scope as `customExtra`).
 
-## 3. `src/components/wizard-steps/step3-business.tsx`
+### 3. Hotel photo gallery + full-page lightbox
 
-- „Model odmeny **trénera** — Garantovaná odmena na osobu" → **„Model odmeny lídra — Garantovaná odmena na osobu"**
-- Ostatné texty (Odmena za jedného účastníka, Spolu zarobíš…) ostávajú.
+**Data shape**
+- Extend `WebhookHotel` in `src/lib/webhook-types.ts` with optional `images?: string[]`.
+- Helper `getHotelImages(hotel)` returns `hotel.images?.length ? hotel.images : [hotel.image]` (deduped, falsy filtered).
+- Static `hotelsByDestination` hotels stay single-image (wrapped in array via the same helper).
 
-## 4. `src/components/wizard-steps/step5-program.tsx`
+**On the hotel tile**
+- Replace the single `<img>` with a swipeable image container:
+  - State per tile: `const [idx, setIdx] = useState(0)` lifted into a small inner `<HotelTile />` component to keep state isolated.
+  - Show current image; if `images.length > 1`, render two overlay buttons (left/right chevrons from `lucide-react`) absolutely positioned, vertically centered, with `bg-black/40 hover:bg-black/60 text-white rounded-full p-1.5`.
+  - Clicking a chevron stops propagation and changes index (wraps around). The tile's main click still selects the hotel.
+  - Add small dot indicators at the bottom when > 1 image.
+- Clicking the image area (not the chevrons) opens the lightbox AND selects the hotel.
 
-Placeholder programu zovšeobecniť, aby nesugeroval len fitness:
-```
-Napríklad:
+**Full-page lightbox**
+- Use existing `Dialog` from `@/components/ui/dialog`. Configure `DialogContent` with `max-w-screen w-screen h-screen p-0 bg-black/95 border-0 rounded-none` and remove default close styling overrides where needed.
+- Inside: large centered `<img>` (`max-h-[90vh] max-w-[95vw] object-contain`), close button top-right, prev/next chevron buttons (only when > 1 image), counter "x / N" bottom-center.
+- Keyboard support: `ArrowLeft`, `ArrowRight`, `Escape` via a `useEffect` listener active while the dialog is open.
+- Lightbox state lives in the parent step (`openGalleryHotelId`, `galleryIndex`) so any tile can open it.
 
-8:00 — Raňajky a privítanie
-9:30 — Hlavná aktivita dňa (workshop, výlet, ochutnávka…)
-12:30 — Obed
-15:00 — Popoludňajší program (prechádzka, voľný čas, druhá session)
-18:00 — Večera
-20:00 — Spoločenský večer alebo voľný program
-```
+### Test previews
 
-## 5. `src/components/summary-page.tsx`
+Updates are confined to `step2-accommodation.tsx` and the type file, both of which are already used by `TestPreviews.tsx` indirectly (the wizard mounts the same step). No additional changes needed there — they automatically pick up the new behavior.
 
-- Toast pri chýbajúcom mene: „Chýba meno **trénera**" / „… vyplňte meno **trénera** v kroku 4." → **„Chýba meno lídra"** / **„… vyplňte meno lídra v kroku 4."**
-- Veta s prístupovým kódom: „Prístupový kód je meno **trénera**:" → **„Prístupový kód je meno lídra:"**
+### Files touched
 
-## Čo sa NEMENÍ
+- `src/lib/webhook-types.ts` — add `images?: string[]` and `getHotelImages` helper.
+- `src/components/wizard-steps/step2-accommodation.tsx` — filtering, paging, `HotelTile` subcomponent with carousel arrows, lightbox dialog.
 
-- Žiadne premenné, kľúče v `configuration`, validation keys (`trainerName`, `trainerExperience`, `trainerSpecialization`, `trainerReward`, `trainerBio`, `trainerCertificates`).
-- Edge funkcia `generate-camp-preview` ani DB stĺpec `trainer_name` — interná logika a AI prompt zostávajú; názvoslovie v prompte je pre AI a netreba meniť pre používateľa.
-- Štruktúra wizardu, dizajn, validácie, error UI.
+### Open question
+
+The backend currently sends a single `image` per hotel in our captured network response. Plan assumes the field for multiple photos is `images: string[]`. If the n8n webhook uses a different key (e.g. `gallery`, `photos`, `imageUrls`), tell me the exact name and I'll wire it through `getHotelImages`.
