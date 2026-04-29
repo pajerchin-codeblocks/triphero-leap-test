@@ -113,7 +113,16 @@ export default function Step2Accommodation({ configuration, onConfigurationChang
   // Use webhook hotels if available, otherwise fallback to static
   const useWebhook = webhookHotels.length > 0
   const selectedDestination = configuration.destination as keyof typeof hotelsByDestination
-  const fallbackHotels = selectedDestination ? hotelsByDestination[selectedDestination] || [] : []
+  const fallbackHotelsRaw = selectedDestination ? hotelsByDestination[selectedDestination] || [] : []
+
+  // Filter out hotels with effective price = 0
+  const filteredWebhookHotels = webhookHotels.filter((h) => getHotelPricing(h).basePrice > 0)
+  const fallbackHotels = fallbackHotelsRaw.filter((h: any) => (h.pricePerNight ?? 0) > 0)
+
+  const visibleWebhookHotels = showAllHotels ? filteredWebhookHotels : filteredWebhookHotels.slice(0, 4)
+  const visibleFallbackHotels = showAllHotels ? fallbackHotels : fallbackHotels.slice(0, 4)
+  const totalVisibleSource = useWebhook ? filteredWebhookHotels : fallbackHotels
+  const hasMore = totalVisibleSource.length > 4
 
   // Find selected webhook hotel for dynamic meals/transfer
   const selectedWebhookHotel = useWebhook
