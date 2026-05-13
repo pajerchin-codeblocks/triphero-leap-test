@@ -135,6 +135,22 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
     }
 
     setGenerating(true)
+
+    // Fire-and-forget: pošli kompletnú konfiguráciu z formulára na builder webhook
+    try {
+      fetch("https://n8n.codeblocks.sk/webhook/triphero-builder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          timestamp: new Date().toISOString(),
+          email: email || null,
+          configuration,
+        }),
+      }).catch((e) => console.error("[TripHERO] builder webhook error:", e))
+    } catch (e) {
+      console.error("[TripHERO] builder webhook error:", e)
+    }
+
     try {
       const { data, error } = await supabase.functions.invoke('generate-camp-preview', {
         body: { configuration },
