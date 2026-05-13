@@ -139,8 +139,19 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
     // Fire-and-forget: pošli kompletnú konfiguráciu z formulára na builder webhook.
     // Pred odoslaním vyčistíme prázdne / nepoužité polia, aby payload neobsahoval šum.
     try {
+      // Mapovanie reálnych polí formulára na názvy očakávané v n8n payloade.
+      const mapped = {
+        ...configuration,
+        // months[] (z formulára) → month (string, čiarkou oddelený)
+        month: Array.isArray(configuration.months) ? configuration.months.join(", ") : (configuration.month || ""),
+        // hotelStars (z formulára) → hotelClass
+        hotelClass: configuration.hotelStars ?? configuration.hotelClass ?? "",
+        // trainerReward (€/účastník) → rewardAmount, model je vždy per-participant
+        rewardAmount: configuration.trainerReward ?? configuration.rewardAmount ?? "",
+        rewardModel: configuration.trainerReward ? "per_participant" : (configuration.rewardModel || ""),
+      }
       const cleanConfiguration = Object.fromEntries(
-        Object.entries(configuration).filter(([_, v]) => {
+        Object.entries(mapped).filter(([_, v]) => {
           if (v === null || v === undefined) return false
           if (typeof v === "string" && v.trim() === "") return false
           if (Array.isArray(v) && v.length === 0) return false
