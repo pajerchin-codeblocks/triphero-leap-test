@@ -136,15 +136,24 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
 
     setGenerating(true)
 
-    // Fire-and-forget: pošli kompletnú konfiguráciu z formulára na builder webhook
+    // Fire-and-forget: pošli kompletnú konfiguráciu z formulára na builder webhook.
+    // Pred odoslaním vyčistíme prázdne / nepoužité polia, aby payload neobsahoval šum.
     try {
+      const cleanConfiguration = Object.fromEntries(
+        Object.entries(configuration).filter(([_, v]) => {
+          if (v === null || v === undefined) return false
+          if (typeof v === "string" && v.trim() === "") return false
+          if (Array.isArray(v) && v.length === 0) return false
+          return true
+        }),
+      )
       fetch("https://n8n.codeblocks.sk/webhook/triphero-builder", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           timestamp: new Date().toISOString(),
           email: email || null,
-          configuration,
+          configuration: cleanConfiguration,
         }),
       }).catch((e) => console.error("[TripHERO] builder webhook error:", e))
     } catch (e) {
