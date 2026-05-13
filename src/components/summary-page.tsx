@@ -136,41 +136,6 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
 
     setGenerating(true)
 
-    // Fire-and-forget: pošli kompletnú konfiguráciu z formulára na builder webhook.
-    // Pred odoslaním vyčistíme prázdne / nepoužité polia, aby payload neobsahoval šum.
-    try {
-      // Mapovanie reálnych polí formulára na názvy očakávané v n8n payloade.
-      const mapped = {
-        ...configuration,
-        // months[] (z formulára) → month (string, čiarkou oddelený)
-        month: Array.isArray(configuration.months) ? configuration.months.join(", ") : (configuration.month || ""),
-        // hotelStars (z formulára) → hotelClass
-        hotelClass: configuration.hotelStars ?? configuration.hotelClass ?? "",
-        // trainerReward (€/účastník) → rewardAmount, model je vždy per-participant
-        rewardAmount: configuration.trainerReward ?? configuration.rewardAmount ?? "",
-        rewardModel: configuration.trainerReward ? "per_participant" : (configuration.rewardModel || ""),
-      }
-      const cleanConfiguration = Object.fromEntries(
-        Object.entries(mapped).filter(([_, v]) => {
-          if (v === null || v === undefined) return false
-          if (typeof v === "string" && v.trim() === "") return false
-          if (Array.isArray(v) && v.length === 0) return false
-          return true
-        }),
-      )
-      fetch("https://n8n.codeblocks.sk/webhook/triphero-builder", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          timestamp: new Date().toISOString(),
-          email: email || null,
-          configuration: cleanConfiguration,
-        }),
-      }).catch((e) => console.error("[TripHERO] builder webhook error:", e))
-    } catch (e) {
-      console.error("[TripHERO] builder webhook error:", e)
-    }
-
     try {
       const { data, error } = await supabase.functions.invoke('generate-camp-preview', {
         body: { configuration },
@@ -182,6 +147,44 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
       const link = `${window.location.origin}/preview/${data.slug}`
       setPreviewLink(link)
       setTrainerNameForAccess(data.trainerName)
+
+      // Fire-and-forget: pošli kompletnú konfiguráciu + výsledok preview na n8n builder webhook.
+      try {
+        // Mapovanie reálnych polí formulára na názvy očakávané v n8n payloade
+        // a odstránenie duplicitných polí (months, hotelStars, trainerReward).
+        const { months, hotelStars, trainerReward, month: _m, hotelClass: _hc, rewardAmount: _ra, rewardModel: _rm, ...rest } = configuration as any
+        const mapped = {
+          ...rest,
+          month: Array.isArray(months) ? months.join(", ") : "",
+          hotelClass: hotelStars ?? "",
+          rewardAmount: trainerReward ?? "",
+          rewardModel: trainerReward ? "per_participant" : "",
+        }
+        const cleanConfiguration = Object.fromEntries(
+          Object.entries(mapped).filter(([_, v]) => {
+            if (v === null || v === undefined) return false
+            if (typeof v === "string" && v.trim() === "") return false
+            if (Array.isArray(v) && v.length === 0) return false
+            return true
+          }),
+        )
+        fetch("https://n8n.codeblocks.sk/webhook/triphero-builder", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            timestamp: new Date().toISOString(),
+            email: email || null,
+            preview: {
+              url: link,
+              slug: data.slug,
+              password: data.trainerName,
+            },
+            configuration: cleanConfiguration,
+          }),
+        }).catch((e) => console.error("[TripHERO] builder webhook error:", e))
+      } catch (e) {
+        console.error("[TripHERO] builder webhook error:", e)
+      }
 
       toast({
         title: "Preview vygenerovaný! 🎉",
