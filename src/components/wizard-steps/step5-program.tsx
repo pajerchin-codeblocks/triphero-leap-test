@@ -25,7 +25,20 @@ export default function Step5Program({ configuration, onConfigurationChange, val
       ? `${durationDays === 3 ? "2" : `2-${durationDays - 1}`}. deň\n- Cvičebný program pod vedením Zory Czoborovej\n- Fakultatívne výlety\n\n`
       : ""
 
-  const programPlaceholder = `1. deň\n(Zmena letov a programu vyhradená)\n- Odlet z Viedne (11:25)\n- Prílet na Santorini (14:45)\n- Transfer do hotela\n- Check-in v hoteli\n- Úvodné stretnutie\n\n${middleLine}${durationDays > 1 ? `${durationDays}. deň\n- Check-out z hotela do 11:30\n- Transfer na letisko\n- Odlet zo Santorini (15:15)\n- Prílet do Viedne (16:45)` : ""}`
+  const programExample = `1. deň\n(Zmena letov a programu vyhradená)\n- Odlet z Viedne (11:25)\n- Prílet na Santorini (14:45)\n- Transfer do hotela\n- Check-in v hoteli\n- Úvodné stretnutie\n\n${middleLine}${durationDays > 1 ? `${durationDays}. deň\n- Check-out z hotela do 11:30\n- Transfer na letisko\n- Odlet zo Santorini (15:15)\n- Prílet do Viedne (16:45)` : ""}`
+
+  const exampleWithPrefix = `Napríklad:\n\n${programExample}`
+
+  const [exampleActive, setExampleActive] = useState(!configuration.dailyProgram)
+
+  const displayValue = exampleActive ? exampleWithPrefix : (configuration.dailyProgram || "")
+
+  const handleProgramFocus = () => {
+    if (exampleActive) {
+      setExampleActive(false)
+      handleChange("dailyProgram", programExample)
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -42,10 +55,13 @@ export default function Step5Program({ configuration, onConfigurationChange, val
             <Label htmlFor="dailyProgram" className="text-sm font-semibold text-foreground">Predstava programu</Label>
             <Textarea
               id="dailyProgram"
-              placeholder={programPlaceholder}
-              value={configuration.dailyProgram || ""}
-              onChange={(e) => handleChange("dailyProgram", e.target.value)}
-              className={`min-h-[300px] resize-none`}
+              value={displayValue}
+              onFocus={handleProgramFocus}
+              onChange={(e) => {
+                if (exampleActive) setExampleActive(false)
+                handleChange("dailyProgram", e.target.value)
+              }}
+              className={`min-h-[300px] resize-none ${exampleActive ? "text-muted-foreground" : ""}`}
               rows={12}
             />
             <p className="text-xs text-muted-foreground">Nepovinné — čím detailnejšie popíšete program, tým lepšie vieme vytvoriť presný popis</p>
