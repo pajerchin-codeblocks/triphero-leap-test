@@ -79,11 +79,13 @@ export const hotelsByDestination: Record<string, Array<{
 export type Hotel = (typeof hotelsByDestination)[keyof typeof hotelsByDestination][number]
 
 export const extraServicesPricing: Record<string, number> = {
-  Wellness: 25,
-  Výlet: 40,
-  "Meeting room": 20,
-  "Foto/video balík": 60,
-  "Extra event": 80,
+  "Transfer": 15,
+  "Sála na cvičenie": 30,
+  "Vonkajší priestor na cvičenie": 25,
+  "Kongresová miestnosť na meetingy": 40,
+  "Pódium": 50,
+  "Fotograf": 60,
+  "Merch": 35,
 }
 
 export const mealsPricing: Record<string, number> = {
