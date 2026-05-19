@@ -44,6 +44,17 @@ export default function Step5Program({ configuration, onConfigurationChange, val
 
   const [exampleActive, setExampleActive] = useState(!configuration.dailyProgram)
 
+  const firstRender = useRef(true)
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false
+      return
+    }
+    setExampleActive(true)
+    if (configuration.dailyProgram) handleChange("dailyProgram", "")
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [configuration.destination, configuration.meals, configuration.duration])
+
   const displayValue = exampleActive ? exampleWithPrefix : (configuration.dailyProgram || "")
 
   const handleProgramFocus = () => {
