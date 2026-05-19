@@ -42,14 +42,10 @@ export default function Step5Program({ configuration, onConfigurationChange, val
 
   const exampleWithPrefix = `Napríklad:\n\n${programExample}`
 
-  const [exampleActive, setExampleActive] = useState(!configuration.dailyProgram)
+  const [exampleActive, setExampleActive] = useState(true)
 
-  const firstRender = useRef(true)
+  // Reset to fresh example on mount and whenever destination/meals/duration change
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false
-      return
-    }
     setExampleActive(true)
     if (configuration.dailyProgram) handleChange("dailyProgram", "")
     // eslint-disable-next-line react-hooks/exhaustive-deps
