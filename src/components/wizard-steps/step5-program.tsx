@@ -21,12 +21,24 @@ export default function Step5Program({ configuration, onConfigurationChange, val
     return n > 0 ? n : 8
   })()
 
+  const destinationLabel =
+    countryCodeToDestination[configuration.destination] || configuration.destination || "vybranú destináciu"
+
+  const meals = configuration.meals || ""
+  const mealLine = (() => {
+    if (meals === "Raňajky") return "- Spoločné raňajky v hoteli\n"
+    if (meals === "Polpenzia") return "- Spoločné raňajky a večere v hoteli\n"
+    if (meals === "Plná penzia") return "- Spoločné raňajky, obedy a večere v hoteli\n"
+    if (meals === "All inclusive") return "- Spoločné stravovanie v režime all inclusive\n"
+    return ""
+  })()
+
   const middleLine =
     durationDays > 2
-      ? `${durationDays === 3 ? "2" : `2-${durationDays - 1}`}. deň\n- Cvičebný program pod vedením Zory Czoborovej\n- Fakultatívne výlety\n\n`
+      ? `${durationDays === 3 ? "2" : `2-${durationDays - 1}`}. deň\n${mealLine}- Hlavný program tripu\n- Fakultatívne výlety\n\n`
       : ""
 
-  const programExample = `1. deň\n(Zmena letov a programu vyhradená)\n- Odlet z Viedne (11:25)\n- Prílet na Santorini (14:45)\n- Transfer do hotela\n- Check-in v hoteli\n- Úvodné stretnutie\n\n${middleLine}${durationDays > 1 ? `${durationDays}. deň\n- Check-out z hotela do 11:30\n- Transfer na letisko\n- Odlet zo Santorini (15:15)\n- Prílet do Viedne (16:45)` : ""}`
+  const programExample = `1. deň\n- Odlet z Viedne\n- Prílet do destinácie: ${destinationLabel}\n- Transfer do hotela\n- Check-in v hoteli\n- Úvodné stretnutie\n\n${middleLine}${durationDays > 1 ? `${durationDays}. deň\n- Check-out z hotela\n- Transfer na letisko\n- Odlet z destinácie\n- Prílet do Viedne` : ""}`
 
   const exampleWithPrefix = `Napríklad:\n\n${programExample}`
 
