@@ -128,7 +128,6 @@ export default function Step1Basic({
                       key={dest.id}
                       onClick={() => {
                         handleChange("destination", dest.id);
-                        onConfigurationChange({ months: [] });
                       }}
                       className={`relative rounded-2xl overflow-hidden border-2 transition transform hover:scale-105 h-28 ${
                         configuration.destination === dest.id
@@ -173,7 +172,6 @@ export default function Step1Basic({
                               key={dest.id}
                               onClick={() => {
                                 handleChange("destination", dest.id);
-                                onConfigurationChange({ months: [] });
                                 setShowMoreDestinations(false);
                               }}
                               className={`relative rounded-2xl overflow-hidden border-2 transition transform hover:scale-105 h-28 ${
