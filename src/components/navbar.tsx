@@ -86,16 +86,16 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 bg-background/98 backdrop-blur-lg pt-24 px-6 md:hidden"
+            className="fixed inset-0 z-40 bg-background/98 backdrop-blur-lg pt-24 px-4 md:hidden overflow-y-auto"
           >
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3 pb-8">
               {navLinks.map((link, i) => {
-                const pillClasses =
+                const variantClasses =
                   link.pillVariant === "primary"
-                    ? "bg-[hsla(234,85%,63%,0.1)] text-[hsl(234,85%,63%)] px-4 py-1 rounded-full self-start"
+                    ? "bg-[hsl(234,85%,63%)] text-white"
                     : link.pillVariant === "secondary"
-                      ? "bg-[hsla(156,83%,64%,0.2)] text-[hsl(156,83%,64%)] px-4 py-1 rounded-full self-start"
-                      : null
+                      ? "bg-[hsl(156,83%,64%)] text-[hsl(215,65%,11%)]"
+                      : "bg-white text-foreground border border-border shadow-sm"
 
                 return (
                   <motion.a
@@ -105,28 +105,24 @@ export default function Navbar() {
                     rel={link.external ? "noopener noreferrer" : undefined}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 }}
+                    transition={{ delay: i * 0.05 }}
                     onClick={() => setMobileOpen(false)}
-                    className={`text-2xl font-semibold transition-colors ${
-                      pillClasses ?? "text-foreground"
-                    }`}
+                    className={`w-full text-center text-base font-semibold py-3.5 rounded-full transition-colors ${variantClasses}`}
                   >
                     {link.label}
                   </motion.a>
                 )
               })}
-              <motion.div
+              <motion.a
+                href="https://ai.triphero.sk/"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: navLinks.length * 0.1 }}
-                className="pt-2"
+                transition={{ delay: navLinks.length * 0.05 }}
+                onClick={() => setMobileOpen(false)}
+                className="w-full text-center text-base font-semibold py-3.5 rounded-full text-white gradient-wizard-btn mt-1"
               >
-                <Button variant="hero" size="lg" asChild className="w-full">
-                  <a href="https://ai.triphero.sk/" onClick={() => setMobileOpen(false)}>
-                    Začať plánovať trip
-                  </a>
-                </Button>
-              </motion.div>
+                Začať plánovať trip s AI
+              </motion.a>
             </div>
           </motion.div>
         )}
