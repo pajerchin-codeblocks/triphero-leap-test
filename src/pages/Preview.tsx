@@ -901,10 +901,10 @@ export default function Preview() {
           <motion.div variants={fadeUp}>
             <Button
               size="lg"
-              className="gradient-wizard-btn text-lg md:text-xl px-12 py-7 font-bold shadow-2xl hover:scale-[1.03] active:scale-[0.98] transition-all duration-300"
+              className="gradient-wizard-btn text-base md:text-xl px-6 md:px-12 py-6 md:py-7 font-bold shadow-2xl hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 h-auto whitespace-normal text-center leading-snug max-w-full"
             >
-              {campData.closingStory.finalCta || "Rezervovať si miesto"}
-              <ArrowRight className="ml-2 w-5 h-5" />
+              <span className="break-words">{campData.closingStory.finalCta || "Rezervovať si miesto"}</span>
+              <ArrowRight className="ml-2 w-5 h-5 flex-shrink-0" />
             </Button>
           </motion.div>
         </motion.div>
