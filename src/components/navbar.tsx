@@ -86,7 +86,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[60] bg-background backdrop-blur-lg pt-24 px-4 md:hidden overflow-y-auto"
+            className="fixed inset-0 z-[60] bg-background/80 backdrop-blur-xl pt-20 px-4 md:hidden overflow-y-auto"
           >
             <div className="flex flex-col gap-3 pb-8">
               {navLinks.map((link, i) => {
@@ -95,7 +95,7 @@ export default function Navbar() {
                     ? "bg-[hsl(234,85%,63%)] text-white"
                     : link.pillVariant === "secondary"
                       ? "bg-[hsl(156,83%,64%)] text-[hsl(215,65%,11%)]"
-                      : "bg-white text-foreground border border-border shadow-sm"
+                      : "bg-white/90 text-foreground border border-border/60 shadow-sm"
 
                 return (
                   <motion.a
@@ -127,6 +127,7 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
     </>
   )
 }
