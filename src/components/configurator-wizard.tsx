@@ -340,6 +340,10 @@ export default function ConfiguratorWizard({
         }
       }
       setValidationErrors({});
+      const emailForSubmits = getUserEmail();
+      for (let s = currentStep; s < index; s++) {
+        pushFormSubmit(steps[s].title, emailForSubmits);
+      }
       if (currentStep === 0) {
         setWebhookLoading(true);
         setCurrentStep(index);
