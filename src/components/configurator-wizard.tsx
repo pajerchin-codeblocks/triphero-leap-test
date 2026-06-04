@@ -59,6 +59,7 @@ export default function ConfiguratorWizard({
     AU: "Austrália", JP: "Japonsko", US: "USA", CY: "Cyprus",
     MV: "Maldivy", MU: "Maurícius", TZ: "Tanzánia", CZ: "Česko",
     AE: "Spojené arabské emiráty", SK: "Slovensko",
+    IN: "India", BH: "Bahrajn", MY: "Malajzia",
   };
 
   const countryCodeToImage: Record<string, string> = {
@@ -71,6 +72,7 @@ export default function ConfiguratorWizard({
     MV: "/destinations/maldives.jpg", MU: "/destinations/mauritius.jpg",
     TZ: "/destinations/tanzania.jpg", CZ: "/destinations/czech.jpg",
     AE: "/destinations/uae.jpg", SK: "/destinations/slovakia.jpg",
+    IN: "/destinations/india.jpg", BH: "/destinations/bahrain.jpg", MY: "/destinations/malaysia.jpg",
   };
 
   const nameToImage: Record<string, string> = {
@@ -95,6 +97,9 @@ export default function ConfiguratorWizard({
     "Česko": "/destinations/czech.jpg", "Czech Republic": "/destinations/czech.jpg", "Czechia": "/destinations/czech.jpg",
     "Spojené arabské emiráty": "/destinations/uae.jpg", "United Arab Emirates": "/destinations/uae.jpg", "UAE": "/destinations/uae.jpg",
     "Slovensko": "/destinations/slovakia.jpg", "Slovakia": "/destinations/slovakia.jpg",
+    "India": "/destinations/india.jpg",
+    "Bahrajn": "/destinations/bahrain.jpg", "Bahrain": "/destinations/bahrain.jpg",
+    "Malajzia": "/destinations/malaysia.jpg", "Malaysia": "/destinations/malaysia.jpg",
   };
 
   useEffect(() => {
