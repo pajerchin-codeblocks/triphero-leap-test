@@ -292,7 +292,7 @@ export default function ConfiguratorWizard({
       return;
     }
     setValidationErrors({});
-    pushFormSubmit(steps[currentStep].title);
+    pushFormSubmit(steps[currentStep].title, getUserEmail());
 
     if (currentStep === 0) {
       setWebhookLoading(true);
