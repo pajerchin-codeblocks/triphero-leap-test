@@ -149,6 +149,8 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
       setPreviewLink(link)
       setTrainerNameForAccess(data.trainerName)
 
+      pushGenerateLead(email)
+
       // Fire-and-forget: pošli kompletnú konfiguráciu + výsledok preview na n8n builder webhook.
       try {
         // Mapovanie reálnych polí formulára na názvy očakávané v n8n payloade
