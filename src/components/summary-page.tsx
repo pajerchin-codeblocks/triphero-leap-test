@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client"
 import { Sparkles, Copy, ExternalLink, Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import PreviewLoadingOverlay from "@/components/preview-loading-overlay"
+import { pushGenerateLead } from "@/lib/dataLayer"
 
 const emailSchema = z.string().trim().email({ message: "Zadajte platný email" }).max(255)
 
