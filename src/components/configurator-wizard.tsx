@@ -158,10 +158,21 @@ export default function ConfiguratorWizard({
     { title: "Program dňa", component: Step5Program },
   ];
 
+  // Read user email from sessionStorage (set on summary page) if available
+  const getUserEmail = (): string | null => {
+    if (typeof window === "undefined") return null;
+    try {
+      const e = sessionStorage.getItem("triphero_email");
+      return e && e.trim() ? e.trim() : null;
+    } catch {
+      return null;
+    }
+  };
+
   // Fire form_start on every step render / change
   useEffect(() => {
     const name = steps[currentStep]?.title;
-    if (name) pushFormStart(name);
+    if (name) pushFormStart(name, getUserEmail());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
@@ -281,7 +292,7 @@ export default function ConfiguratorWizard({
       return;
     }
     setValidationErrors({});
-    pushFormSubmit(steps[currentStep].title);
+    pushFormSubmit(steps[currentStep].title, getUserEmail());
 
     if (currentStep === 0) {
       setWebhookLoading(true);
@@ -329,6 +340,10 @@ export default function ConfiguratorWizard({
         }
       }
       setValidationErrors({});
+      const emailForSubmits = getUserEmail();
+      for (let s = currentStep; s < index; s++) {
+        pushFormSubmit(steps[s].title, emailForSubmits);
+      }
       if (currentStep === 0) {
         setWebhookLoading(true);
         setCurrentStep(index);
