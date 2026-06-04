@@ -158,6 +158,13 @@ export default function ConfiguratorWizard({
     { title: "Program dňa", component: Step5Program },
   ];
 
+  // Fire form_start on every step render / change
+  useEffect(() => {
+    const name = steps[currentStep]?.title;
+    if (name) pushFormStart(name);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep]);
+
   const CurrentStep = steps[currentStep].component as React.ComponentType<{ configuration: any; onConfigurationChange: (updates: any) => void; validationErrors?: Record<string, boolean> }>;
 
   // Wrapper that clears validation errors for fields being updated
