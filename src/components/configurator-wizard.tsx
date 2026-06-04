@@ -281,6 +281,7 @@ export default function ConfiguratorWizard({
       return;
     }
     setValidationErrors({});
+    pushFormSubmit(steps[currentStep].title);
 
     if (currentStep === 0) {
       setWebhookLoading(true);
