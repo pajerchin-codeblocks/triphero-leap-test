@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client"
 import { Sparkles, Copy, ExternalLink, Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import PreviewLoadingOverlay from "@/components/preview-loading-overlay"
+import { pushGenerateLead } from "@/lib/dataLayer"
 
 const emailSchema = z.string().trim().email({ message: "Zadajte platný email" }).max(255)
 
@@ -147,6 +148,8 @@ export default function SummaryPage({ configuration, onEdit }: SummaryPageProps)
       const link = `${window.location.origin}/preview/${data.slug}`
       setPreviewLink(link)
       setTrainerNameForAccess(data.trainerName)
+
+      pushGenerateLead(email)
 
       // Fire-and-forget: pošli kompletnú konfiguráciu + výsledok preview na n8n builder webhook.
       try {

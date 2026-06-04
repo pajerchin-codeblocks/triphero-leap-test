@@ -15,6 +15,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { destinationToCountryCode, convertMonthsToWebhookFormat } from "@/lib/destination-mapping";
 import { supabase } from "@/integrations/supabase/client";
 import { WebhookHotel, micros, MealKey, mealPriceKeys, getHotelPricing } from "@/lib/webhook-types";
+import { pushFormStart, pushFormSubmit } from "@/lib/dataLayer";
 
 interface ConfiguratorWizardProps {
   configuration: any;
@@ -157,6 +158,13 @@ export default function ConfiguratorWizard({
     { title: "Program dňa", component: Step5Program },
   ];
 
+  // Fire form_start on every step render / change
+  useEffect(() => {
+    const name = steps[currentStep]?.title;
+    if (name) pushFormStart(name);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep]);
+
   const CurrentStep = steps[currentStep].component as React.ComponentType<{ configuration: any; onConfigurationChange: (updates: any) => void; validationErrors?: Record<string, boolean> }>;
 
   // Wrapper that clears validation errors for fields being updated
@@ -273,6 +281,7 @@ export default function ConfiguratorWizard({
       return;
     }
     setValidationErrors({});
+    pushFormSubmit(steps[currentStep].title);
 
     if (currentStep === 0) {
       setWebhookLoading(true);
