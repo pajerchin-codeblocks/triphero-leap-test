@@ -1,12 +1,12 @@
-import { useState } from "react"
-import Navbar from "@/components/navbar"
-import ConfiguratorWizard from "@/components/configurator-wizard"
-import SummaryPage from "@/components/summary-page"
+import { useState } from "react";
+import Navbar from "@/components/navbar";
+import ConfiguratorWizard from "@/components/configurator-wizard";
+import SummaryPage from "@/components/summary-page";
 
-type Step = "wizard" | "summary"
+type Step = "wizard" | "summary";
 
 export default function Home() {
-  const [currentStep, setCurrentStep] = useState<Step>("wizard")
+  const [currentStep, setCurrentStep] = useState<Step>("wizard");
   const [configuration, setConfiguration] = useState({
     destination: "",
     month: "",
@@ -20,10 +20,10 @@ export default function Home() {
     rewardModel: "",
     rewardAmount: "",
     budgetPerPerson: 600,
-  })
+  });
 
   const handleConfigurationChange = (updates: Partial<typeof configuration>) =>
-    setConfiguration((prev) => ({ ...prev, ...updates }))
+    setConfiguration((prev) => ({ ...prev, ...updates }));
 
   return (
     <div className="min-h-screen bg-background pt-16 md:pt-20">
@@ -36,12 +36,9 @@ export default function Home() {
             onComplete={() => setCurrentStep("summary")}
           />
         ) : (
-          <SummaryPage
-            configuration={configuration}
-            onEdit={() => setCurrentStep("wizard")}
-          />
+          <SummaryPage configuration={configuration} onEdit={() => setCurrentStep("wizard")} />
         )}
       </div>
     </div>
-  )
+  );
 }
